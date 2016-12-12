@@ -1,0 +1,382 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Asset\THAssetManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Asset\THImage.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Asset\THShader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Asset\THTexture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Common\THCommon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Common\THEngineObject.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Common\THException.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Common\THExceptionManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Common\THFrameTimer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Common\THLogger.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Common\THObject.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Common\THScheduler.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Common\THString.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Core\3D\THLight.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Core\3D\THMesh.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Core\THCamera.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Core\THFont.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Core\THGame.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Core\THGameObject.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Core\THLayer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Core\THParticle3D.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Core\THRenderObject.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Core\THRenderState.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Core\THScene.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Core\THSprite.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Math\MathUtil.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Math\Matrix.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Platform\External\CWaveFile.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Platform\THApplication.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Platform\THAudio.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Platform\THInput.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Platform\THMusic.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Platform\THSound.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Renderer\THMeshRenderer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Renderer\THParticle3DRenderer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Renderer\THRenderQueue.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Renderer\THSpriteRenderer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Tween\THConcreteTween.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Tween\THConcreteTweener.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Tween\THTween.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Tween\THTweener.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Tween\THTweenManager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\UI\THEventSystem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\UI\THMenu.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\UI\THMenuItem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Asset\THAssetManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Asset\THImage.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Asset\THShader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Asset\THTexture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Common\THCommon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Common\THDefine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Common\THEngineObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Common\THException.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Common\THExceptionManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Common\THFrameTimer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Common\THList.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Common\THLogger.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Common\THMap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Common\THObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Common\THScheduler.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Common\THString.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Core\3D\THLight.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Core\3D\THMesh.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Core\THCamera.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Core\THFont.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Core\THGame.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Core\THGameObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Core\THLayer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Core\THParticle3D.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Core\THRenderObject.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Core\THRenderState.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Core\THScene.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Core\THSprite.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\libpng\png.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\libpng\pngconf.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\libpng\pnginfo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\libpng\pnglibconf.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\libpng\pngpriv.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\libpng\pngstruct.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Math\MathUtil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Math\Matrix.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Platform\External\CWaveFile.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Platform\THApplication.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Platform\THAudio.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Platform\THInput.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Platform\THMusic.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Platform\THSound.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Renderer\THMeshRenderer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Renderer\THParticle3DRenderer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Renderer\THRenderer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Renderer\THRenderQueue.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Renderer\THSpriteRenderer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Tween\THConcreteTween.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Tween\THConcreteTweener.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Tween\THTween.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Tween\THTweener.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Tween\THTweenManager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\UI\THEvents.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\UI\THEventSystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\UI\THMenu.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\UI\THMenuItem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\THEngine.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\libjpeg\jconfig.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\libjpeg\jmorecfg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\libjpeg\jpeglib.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\font\font-fps-opensans.png">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\icon\Game.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="res\icon\small.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Game.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\font\font-fps-opensans.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fx\mesh.fx" />
+    <None Include="fx\sprite.fx" />
+    <None Include="fx\lighting.fx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\libpng\zlib-release.lib" />
+    <Library Include="lib\libpng\libpng16-release.lib" />
+    <Library Include="lib\libpng\libpng16-debug.lib" />
+    <Library Include="lib\libjpeg\jpeg.lib" />
+    <Library Include="lib\libpng\zlib-debug.lib" />
+  </ItemGroup>
+</Project>

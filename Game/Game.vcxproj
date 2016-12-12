@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{B7B677F7-DD11-40AE-8BF4-D59EB486D3B3}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Game</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(DXSDK_DIR)\Include;$(ProjectDir)\src\THEngine;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)\lib;$(DXSDK_DIR)\Lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <IncludePath>$(DXSDK_DIR)/Include;$(ProjectDir)/src/THEngine;$(IncludePath)</IncludePath>
+    <LibraryPath>$(ProjectDir)/lib;$(DXSDK_DIR)/Lib/x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;dxerr.lib;dinput8.lib;xaudio2.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>msvcrt.lib;libcmtd.lib;libcmt.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+      <DisableSpecificWarnings>4244</DisableSpecificWarnings>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;dxerr.lib;dinput8.lib;xaudio2.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>libcmtd.lib;libcmt.lib</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\stdafx.cpp" />
+    <ClCompile Include="src\THEngine\Asset\THAssetManager.cpp" />
+    <ClCompile Include="src\THEngine\Asset\THImage.cpp" />
+    <ClCompile Include="src\THEngine\Asset\THShader.cpp" />
+    <ClCompile Include="src\THEngine\Asset\THTexture.cpp" />
+    <ClCompile Include="src\THEngine\Common\THCommon.cpp" />
+    <ClCompile Include="src\THEngine\Common\THEngineObject.cpp" />
+    <ClCompile Include="src\THEngine\Common\THException.cpp" />
+    <ClCompile Include="src\THEngine\Common\THExceptionManager.cpp" />
+    <ClCompile Include="src\THEngine\Common\THFrameTimer.cpp" />
+    <ClCompile Include="src\THEngine\Common\THLogger.cpp" />
+    <ClCompile Include="src\THEngine\Common\THObject.cpp" />
+    <ClCompile Include="src\THEngine\Common\THScheduler.cpp" />
+    <ClCompile Include="src\THEngine\Common\THString.cpp" />
+    <ClCompile Include="src\THEngine\Core\3D\THLight.cpp" />
+    <ClCompile Include="src\THEngine\Core\3D\THMesh.cpp" />
+    <ClCompile Include="src\THEngine\Core\THCamera.cpp" />
+    <ClCompile Include="src\THEngine\Core\THFont.cpp" />
+    <ClCompile Include="src\THEngine\Core\THGame.cpp" />
+    <ClCompile Include="src\THEngine\Core\THGameObject.cpp" />
+    <ClCompile Include="src\THEngine\Core\THLayer.cpp" />
+    <ClCompile Include="src\THEngine\Core\THParticle3D.cpp" />
+    <ClCompile Include="src\THEngine\Core\THRenderObject.cpp" />
+    <ClCompile Include="src\THEngine\Core\THRenderState.cpp" />
+    <ClCompile Include="src\THEngine\Core\THScene.cpp" />
+    <ClCompile Include="src\THEngine\Core\THSprite.cpp" />
+    <ClCompile Include="src\THEngine\Math\MathUtil.cpp" />
+    <ClCompile Include="src\THEngine\Math\Matrix.cpp" />
+    <ClCompile Include="src\THEngine\Platform\External\CWaveFile.cpp" />
+    <ClCompile Include="src\THEngine\Platform\THApplication.cpp" />
+    <ClCompile Include="src\THEngine\Platform\THAudio.cpp" />
+    <ClCompile Include="src\THEngine\Platform\THInput.cpp" />
+    <ClCompile Include="src\THEngine\Platform\THMusic.cpp" />
+    <ClCompile Include="src\THEngine\Platform\THSound.cpp" />
+    <ClCompile Include="src\THEngine\Renderer\THMeshRenderer.cpp" />
+    <ClCompile Include="src\THEngine\Renderer\THParticle3DRenderer.cpp" />
+    <ClCompile Include="src\THEngine\Renderer\THRenderQueue.cpp" />
+    <ClCompile Include="src\THEngine\Renderer\THSpriteRenderer.cpp" />
+    <ClCompile Include="src\THEngine\Tween\THConcreteTween.cpp" />
+    <ClCompile Include="src\THEngine\Tween\THConcreteTweener.cpp" />
+    <ClCompile Include="src\THEngine\Tween\THTween.cpp" />
+    <ClCompile Include="src\THEngine\Tween\THTweener.cpp" />
+    <ClCompile Include="src\THEngine\Tween\THTweenManager.cpp" />
+    <ClCompile Include="src\THEngine\UI\THEventSystem.cpp" />
+    <ClCompile Include="src\THEngine\UI\THMenu.cpp" />
+    <ClCompile Include="src\THEngine\UI\THMenuItem.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\Resource.h" />
+    <ClInclude Include="src\stdafx.h" />
+    <ClInclude Include="src\targetver.h" />
+    <ClInclude Include="src\THEngine\Asset\THAssetManager.h" />
+    <ClInclude Include="src\THEngine\Asset\THImage.h" />
+    <ClInclude Include="src\THEngine\Asset\THShader.h" />
+    <ClInclude Include="src\THEngine\Asset\THTexture.h" />
+    <ClInclude Include="src\THEngine\Common\THCommon.h" />
+    <ClInclude Include="src\THEngine\Common\THDefine.h" />
+    <ClInclude Include="src\THEngine\Common\THEngineObject.h" />
+    <ClInclude Include="src\THEngine\Common\THException.h" />
+    <ClInclude Include="src\THEngine\Common\THExceptionManager.h" />
+    <ClInclude Include="src\THEngine\Common\THFrameTimer.h" />
+    <ClInclude Include="src\THEngine\Common\THList.h" />
+    <ClInclude Include="src\THEngine\Common\THLogger.h" />
+    <ClInclude Include="src\THEngine\Common\THMap.h" />
+    <ClInclude Include="src\THEngine\Common\THObject.h" />
+    <ClInclude Include="src\THEngine\Common\THScheduler.h" />
+    <ClInclude Include="src\THEngine\Common\THString.h" />
+    <ClInclude Include="src\THEngine\Core\3D\THLight.h" />
+    <ClInclude Include="src\THEngine\Core\3D\THMesh.h" />
+    <ClInclude Include="src\THEngine\Core\THCamera.h" />
+    <ClInclude Include="src\THEngine\Core\THFont.h" />
+    <ClInclude Include="src\THEngine\Core\THGame.h" />
+    <ClInclude Include="src\THEngine\Core\THGameObject.h" />
+    <ClInclude Include="src\THEngine\Core\THLayer.h" />
+    <ClInclude Include="src\THEngine\Core\THParticle3D.h" />
+    <ClInclude Include="src\THEngine\Core\THRenderObject.h" />
+    <ClInclude Include="src\THEngine\Core\THRenderState.h" />
+    <ClInclude Include="src\THEngine\Core\THScene.h" />
+    <ClInclude Include="src\THEngine\Core\THSprite.h" />
+    <ClInclude Include="src\THEngine\External\libjpeg\jconfig.h" />
+    <ClInclude Include="src\THEngine\External\libjpeg\jmorecfg.h" />
+    <ClInclude Include="src\THEngine\External\libjpeg\jpeglib.h" />
+    <ClInclude Include="src\THEngine\External\libpng\png.h" />
+    <ClInclude Include="src\THEngine\External\libpng\pngconf.h" />
+    <ClInclude Include="src\THEngine\External\libpng\pnginfo.h" />
+    <ClInclude Include="src\THEngine\External\libpng\pnglibconf.h" />
+    <ClInclude Include="src\THEngine\External\libpng\pngpriv.h" />
+    <ClInclude Include="src\THEngine\External\libpng\pngstruct.h" />
+    <ClInclude Include="src\THEngine\Math\MathUtil.h" />
+    <ClInclude Include="src\THEngine\Math\Matrix.h" />
+    <ClInclude Include="src\THEngine\Platform\External\CWaveFile.h" />
+    <ClInclude Include="src\THEngine\Platform\THApplication.h" />
+    <ClInclude Include="src\THEngine\Platform\THAudio.h" />
+    <ClInclude Include="src\THEngine\Platform\THInput.h" />
+    <ClInclude Include="src\THEngine\Platform\THMusic.h" />
+    <ClInclude Include="src\THEngine\Platform\THSound.h" />
+    <ClInclude Include="src\THEngine\Renderer\THMeshRenderer.h" />
+    <ClInclude Include="src\THEngine\Renderer\THParticle3DRenderer.h" />
+    <ClInclude Include="src\THEngine\Renderer\THRenderer.h" />
+    <ClInclude Include="src\THEngine\Renderer\THRenderQueue.h" />
+    <ClInclude Include="src\THEngine\Renderer\THSpriteRenderer.h" />
+    <ClInclude Include="src\THEngine\THEngine.h" />
+    <ClInclude Include="src\THEngine\Tween\THConcreteTween.h" />
+    <ClInclude Include="src\THEngine\Tween\THConcreteTweener.h" />
+    <ClInclude Include="src\THEngine\Tween\THTween.h" />
+    <ClInclude Include="src\THEngine\Tween\THTweener.h" />
+    <ClInclude Include="src\THEngine\Tween\THTweenManager.h" />
+    <ClInclude Include="src\THEngine\UI\THEvents.h" />
+    <ClInclude Include="src\THEngine\UI\THEventSystem.h" />
+    <ClInclude Include="src\THEngine\UI\THMenu.h" />
+    <ClInclude Include="src\THEngine\UI\THMenuItem.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\font\font-fps-opensans.png" />
+    <Image Include="res\icon\Game.ico" />
+    <Image Include="res\icon\small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Game.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="fx\lighting.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="fx\mesh.fx">
+      <FileType>Document</FileType>
+    </None>
+    <None Include="fx\sprite.fx">
+      <FileType>Document</FileType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="res\font\font-fps-opensans.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="lib\libjpeg\jpeg.lib" />
+    <Library Include="lib\libpng\libpng16-debug.lib" />
+    <Library Include="lib\libpng\libpng16-release.lib" />
+    <Library Include="lib\libpng\zlib-debug.lib" />
+    <Library Include="lib\libpng\zlib-release.lib" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
