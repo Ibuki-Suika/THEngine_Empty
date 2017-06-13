@@ -16,7 +16,12 @@ namespace THEngine
 
 	Object::~Object()
 	{
+	}
 
+	Object& Object::operator=(const Object& object)
+	{
+		this->refCount = 0;
+		return *this;
 	}
 
 	Object* Object::Clone()
@@ -39,4 +44,3 @@ namespace THEngine
 		}
 	}
 }
-

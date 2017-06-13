@@ -1,7 +1,7 @@
 #ifndef THSCENE_H
 #define THSCENE_H
 
-#include "../Common/THCommon.h"
+#include <Common\THCommon.h>
 #include "THLayer.h"
 
 namespace THEngine
@@ -12,11 +12,14 @@ namespace THEngine
 		LinkedList<Layer*> layers;
 
 	public:
+		Scene();
+		virtual ~Scene();
+
 		virtual void Update() override;
 		virtual void Draw() override;
+		virtual void OnLoad(AsyncInfo* info) override;
 
-		virtual void OnLoad();
-		virtual void OnSceneChanged();
+		virtual void OnDestroy();
 
 		void AddLayer(Layer* layer);
 	};

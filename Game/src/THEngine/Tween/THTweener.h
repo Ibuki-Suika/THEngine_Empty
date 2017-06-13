@@ -1,14 +1,10 @@
 #ifndef THTWEENER_H
 #define THTWEENER_H
 
-#include "../Common/THCommon.h"
-#include "../Math/MathUtil.h"
-#include "../Math/Matrix.h"
+#include <Common\THCommon.h>
 
 namespace THEngine
 {
-	class RenderObject;
-
 	class Tweener : public Object
 	{
 	public:

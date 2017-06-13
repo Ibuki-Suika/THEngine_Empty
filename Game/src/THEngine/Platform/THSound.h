@@ -1,7 +1,7 @@
 #ifndef THSOUND_H
 #define THSOUND_H
 
-#include "../Common/THCommon.h"
+#include <Common\THCommon.h>
 #include <xaudio2.h>
 
 namespace THEngine
@@ -34,6 +34,7 @@ namespace THEngine
 		IXAudio2SourceVoice* sourceVoice = nullptr;
 		XAUDIO2_BUFFER buffer;
 		SoundCallback* callback = nullptr;
+		bool submitted = false;
 
 	public:
 		Sound();

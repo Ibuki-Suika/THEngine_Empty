@@ -1,4 +1,5 @@
 #include "THEventSystem.h"
+#include "THEvents.h"
 
 using namespace THEngine;
 
@@ -6,12 +7,10 @@ EventSystem* EventSystem::instance = nullptr;
 
 EventSystem::EventSystem()
 {
-
 }
 
 EventSystem::~EventSystem()
 {
-
 }
 
 EventSystem* EventSystem::Create()
@@ -19,7 +18,6 @@ EventSystem* EventSystem::Create()
 	if (instance == nullptr)
 	{
 		instance = new EventSystem();
-		instance->Retain();
 		return instance;
 	}
 	return nullptr;
@@ -80,9 +78,8 @@ void EventSystem::UnRegisterKeyDownListener(IKeyDownListener* listener)
 		auto info = iter->Next();
 		if (info->listener == listener)
 		{
-			info->needRemove = true;
+			iter->Remove();
 			return;
 		}
 	}
 }
-

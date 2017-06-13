@@ -1,5 +1,10 @@
 #include "THMesh.h"
-#include "../../Core/THGame.h"
+#include <Core\THGame.h>
+#include <Platform\THApplication.h>
+#include <Asset\THAssetManager.h>
+#include <Asset\THTexture.h>
+#include <Renderer\THRenderPipeline.h>
+#include <Renderer\THMeshRenderer.h>
 
 namespace THEngine
 {
@@ -8,7 +13,7 @@ namespace THEngine
 
 	}
 
-	Mesh::Mesh(const Mesh& mesh) : RenderObject(mesh)
+	Mesh::Mesh(const Mesh& mesh) : GameObject(mesh)
 	{
 		vertexCount = mesh.vertexCount;
 		material = mesh.material;
@@ -42,7 +47,7 @@ namespace THEngine
 
 	void Mesh::SendToRenderQueue()
 	{
-		Game::GetInstance()->SendToRenderQueue(Game::NORMAL, this);
+		Game::GetInstance()->GetRenderPipeline()->SendToRenderQueue(RenderPipeline::NORMAL, this);
 	}
 
 	void Mesh::InitVertexBuffer(int size)
@@ -67,12 +72,39 @@ namespace THEngine
 
 	void Mesh::Update()
 	{
-		RenderObject::Update();
+		GameObject::Update();
 	}
 
 	void Mesh::Draw()
 	{
-		Game::GetInstance()->GetMeshRenderer()->Render(this);
+		Game::GetInstance()->GetRenderPipeline()->GetMeshRenderer()->Render(this);
+	}
+
+	void Mesh::DrawGeometry()
+	{
+		auto app = Application::GetInstance();
+
+		if (this->mesh)
+		{
+			this->mesh->DrawGeometry();
+		}
+		else
+		{
+			D3DVERTEXBUFFER_DESC vbdesc;
+			this->vertexBuffer->GetDesc(&vbdesc);
+			app->GetDevice()->SetFVF(vbdesc.FVF);
+
+			switch (this->primitiveType)
+			{
+			case Mesh::TRIANGLE_LIST:
+				app->GetDevice()->DrawPrimitive(D3DPT_TRIANGLELIST, 0, this->vertexCount / 3);
+				break;
+			case Mesh::TRIANGLE_STRIP:
+				app->GetDevice()->SetStreamSource(0, this->vertexBuffer, 0, sizeof(MeshVertex));
+				app->GetDevice()->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, this->vertexCount - 2);
+				break;
+			}
+		}
 	}
 
 	Mesh* Mesh::CreateMeshFromFile(String filePath)
@@ -150,7 +182,7 @@ namespace THEngine
 		{
 			for (int i = 0; i < numMaterials; i++)
 			{
-				assetManager->DestroyTexture(materialList[i].texture);
+				TH_SAFE_RELEASE(materialList[i].texture);
 			}
 			delete[] materialList;
 		}
@@ -203,12 +235,13 @@ namespace THEngine
 			if (materials[i].pTextureFilename)
 			{
 				String path = folder + materials[i].pTextureFilename;
-				d3dMesh->materialList[i].texture = assetManager->CreateTextureFromFile(path, true);
+				d3dMesh->materialList[i].texture = assetManager->CreateTextureFromFile(path);
 				if (d3dMesh->materialList[i].texture == nullptr)
 				{
 					delete d3dMesh;
 					return nullptr;
 				}
+				d3dMesh->materialList[i].texture->Retain();
 			}		
 			d3dMesh->materialList[i].ambient[0] = materials[i].MatD3D.Diffuse.r;
 			d3dMesh->materialList[i].ambient[1] = materials[i].MatD3D.Diffuse.g;
@@ -229,14 +262,33 @@ namespace THEngine
 			d3dMesh->materialList[i].power = materials[i].MatD3D.Power;
 		}
 
-		//float* data = new float[100000];
-		//d3dMesh->mesh->LockVertexBuffer(D3DLOCK_READONLY, (void**)&data);
-
 		return d3dMesh;
 	}
 
 	Object* Mesh::D3DMesh::Clone()
 	{
 		return new D3DMesh(*this);
+	}
+
+	void Mesh::D3DMesh::DrawGeometry()
+	{
+		auto meshShader = Application::GetInstance()->GetRenderState()->GetCurrentShader();
+		for (int i = 0; i < this->numMaterials; i++)
+		{
+			
+			Material& mat = this->materialList[i];
+			if (mat.texture)
+			{
+				meshShader->SetTexture("tex", mat.texture);
+				meshShader->SetBoolean("hasTexture", true);
+			}
+			else
+			{
+				meshShader->SetBoolean("hasTexture", false);
+			}
+			meshShader->SetValue("material", &mat, sizeof(Material) - sizeof(Texture*));
+			meshShader->CommitChanges();
+			this->mesh->DrawSubset(i);
+		}
 	}
 }

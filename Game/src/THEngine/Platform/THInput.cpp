@@ -1,4 +1,5 @@
 #include "THInput.h"
+#include "THApplication.h"
 
 using namespace THEngine;
 

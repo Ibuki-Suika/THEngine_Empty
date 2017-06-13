@@ -1,20 +1,40 @@
 #include "THMenu.h"
+#include "THEventSystem.h"
+#include <Platform\THSound.h>
 
 namespace THEngine
 {
 	Menu::Menu()
 	{
-
 	}
 
 	Menu::Menu(int left, int top, int width, int height) : Layer(left, top, width, height)
 	{
-
 	}
 
 	Menu::~Menu()
 	{
+	}
 
+	void Menu::Update()
+	{
+		Layer::Update();
+
+		auto iter = this->itemList.GetIterator();
+		int i = 0;
+		while (iter->HasNext())
+		{
+			auto item = iter->Next();
+			if (item->NeedRemove())
+			{
+				iter->Remove();
+				if (i <= currentSelection)
+				{
+					currentSelection--;
+				}
+			}
+			i++;
+		}
 	}
 
 	void Menu::AddMenuItem(MenuItem* menuItem)
@@ -32,9 +52,9 @@ namespace THEngine
 		}
 	}
 
-	void Menu::OnActivate()
+	void Menu::OnStart()
 	{
-		Layer::OnActivate();
+		Layer::OnStart();
 		EventSystem::GetInstance()->RegisterKeyDownListener(this);
 	}
 
@@ -46,7 +66,6 @@ namespace THEngine
 
 	void Menu::OnMenuItemClicked(int item)
 	{
-
 	}
 
 	void Menu::Select(int index, bool playSound)
@@ -69,6 +88,10 @@ namespace THEngine
 
 	void Menu::Click(int index)
 	{
+		if (index >= itemList.Size() || index < 0)
+		{
+			return;
+		}
 		itemList.Get(index)->OnClick();
 		OnMenuItemClicked(index);
 

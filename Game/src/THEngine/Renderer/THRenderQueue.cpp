@@ -1,6 +1,8 @@
 #include "THRenderQueue.h"
 #include "THRenderer.h"
-#include "../Core/THGame.h"
+#include <Core\THGame.h>
+#include <Core\THSprite.h>
+#include <iostream>
 
 using namespace THEngine;
 
@@ -27,26 +29,20 @@ void RenderQueue::Clear()
 
 bool SpriteRenderQueue::Compare(GameObject* sprite1, GameObject* sprite2)
 {
-	return ((Sprite*)(sprite1))->GetPosition().z > ((Sprite*)(sprite2))->GetPosition().z;
+	Sprite* sp1 = (Sprite*)sprite1;
+	Sprite* sp2 = (Sprite*)sprite2;
+	if (sp1->GetPosition().z != sp2->GetPosition().z)
+	{
+		return sp1->GetPosition().z > sp2->GetPosition().z;
+	}
+	return sp1->GetTexture() > sp2->GetTexture();
 }
 
 void SpriteRenderQueue::Render()
 {
-	SpriteRenderer* renderer = Game::GetInstance()->GetSpriteRenderer();
-
 	objList.Sort(0, objList.Size(), SpriteRenderQueue::Compare);
 
-	auto iter = objList.GetIterator();
-	while (iter->HasNext())
-	{
-		iter->Next()->Draw();
-	}
-
-}
-
-void SpriteRenderQueue::Add(GameObject* obj)
-{
-	objList.Add(obj);
+	RenderQueue::Render();
 }
 
 /////////////////////////////////////////////
@@ -56,6 +52,22 @@ NormalRenderQueue::NormalRenderQueue()
 }
 
 NormalRenderQueue::~NormalRenderQueue()
+{
+
+}
+
+/////////////////////////////////////////////
+GlobalRenderQueue::GlobalRenderQueue()
+{
+
+}
+
+GlobalRenderQueue::~GlobalRenderQueue()
+{
+
+}
+
+void GlobalRenderQueue::Render()
 {
 
 }

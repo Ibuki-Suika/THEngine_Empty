@@ -3,14 +3,28 @@
 #include "../External/libpng/png.h"
 #include <stdlib.h>
 
+#if _MSC_VER >= 1910
+	#pragma comment(lib,"libjpeg/vs2017/jpeg.lib")
+#elif
+	#pragma comment(lib,"libjpeg/vs2013/jpeg.lib")
+#endif
+
 #ifdef _DEBUG
-#pragma comment(lib,"libjpeg/jpeg.lib")
-#pragma comment(lib,"libpng/libpng16-debug.lib")
-#pragma comment(lib,"libpng/zlib-debug.lib")
+	#if _MSC_VER >= 1910
+		#pragma comment(lib,"libpng/vs2017/libpng16-debug.lib")
+		#pragma comment(lib,"libpng/vs2017/zlib-debug.lib")
+	#elif
+		#pragma comment(lib,"libpng/vs2013/libpng16-debug.lib")
+		#pragma comment(lib,"libpng/vs2013/zlib-debug.lib")
+	#endif
 #else
-#pragma comment(lib,"libjpeg/jpeg.lib")
-#pragma comment(lib,"libpng/libpng16-release.lib")
-#pragma comment(lib,"libpng/zlib-release.lib")
+	#if _MSC_VER >= 1910
+		#pragma comment(lib,"libpng/vs2017/libpng16-release.lib")
+		#pragma comment(lib,"libpng/vs2017/zlib-release.lib")
+	#elif
+		#pragma comment(lib,"libpng/vs2013/libpng16-release.lib")
+		#pragma comment(lib,"libpng/vs2013/zlib-release.lib")
+	#endif
 #endif
 
 using namespace THEngine;
@@ -38,7 +52,7 @@ Image::~Image()
 	data = nullptr;
 }
 
-Image* Image::Load(String filePath)
+Image* Image::Load(const String& filePath)
 {
 	auto exceptionManager = ExceptionManager::GetInstance();
 

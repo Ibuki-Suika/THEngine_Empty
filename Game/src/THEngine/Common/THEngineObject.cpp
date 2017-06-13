@@ -1,5 +1,6 @@
 #include "THEngineObject.h"
 #include "THDefine.h"
+#include <Scheduling\THScheduler.h>
 
 namespace THEngine
 {
@@ -23,6 +24,24 @@ namespace THEngine
 
 	void EngineObject::Update()
 	{
+		if (started == false)
+		{
+			started = true;
+			OnStart();
+		}
 		scheduler->Update();
+	}
+
+	void EngineObject::OnStart()
+	{
+	}
+
+	void EngineObject::OnLoad(AsyncInfo* info)
+	{
+		if (loaded)
+		{
+			return;
+		}
+		loaded = true;
 	}
 }

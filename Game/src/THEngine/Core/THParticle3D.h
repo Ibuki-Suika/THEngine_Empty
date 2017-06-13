@@ -1,13 +1,14 @@
 #ifndef THPARTICLE3D_H
 #define THPARTICLE3D_H
 
-#include "../Common/THCommon.h"
-#include "THRenderObject.h"
-#include "../Asset/THTexture.h"
+#include <Common\THCommon.h>
+#include "THGameObject.h"
 
 namespace THEngine
 {
-	class Particle3D : public RenderObject
+	class Texture;
+	
+	class Particle3D : public GameObject
 	{
 	protected:
 		Texture* texture;

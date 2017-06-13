@@ -1,13 +1,12 @@
 #ifndef THMENUITEM_H
 #define THMENUITEM_H
 
-#include "../Core/THSprite.h"
-#include "../Tween/THTween.h"
-#include "../Tween/THConcreteTween.h"
+#include <Core\THSprite.h>
 
 namespace THEngine
 {
 	class Menu;
+	class Tween;
 
 	class MenuItem : public Sprite
 	{
@@ -49,6 +48,9 @@ namespace THEngine
 		virtual void OnDeselect();
 
 		void SetSelectable(bool selectable);
+
+		inline void SetColorUnSelected(const Vector3f& color) { this->colorUnselected = color; }
+		inline void SetColorUnSelectable(const Vector3f& color) { this->colorUnselectable = color; }
 
 		friend class Menu;
 	};

@@ -1,21 +1,21 @@
 #ifndef THAPPLICATION_H
 #define THAPPLICATION_H
 
-#include "../Common/THCommon.h"
-#include "../Core/THRenderState.h"
+#include <Common\THCommon.h>
+#include <Core\THRenderState.h>
 
 namespace THEngine
 {
 	class Input;
+	class RenderTexture;
+	class Surface;
+	struct Config;
 
 	class Application : public Object
 	{
 	private:
-		int bigIcon;
-		int smallIcon;
-		String title;
-		int width, height;
-		bool fullScreen;
+		const Config* config = nullptr; //
+		int bigIcon, smallIcon;
 		bool needQuit;
 		int returnCode;
 
@@ -37,6 +37,7 @@ namespace THEngine
 		bool RegisterGameClass();
 		bool CreateGameWindow();
 		bool InitDeviceContext();
+		void InitRenderState();
 		void GetDeviceInfo(D3DDEVTYPE* deviceType, int* vertexProcessingType);
 		void GetMultiSampleType(D3DDEVTYPE deviceType, D3DMULTISAMPLE_TYPE* multiSampleType, DWORD* qualityLevel);
 		bool CheckDeviceCaps(D3DDEVTYPE deviceType);
@@ -50,7 +51,7 @@ namespace THEngine
 
 		static Application* GetInstance();
 
-		bool Init(int width, int height, bool fullScreen, String title, int bigIcon, int smallIcon);
+		bool Init(const Config& config, int bigIcon, int smallIcon);
 		void DealWithMessage();
 
 		void SetOrtho(float left, float bottom, float width, float height, float znear, float zfar);
@@ -79,16 +80,32 @@ namespace THEngine
 
 		inline int GetReturnCode() { return returnCode; }
 
+		inline HWND GetWindowHandle() { return hWnd; }
+
 		inline void ClearBuffer()
 		{
 			device->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL,
 				D3DCOLOR_ARGB(255, 0, 0, 0), 1, 0);
 		}
 
+		inline void ClearColorBuffer(const Vector4f& color)
+		{
+			device->Clear(0, NULL, D3DCLEAR_TARGET,
+				D3DCOLOR_ARGB((int)(255 * color.w + 0.5), ((int)(255 * color.x + 0.5)), ((int)(255 * color.y + 0.5)),
+				((int)(255 * color.z + 0.5))), 1, 0);
+		}
+
 		inline void ClearDepthBuffer()
 		{
-			device->Clear(0, NULL, D3DCLEAR_ZBUFFER, D3DCOLOR_ARGB(255, 0, 0, 0), 1, 0);
+			device->Clear(0, NULL, D3DCLEAR_ZBUFFER, 0, 1, 0);
 		}
+
+		void SetRenderTarget(RenderTexture* texture);
+
+		void SetDepthBuffer(Surface* depthBuffer);
+		Surface* CreateDepthBuffer(int width, int height);
+
+		void SetBlendMode(BlendMode blendMode);
 
 		inline bool SwapBuffers()
 		{
@@ -100,29 +117,29 @@ namespace THEngine
 			device->BeginScene();
 		}
 
-		inline void EndRender()
-		{
-			device->EndScene();
-		}
+		void EndRender();
 
 		inline void Quit()
 		{
 			PostQuitMessage(0);
 		}
 
-		inline void SetWorldTransform(D3DXMATRIX* world)
+		inline void SetWorldMatrix(const Matrix& world)
 		{
-			renderState.world = *world; 
+			renderState.world = world;
 		}
 
-		inline void SetProjectionTransform(D3DXMATRIX* projection) 
-		{ 
-			renderState.projection = *projection; 
+		inline void SetProjectionMatrix(const Matrix& projection)
+		{
+			renderState.projection = projection;
 		}
 
-		inline void SetViewTransform(D3DXMATRIX* view) { 
-			renderState.view = *view; 
+		inline void SetViewMatrix(const Matrix& view)
+		{
+			renderState.view = view;
 		}
+
+		void EnableDepthTest(bool value);
 
 		friend class AssetManager;
 		friend class SpriteRenderer;

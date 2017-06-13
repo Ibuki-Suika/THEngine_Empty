@@ -1,12 +1,14 @@
 #include "THSprite.h"
 #include "THGame.h"
-#include "../Math/MathUtil.h"
+#include <Math\THMath.h>
+#include <Asset\THTexture.h>
+#include <Renderer\THRenderPipeline.h>
+#include <Renderer\THSpriteRenderer.h>
 
 using namespace THEngine;
 
 Sprite::Sprite()
 {
-	renderer = Game::GetInstance()->GetSpriteRenderer();
 	texRect = Rect(0, 0, 0, 0);
 	alpha = 1.0f;
 	color = Vector3f(1.0f, 1.0f, 1.0f);
@@ -26,22 +28,27 @@ Sprite::Sprite()
 
 Sprite::~Sprite()
 {
+	TH_SAFE_RELEASE(this->texture);
+}
 
+void Sprite::SetTexture(Texture* texture)
+{
+	TH_SET(this->texture, texture);
 }
 
 void Sprite::SendToRenderQueue()
 {
-	Game::GetInstance()->SendToRenderQueue(Game::SPRITE, this);
+	Game::GetInstance()->GetRenderPipeline()->SendToRenderQueue(RenderPipeline::SPRITE, this);
 }
 
 void Sprite::Update()
 {
-	RenderObject::Update();
+	GameObject::Update();
 
 	speed += acSpeed;
 	angle += acAngle;
-	vx = speed * cos(angle / 180.0f * PI);
-	vy = speed * sin(angle / 180.0f * PI);
+	vx = speed * cos(angle / 180.0f * Math::PI);
+	vy = speed * sin(angle / 180.0f * Math::PI);
 	vx += ax;
 	vy += ay;
 	position.x += vx;
@@ -50,5 +57,5 @@ void Sprite::Update()
 
 void Sprite::Draw()
 {
-	renderer->Render(this);
+	Game::GetInstance()->GetRenderPipeline()->GetSpriteRenderer()->Render(this);
 }

@@ -1,4 +1,5 @@
 #include "THFont.h"
+#include "THSprite.h"
 #include "../Asset/THAssetManager.h"
 #include <fstream>
 #include <sstream>
@@ -10,12 +11,18 @@ Font::Font()
 
 }
 
+Font::~Font()
+{
+	TH_SAFE_RELEASE(texture);
+}
+
 Font* Font::CreateFontFromFile(String imagePath, String txtPath)
 {
 	std::string s = txtPath.ToStdString();
 
 	Font* font = new Font();
 	font->texture = AssetManager::GetInstance()->CreateTextureFromFile(imagePath);
+	font->texture->Retain();
 
 	if (font->texture == nullptr)
 	{
@@ -46,7 +53,6 @@ Font* Font::CreateFontFromFile(String imagePath, String txtPath)
 		font->charset.insert(std::pair<char,Rect>(c,rc));
 	}
 	in.close();
-	font->Retain();
 	return font;
 }
 

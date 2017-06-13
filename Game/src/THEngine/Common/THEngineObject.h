@@ -2,15 +2,19 @@
 #define THENGINEOBJECT_H
 
 #include "THObject.h"
-#include "THScheduler.h"
 
 namespace THEngine
 {
+	class AsyncInfo;
+	class Scheduler;
+
 	class EngineObject : public Object
 	{
 	protected:
 		Scheduler* scheduler = nullptr;
 		bool paused = false;
+		bool started = false;
+		bool loaded = false;
 
 	public:
 		EngineObject();
@@ -25,6 +29,11 @@ namespace THEngine
 		inline bool IsPaused() { return paused; }
 		inline void Pause() { paused = true; }
 		inline void Resume() { paused = false; }
+
+		virtual void OnStart();
+		virtual void OnLoad(AsyncInfo* info);
+
+		friend class Game;
 	};
 }
 

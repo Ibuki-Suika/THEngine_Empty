@@ -1,14 +1,15 @@
-#ifndef THMENU_H
-#define THMENU_H
+#ifndef TH_MENU_H
+#define TH_MENU_H
 
-#include "../Common/THCommon.h"
-#include "../Core/THLayer.h"
-#include "THEventSystem.h"
+#include <Common\THCommon.h>
+#include "THEvents.h"
 #include "THMenuItem.h"
-#include "../Platform/THSound.h"
+#include <Core\THLayer.h>
 
 namespace THEngine
 {
+	class Sound;
+
 	class Menu : public Layer, public IKeyDownListener
 	{
 	protected:
@@ -24,11 +25,12 @@ namespace THEngine
 		Menu(int left, int top, int width, int height);
 		virtual ~Menu();
 
+		virtual void Update() override;
 		virtual bool OnKeyDown(EngineObject* sender, int key) override;
 
-		virtual void OnActivate() override;
+		virtual void OnStart() override;
 		virtual void OnDestroy() override;
-		
+
 		virtual void OnMenuItemClicked(int item);
 
 		inline void Select(int index) { Select(index, true); }
@@ -44,6 +46,7 @@ namespace THEngine
 
 		inline int GetItemCount() { return itemList.Size(); }
 		inline MenuItem* GetMenuItem(int index) { return itemList.Get(index); }
+		inline ArrayList<MenuItem*>* GetMenuItems() { return &this->itemList; }
 
 		void AddMenuItem(MenuItem* menuItem);
 

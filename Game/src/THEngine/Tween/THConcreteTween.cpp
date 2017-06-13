@@ -1,6 +1,6 @@
 #include "THConcreteTween.h"
 #include "THConcreteTweener.h"
-#include "../Core/THRenderObject.h"
+#include "../Core/THGameObject.h"
 #include "../Core/THSprite.h"
 
 namespace THEngine
@@ -12,7 +12,6 @@ namespace THEngine
 
 	Delay::~Delay()
 	{
-
 	}
 
 	void Delay::OnStart()
@@ -34,7 +33,6 @@ namespace THEngine
 
 	MoveTo::~MoveTo()
 	{
-
 	}
 
 	void MoveTo::OnStart()
@@ -56,7 +54,6 @@ namespace THEngine
 
 	MoveBy::~MoveBy()
 	{
-
 	}
 
 	void MoveBy::OnStart()
@@ -78,7 +75,6 @@ namespace THEngine
 
 	FadeTo::~FadeTo()
 	{
-
 	}
 
 	void FadeTo::OnStart()
@@ -99,7 +95,6 @@ namespace THEngine
 
 	FadeOut::~FadeOut()
 	{
-
 	}
 
 	void FadeOut::OnStart()
@@ -128,7 +123,6 @@ namespace THEngine
 
 	ColorTo::~ColorTo()
 	{
-
 	}
 
 	void ColorTo::OnStart()
@@ -150,7 +144,6 @@ namespace THEngine
 
 	ScaleTo::~ScaleTo()
 	{
-
 	}
 
 	void ScaleTo::OnStart()
@@ -172,7 +165,6 @@ namespace THEngine
 
 	Rotate2D::~Rotate2D()
 	{
-
 	}
 
 	void Rotate2D::OnStart()
@@ -182,6 +174,28 @@ namespace THEngine
 		TH_SAFE_RELEASE(tweener);
 		tweener = new FloatTweener(&((Sprite*)object)->rotation, ((Sprite*)object)->rotation,
 			((Sprite*)object)->rotation + rotation, duration, type);
+		tweener->Retain();
+	}
+
+	///////////////////////////////////////////////////////////
+	SpeedTo::SpeedTo(float speed, int duration, Tweener::Type type)
+	{
+		this->speed = speed;
+		this->duration = duration;
+		this->type = type;
+	}
+
+	SpeedTo::~SpeedTo()
+	{
+	}
+
+	void SpeedTo::OnStart()
+	{
+		TweenUnit::OnStart();
+
+		TH_SAFE_RELEASE(tweener);
+		tweener = new FloatTweener(&((Sprite*)object)->speed, ((Sprite*)object)->speed,
+			speed, duration, type);
 		tweener->Retain();
 	}
 }

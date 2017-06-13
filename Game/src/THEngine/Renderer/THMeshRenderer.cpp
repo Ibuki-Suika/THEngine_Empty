@@ -1,57 +1,31 @@
 #include "THMeshRenderer.h"
-#include "../Platform/THApplication.h"
-#include "../Asset/THAssetManager.h"
+#include "THShadowMap.h"
+#include "THRenderQueue.h"
+#include <Platform\THApplication.h>
+#include <Asset\THAssetManager.h>
+#include <Asset\THShaderStock.h>
+#include <Asset\THFloatTexture.h>
+#include <Core\THCamera.h>
+#include <Core\THEnvironment.h>
+#include <Core\3D\THMesh.h>
+#include <Core\THGame.h>
+#include <Core\THConfig.h>
 
 namespace THEngine
 {
 	MeshRenderer::MeshRenderer()
 	{
-
 	}
 
 	MeshRenderer::~MeshRenderer()
 	{
-
 	}
 
 	MeshRenderer* MeshRenderer::Create()
 	{
 		MeshRenderer* renderer = new MeshRenderer();
-		if (renderer)
-		{
-			auto assetManager = AssetManager::GetInstance();
 
-			renderer->meshShader = assetManager->CreateShaderFromFile("fx/mesh.fx");
-			if (renderer->meshShader)
-			{
-				renderer->meshShader->SetTechnique("Mesh");
-			}
-			else
-			{
-				delete renderer;
-				return nullptr;
-			}
-
-		}
 		return renderer;
-	}
-
-	void MeshRenderer::CalcWorldTransform(Mesh* mesh)
-	{
-		D3DXMATRIX transform;
-		D3DXMatrixIdentity(&transform);
-
-		D3DXMATRIX temp;
-		D3DXMatrixScaling(&temp, mesh->GetScale().x, mesh->GetScale().y, mesh->GetScale().z);
-		transform *= temp;
-
-		D3DXMatrixRotationQuaternion(&temp, &mesh->rotation3D);
-		transform *= temp;
-
-		D3DXMatrixTranslation(&temp, floor(0.5f + mesh->position.x), floor(0.5f + mesh->position.y), mesh->position.z);
-		transform *= temp;
-
-		Application::GetInstance()->SetWorldTransform(&transform);
 	}
 
 	void MeshRenderer::SetupRenderState()
@@ -60,7 +34,7 @@ namespace THEngine
 		auto device = app->GetDevice();
 		auto renderState = app->GetRenderState();
 
-		if (renderState->lightingEnable)
+		if (renderState->IsLightingEnabled())
 		{
 			device->SetRenderState(D3DRS_LIGHTING, true);
 		}
@@ -70,12 +44,12 @@ namespace THEngine
 		}
 	}
 
-	void MeshRenderer::Render(RenderObject* object)
+	void MeshRenderer::SetupShaderParams(Mesh* mesh)
 	{
-		Mesh* mesh = (Mesh*)object;
 		auto app = Application::GetInstance();
+		auto meshShader = ShaderStock::GetInstance()->GetMeshShader();
 
-		CalcWorldTransform(mesh);
+		SetupWorldTransform(mesh);
 
 		Material material = mesh->material;
 
@@ -87,66 +61,167 @@ namespace THEngine
 
 		auto renderState = app->GetRenderState();
 
-		D3DXMATRIX mv = renderState->world * renderState->view;
-		D3DXMATRIX normalMatrix;
-		D3DXMatrixInverse(&normalMatrix, nullptr, &mv);
-		D3DXMatrixTranspose(&normalMatrix, &normalMatrix);
+		Matrix mv = renderState->GetWorldMatrix() * renderState->GetViewMatrix();
+		Matrix normalMatrix = mv;
+		normalMatrix.Inverse();
+		normalMatrix.Transpose();
 
-		meshShader->Begin();
-
-		meshShader->SetFloatArray("argb", argb, 4);
-		meshShader->SetBoolean("fogEnable", renderState->fogEnable);
-		meshShader->SetValue("fog", &renderState->fog, sizeof(Fog));
-		meshShader->SetMatrix("mvMatrix", &mv);
-		meshShader->SetMatrix("normalMatrix", &normalMatrix);
-		meshShader->SetMatrix("projection", &renderState->projection);
-
-		
-		if (mesh->mesh)
-		{
-			DrawD3DMesh(mesh->mesh);
-		}
-		else
+		if (mesh->mesh == nullptr)
 		{
 			meshShader->SetTexture("tex", material.texture);
 			meshShader->SetBoolean("hasTexture", true);
-
-			meshShader->BeginPass(0);
-			switch (mesh->primitiveType)
-			{
-			case Mesh::TRIANGLE_LIST:
-				app->GetDevice()->DrawPrimitive(D3DPT_TRIANGLELIST, 0, mesh->vertexCount / 3);
-				break;
-			case Mesh::TRIANGLE_STRIP:
-				app->GetDevice()->SetStreamSource(0, mesh->vertexBuffer, 0, sizeof(MeshVertex));
-				app->GetDevice()->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, mesh->vertexCount - 2);
-				break;
-			}
-			meshShader->EndPass();
 		}
-		
-		meshShader->End();
+
+		meshShader->Use();
+
+		meshShader->SetFloatArray("argb", argb, 4);
+		meshShader->SetBoolean("fogEnable", renderState->IsFogEnabled());
+		meshShader->SetValue("fog", (void*)&renderState->GetFog(), sizeof(Fog));
+		meshShader->SetMatrix("worldMatrix", renderState->GetWorldMatrix());
+		meshShader->SetMatrix("mvMatrix", mv);
+		meshShader->SetMatrix("normalMatrix", normalMatrix);
+		meshShader->SetMatrix("projection", renderState->GetProjectionMatrix());
 	}
 
-	void MeshRenderer::DrawD3DMesh(Mesh::D3DMesh* mesh)
+	void MeshRenderer::DrawMesh(Mesh* mesh)
 	{
-		for (int i = 0; i < mesh->numMaterials; i++)
+		auto meshShader = ShaderStock::GetInstance()->GetMeshShader();
+
+		meshShader->UsePass(0);
+		mesh->DrawGeometry();
+		meshShader->EndPass();
+	}
+
+	void MeshRenderer::ShadeWithAmbient(Mesh* mesh, const Vector4f& ambient)
+	{
+		auto meshShader = ShaderStock::GetInstance()->GetMeshShader();
+
+		meshShader->SetTechnique("Ambient");
+		meshShader->SetFloat4("ambientLight", ambient);
+		DrawMesh(mesh);
+	}
+
+	void MeshRenderer::ShadeWithLight(Mesh* mesh)
+	{
+	}
+
+	void MeshRenderer::Shade(Mesh* mesh)
+	{
+		auto app = Application::GetInstance();
+		auto renderState = app->GetRenderState();
+
+		if (Game::GetInstance()->GetConfig()->useLighting && renderState->IsLightingEnabled())
 		{
-			Material& mat = mesh->materialList[i];
-			if (mat.texture)
+			if (isRenderingAmbient)
 			{
-				meshShader->SetTexture("tex", mat.texture);
-				meshShader->SetBoolean("hasTexture", true);
+				ShadeWithAmbient(mesh, renderState->GetAmbientLight());
 			}
 			else
 			{
-				meshShader->SetBoolean("hasTexture", false);
+				ShadeWithLight(mesh);
 			}
-			meshShader->SetValue("material", &mat, sizeof(Material) - sizeof(Texture*));
-
-			meshShader->BeginPass(0);
-			mesh->mesh->DrawSubset(i);
-			meshShader->EndPass();
 		}
+
+		else
+		{
+			DrawMesh(mesh);
+		}
+	}
+
+	void MeshRenderer::Render(GameObject* object)
+	{
+		Mesh* mesh = (Mesh*)object;
+		auto app = Application::GetInstance();
+
+		SetupShaderParams(mesh);
+
+		Shade(mesh);
+	}
+
+	void MeshRenderer::RenderObjects(RenderQueue* renderQueue)
+	{
+		auto objects = renderQueue->GetObjects();
+		auto iter = objects->GetIterator();
+		while (iter->HasNext())
+		{
+			Render(iter->Next());
+		}
+	}
+
+	//////////////////////////////////////////////
+	DirectionalLightRenderer::DirectionalLightRenderer()
+	{
+	}
+
+	DirectionalLightRenderer::~DirectionalLightRenderer()
+	{
+	}
+
+	DirectionalLightRenderer* DirectionalLightRenderer::Create()
+	{
+		DirectionalLightRenderer* renderer = new DirectionalLightRenderer();
+
+		return renderer;
+	}
+
+	void DirectionalLightRenderer::ShadeWithLight(Mesh* mesh)
+	{
+		struct DirectionalLight_For_Render
+		{
+			Vector4f color;
+			Vector3f direction;
+		};
+
+		auto app = Application::GetInstance();
+		auto renderState = app->GetRenderState();
+		auto meshShader = ShaderStock::GetInstance()->GetMeshShader();
+
+		DirectionalLight_For_Render lightForRender;
+		lightForRender.color.x = this->currentLight->GetColor().x;
+		lightForRender.color.y = this->currentLight->GetColor().y;
+		lightForRender.color.z = this->currentLight->GetColor().z;
+		lightForRender.color.w = 1.0f;
+
+		DirectionalLight* dirLight = (DirectionalLight*)this->currentLight;
+		Vector4f lightDirInView;
+		lightDirInView.x = dirLight->GetDirection().x;
+		lightDirInView.y = dirLight->GetDirection().y;
+		lightDirInView.z = dirLight->GetDirection().z;
+		lightDirInView.w = 0;
+		lightDirInView *= renderState->GetViewMatrix();
+		lightForRender.direction.x = lightDirInView.x;
+		lightForRender.direction.y = lightDirInView.y;
+		lightForRender.direction.z = lightDirInView.z;
+		lightForRender.direction = lightForRender.direction.Normalize();
+
+		meshShader->SetTechnique("Directional");
+		meshShader->SetValue("directionalLight", &lightForRender, sizeof(DirectionalLight_For_Render));
+
+		float znear = renderState->GetCamera()->GetZNear();
+		float zfar = renderState->GetCamera()->GetZFar();
+		meshShader->SetFloat("znear", znear);
+		meshShader->SetFloat("zfar", zfar);
+		meshShader->SetFloat("blendBand", (znear - zfar) / 30);
+		if (this->shadowMapNear)
+		{
+			meshShader->SetTexture("shadowMapNear", this->shadowMapNear->GetShadowMap());
+			meshShader->SetTexture("shadowMapMid", this->shadowMapMid->GetShadowMap());
+			meshShader->SetTexture("shadowMapFar", this->shadowMapFar->GetShadowMap());
+			meshShader->SetInt("shadowMapWidth", this->shadowMapNear->GetShadowMap()->GetWidth());
+			meshShader->SetInt("shadowMapHeight", this->shadowMapNear->GetShadowMap()->GetHeight());
+		}
+		if (this->currentLight)
+		{
+			Matrix lightVPNear = this->shadowMapNear->GetLightView() * this->shadowMapNear->GetLightProjection();
+			meshShader->SetMatrix("lightVPNear", lightVPNear);
+
+			Matrix lightVPMid = this->shadowMapMid->GetLightView() * this->shadowMapMid->GetLightProjection();
+			meshShader->SetMatrix("lightVPMid", lightVPMid);
+
+			Matrix lightVPFar = this->shadowMapFar->GetLightView() * this->shadowMapFar->GetLightProjection();
+			meshShader->SetMatrix("lightVPFar", lightVPFar);
+		}
+
+		DrawMesh(mesh);
 	}
 }

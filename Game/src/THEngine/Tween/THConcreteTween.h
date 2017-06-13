@@ -2,15 +2,13 @@
 #define THCONCRETETWEEN_H
 
 #include "THTween.h"
+#include "THTweener.h"
+#include <Math\THVector.h>
 
 namespace THEngine
 {
-
 	class Delay : public TweenUnit
 	{
-	protected:
-		int duration;
-
 	public:
 		Delay(int duration);
 		virtual ~Delay();
@@ -23,7 +21,6 @@ namespace THEngine
 	{
 	protected:
 		Vector3f position;
-		int duration;
 		Tweener::Type type;
 
 	public:
@@ -38,7 +35,6 @@ namespace THEngine
 	{
 	protected:
 		Vector3f position;
-		int duration;
 		Tweener::Type type;
 
 	public:
@@ -53,7 +49,6 @@ namespace THEngine
 	{
 	protected:
 		float alpha;
-		int duration;
 		Tweener::Type type;
 
 	public:
@@ -67,7 +62,6 @@ namespace THEngine
 	class FadeOut : public TweenUnit
 	{
 	protected:
-		int duration;
 		Tweener::Type type;
 
 	public:
@@ -83,7 +77,6 @@ namespace THEngine
 	{
 	protected:
 		Vector3f color;
-		int duration;
 		Tweener::Type type;
 
 	public:
@@ -98,7 +91,6 @@ namespace THEngine
 	{
 	protected:
 		Vector3f scale;
-		int duration;
 		Tweener::Type type;
 
 	public:
@@ -113,12 +105,25 @@ namespace THEngine
 	{
 	protected:
 		float rotation;
-		int duration;
 		Tweener::Type type;
 
 	public:
 		Rotate2D(float rotation, int duration, Tweener::Type type);
 		virtual ~Rotate2D();
+
+		virtual void OnStart() override;
+	};
+
+	/////////////////////////////////////////////////////
+	class SpeedTo : public TweenUnit
+	{
+	protected:
+		float speed;
+		Tweener::Type type;
+
+	public:
+		SpeedTo(float rotation, int duration, Tweener::Type type);
+		virtual ~SpeedTo();
 
 		virtual void OnStart() override;
 	};

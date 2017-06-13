@@ -2,6 +2,7 @@
 #define THCONCRETEWEENER_H
 
 #include "THTweener.h"
+#include <Math\THVector.h>
 
 namespace THEngine
 {

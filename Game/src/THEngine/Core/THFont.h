@@ -1,11 +1,14 @@
 #ifndef THFONT_H
 #define THFONT_H
 
-#include "THSprite.h"
+#include <Common\THCommon.h>
 #include <map>
+#include <Math\THVector.h>
 
 namespace THEngine
 {
+	class Texture;
+
 	class Font : public Object
 	{
 	private:
@@ -15,6 +18,7 @@ namespace THEngine
 
 	public:
 		Font();
+		virtual ~Font();
 		
 		static Font* CreateFontFromFile(String ImagePath,String txtPath);
 

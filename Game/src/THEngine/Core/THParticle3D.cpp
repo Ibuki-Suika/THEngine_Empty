@@ -1,5 +1,8 @@
 #include "THParticle3D.h"
-#include "../Core/THGame.h"
+#include "THGame.h"
+#include <Asset\THTexture.h>
+#include <Renderer\THRenderPipeline.h>
+#include <Renderer\THParticle3DRenderer.h>
 
 namespace THEngine
 {
@@ -15,19 +18,19 @@ namespace THEngine
 
 	void Particle3D::SendToRenderQueue()
 	{
-		Game::GetInstance()->SendToRenderQueue(Game::SPRITE, this);
+		Game::GetInstance()->GetRenderPipeline()->SendToRenderQueue(RenderPipeline::SPRITE, this);
 	}
 
 	void Particle3D::RotateByAxis(Vector3f axis, float degree)
 	{
-		D3DXQUATERNION temp;
-		D3DXQuaternionRotationAxis(&temp, &D3DXVECTOR3(axis.x, axis.y, axis.z), ToRad(degree));
+		Quaternion temp;
+		Quaternion::RotateAngleAxis(&temp, Vector3f(axis.x, axis.y, axis.z), degree);
 		rotation3D *= temp;
 	}
 
 	void Particle3D::Update()
 	{
-		RenderObject::Update();
+		GameObject::Update();
 
 		position = position + speed * direction;
 
@@ -42,6 +45,6 @@ namespace THEngine
 
 	void Particle3D::Draw()
 	{
-		Game::GetInstance()->GetParticle3DRenderer()->Render(this);
+		Game::GetInstance()->GetRenderPipeline()->GetParticle3DRenderer()->Render(this);
 	}
 }

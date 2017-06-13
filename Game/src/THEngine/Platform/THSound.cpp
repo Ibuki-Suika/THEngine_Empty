@@ -25,15 +25,19 @@ namespace THEngine
 
 	void Sound::Play()
 	{
-		XAUDIO2_VOICE_STATE state;
-		sourceVoice->GetState(&state);
-		if (state.BuffersQueued > 0)
+		if (submitted == false)
 		{
-			sourceVoice->Stop();
-			sourceVoice->FlushSourceBuffers();
+			XAUDIO2_VOICE_STATE state;
+			sourceVoice->GetState(&state);
+			if (state.BuffersQueued > 0)
+			{
+				sourceVoice->Stop();
+				sourceVoice->FlushSourceBuffers();
+			}
+			sourceVoice->SubmitSourceBuffer(&buffer);
+			sourceVoice->Start(0);
+			submitted = true;
 		}
-		sourceVoice->SubmitSourceBuffer(&buffer);
-		sourceVoice->Start(0);
 	}
 }
 

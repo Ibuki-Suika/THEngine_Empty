@@ -6,14 +6,14 @@
 #endif
 
 #include <dinput.h>
-#include "../Common/THCommon.h"
-#include "THApplication.h"
-
+#include <Common\THCommon.h>
 
 #define DIKEYDOWN(data,id) (data[id] & 0x80)
 
 namespace THEngine
 {
+	class Application;
+
 	class Input : public Object
 	{
 	private:
