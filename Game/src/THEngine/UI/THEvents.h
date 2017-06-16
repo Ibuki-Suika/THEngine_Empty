@@ -1,5 +1,5 @@
-#ifndef THEVENTS_H
-#define THEVENTS_H
+#ifndef TH_EVENTS_H
+#define TH_EVENTS_H
 
 namespace THEngine
 {

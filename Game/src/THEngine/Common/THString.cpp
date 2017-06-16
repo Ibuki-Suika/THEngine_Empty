@@ -7,13 +7,16 @@ using namespace THEngine;
 
 String::String()
 {
-	buffer = TEXT("");
-	length = 0;
+
 }
 
 String::String(const TCHAR* str)
 {
 	length = lstrlen(str);
+	if (buffer)
+	{
+		delete[] buffer;
+	}
 	buffer = new TCHAR[length + 1];
 	lstrcpy(buffer, str);
 }
@@ -21,6 +24,10 @@ String::String(const TCHAR* str)
 String::String(const char* str)
 {
 	length = MultiByteToWideChar(CP_ACP, 0, str, -1, NULL, 0) - 1;
+	if (buffer)
+	{
+		delete[] buffer;
+	}
 	buffer = new TCHAR[length + 1];	
 	MultiByteToWideChar(CP_ACP, 0, str, -1, buffer, length + 1);
 }
@@ -28,6 +35,10 @@ String::String(const char* str)
 String::String(const String& str)
 {
 	length = str.length;
+	if (buffer)
+	{
+		delete[] buffer;
+	}
 	buffer = new TCHAR[length + 1];
 	lstrcpy(buffer, str.buffer);
 }
@@ -40,7 +51,7 @@ String::~String()
 	}
 }
 
-std::string String::ToStdString()
+std::string String::ToStdString() const
 {
 	int requiredSize = WideCharToMultiByte(CP_ACP, 0, buffer, -1, nullptr, 0, nullptr, nullptr);
 	char* outBuffer = new char[requiredSize + 1];
@@ -51,7 +62,7 @@ std::string String::ToStdString()
 	return ret;
 }
 
-int String::LastIndexOf(TCHAR ch)
+int String::LastIndexOf(TCHAR ch) const
 {
 	int i;
 	for (i = length - 1; i >= 0; i--)
@@ -64,7 +75,7 @@ int String::LastIndexOf(TCHAR ch)
 	return i;
 }
 
-String String::SubString(int start, int end)
+String String::SubString(int start, int end) const
 {
 	ASSERT(start >= 0 && end <= length && start < end);
 	String ret;
@@ -104,7 +115,7 @@ String String::operator + (int number)
 
 void String::operator = (const String& str)
 {
-	if (length > 0)
+	if (buffer)
 	{
 		delete[] buffer;
 	}

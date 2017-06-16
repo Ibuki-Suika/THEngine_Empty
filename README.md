@@ -1,21 +1,24 @@
 # THEngine_Empty
 
-This is a game engine under development.
+This is a game engine based on DirectX 9.0c.
 
-There are two ways to use this engine:
+## How to use this engine
 
-- Directly clone this repository and open in Visual Studio 2013 or higher version.
+Directly clone this repository and open in Visual Studio 2013 or higher version.
 
-- copy the THEngine.zip and paste to UserProfile/Document/Your VS Version/Templates/ProjectTemplates. Then open the Visual Studio, and select File>>New>>Project, then choose the template 'THEngine' and create it.
+## Acknowledgement
+This project used these 3rd party open source libraries.
 
-Have fun with that!
+### zlib licesne
+* <a href="http://zlib.net">zlib</a>
+* <a href="https://www.libsdl.org/">SDL 2.0</a>
+
+### libpng licesne
+* <a href="http://www.libpng.org/pub/png/libpng.html">libpng</a>
+
+### custom license
+* <a href="http://libjpeg.sourceforge.net/">libjpeg</a>
 
 ## License
 
-Copyright ©2016 SZ_Silence06.<br>
-
-Licensed under the Apache License, Version 2.0 (the "License");<br>
-you may not use this file except in compliance with the License.<br>
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
+MIT

@@ -1,31 +1,28 @@
 #ifndef THLAYER_H
 #define THLAYER_H
 
-#include "../Common/THCommon.h"
+#include <Common\THCommon.h>
 #include "THGameObject.h"
 #include "THCamera.h"
-#include "../Platform/THApplication.h"
-#include "3D\THLight.h"
+#include "THEnvironment.h"
 
 namespace THEngine
 {
+	class CubeMap;
+
 	class Layer : public EngineObject
 	{
 	protected:
 		int width, height;
 		int left, top;
-		int order;          
+		int order;
 		GameObject rootNode;
-		Camera* camera = nullptr;
 
-		bool activated = false;
+		LinkedList<Camera*> cameraList;
 
-		bool fogEnable = false;
-		Fog fog;
+		Environment environment;
 
-		LinkedList<Light*> lights;
-
-		bool lightingEnable = false;
+		CubeMap* skyBox = nullptr;
 
 	protected:
 		void SetupRenderState();
@@ -36,27 +33,48 @@ namespace THEngine
 		virtual ~Layer();
 		virtual void Update() override;
 		virtual void Draw() override;
+		virtual void OnLoad(AsyncInfo* info) override;
 
-		virtual void OnActivate();
 		virtual void OnDestroy();
+
+		inline int GetWidth() const { return width; }
+		inline int GetHeight() const { return height; }
+		inline int GetLeft() const { return left; }
+		inline int GetTop() const { return top; }
 
 		void AddChild(GameObject* obj);
 
-		inline void AddLight(Light* light) { lights.Add(light); }
+		void Clear();
 
-		inline void RemoveLight(Light* light) { lights.Remove(light); }
+		inline void AddLight(Light* light) { this->environment.lights.Add(light); }
 
-		inline Camera* GetCamera() { return camera; }
+		inline void RemoveLight(Light* light) { this->environment.lights.Remove(light); }
 
-		void SetCamera(Camera* camera);
+		inline LinkedList<Camera*>* GetCameraList() { return &cameraList; }
+
+		Camera* GetCameraByName(const String& name);
+		Camera* GetCameraByIndex(int index);
+		Camera* GetFirstCamera();
+
+		void AddCamera(Camera* camera);
+
+		void SetCameraByName(Camera* camera, const String& name);
+		void SetCameraByIndex(Camera* camera, int index);
+		void SetFirstCamera(Camera* camera);
 
 		inline void SetOrder(int order) { this->order = order; }
 
-		inline void EnableFog(bool fogEnable) { this->fogEnable = fogEnable; }
+		inline void EnableFog(bool fogEnable) { this->environment.fogEnable = fogEnable; }
 
-		inline void EnableLighting(bool lightingEnable) { this->lightingEnable = lightingEnable; }
-		
-		inline void SetFog(Fog fog) { this->fog = fog; }
+		inline void EnableLighting(bool lightingEnable) { this->environment.lightingEnable = lightingEnable; }
+
+		inline void SetAmbientLight(const Vector4f ambient) { this->environment.ambientLight = ambient; }
+
+		inline void SetFog(Fog fog) { this->environment.fog = fog; }
+
+		void SetSkyBox(CubeMap* skyBox);
+
+		inline CubeMap* GetSkyBox() const { return skyBox; }
 
 		void DestroyObjectImmediately(GameObject* obj);
 

@@ -1,4 +1,21 @@
 #include "THGame.h"
+#include "THFont.h"
+#include "THSprite.h"
+#include "THDataStack.h"
+#include "THScene.h"
+#include "THConfig.h"
+#include <Scheduling\THScheduler.h>
+#include <Scheduling\THFrameTimer.h>
+#include <Platform\THApplication.h>
+#include <Platform\THDevice.h>
+#include <Platform\THInput.h>
+#include <Platform\THAudio.h>
+#include <Platform\THSystemClock.h>
+#include <Renderer\THRenderPipeline.h>
+#include <Asset\THAssetManager.h>
+#include <Asset\THShaderStock.h>
+#include <UI\THEventSystem.h>
+#include <Async\THAsyncLoader.h>
 
 using namespace THEngine;
 
@@ -17,8 +34,6 @@ Game::Game()
 	frameCount = 0;
 	showFPS = true;
 
-	spriteQueue = nullptr;
-	spriteRenderer = nullptr;
 	assetManager = nullptr;
 	defaultFont = nullptr;
 	input = nullptr;
@@ -27,7 +42,7 @@ Game::Game()
 Game::~Game()
 {
 	ASSERT(this == instance);
-	
+
 	OnShutdown();
 }
 
@@ -40,64 +55,73 @@ Game* Game::GetInstance()
 	return instance;
 }
 
-bool Game::CreateGame(int width, int height, bool fullScreen, String title, 
+bool Game::CreateGame(int width, int height, bool fullScreen, const String& title,
 	int bigIcon, int smallIcon)
 {
-	this->width = width;
-	this->height = height;
-	this->fullScreen = fullScreen;
-	this->title = title;
+	Config config;
 
+	config.width = width;
+	config.height = height;
+	config.fullScreen = fullScreen;
+	config.title = title;
+
+	return CreateGame(config, bigIcon, smallIcon);
+}
+
+bool Game::CreateGame(const Config& config, int bigIcon, int smallIcon)
+{
 	exceptionManager = ExceptionManager::GetInstance();
 
+	this->config = new Config(config);
+
 	app = new Application();
-	if(app->Init(width,height,fullScreen,title,bigIcon,smallIcon) == false)
+	if (app->Init(*this->config, bigIcon, smallIcon) == false)
 	{
 		return false;
 	}
 	app->Retain();
 
-	assetManager = AssetManager::Create(app);
-	
-	spriteQueue = new SpriteRenderQueue();
-	spriteQueue->Retain();
+	assetManager = AssetManager::Create();
+	if (assetManager == nullptr)
+	{
+		auto exception = exceptionManager->GetException();
+		auto newException = new Exception((String)"创建AssetManager失败。原因是：\n" + exception->GetInfo());
+		exceptionManager->PushException(newException);
+		return false;
+	}
+	assetManager->Retain();
 
-	normalQueue = new NormalRenderQueue();
-	normalQueue->Retain();
+	shaderStock = ShaderStock::Create();
+	if (shaderStock == nullptr)
+	{
+		auto exception = exceptionManager->GetException();
+		auto newException = new Exception((String)"创建ShaderStock失败。原因是：\n" + exception->GetInfo());
+		exceptionManager->PushException(newException);
+		return false;
+	}
+	shaderStock->Retain();
 
 	eventSystem = EventSystem::Create();
-
-	spriteRenderer = SpriteRenderer::Create(app);
-	if (spriteRenderer == nullptr)
+	if (eventSystem == nullptr)
 	{
 		auto exception = exceptionManager->GetException();
-		auto newException = new Exception((String)"创建SpriteRenderer失败。原因是：\n" + exception->GetInfo());
+		auto newException = new Exception((String)"创建EventSystem失败。原因是：\n" + exception->GetInfo());
 		exceptionManager->PushException(newException);
 		return false;
 	}
+	eventSystem->Retain();
 
-	particle3DRenderer = Particle3DRenderer::Create();
-	if (particle3DRenderer == nullptr)
+	pipeline = RenderPipeline::Create();
+	if (pipeline == nullptr)
 	{
 		auto exception = exceptionManager->GetException();
-		auto newException = new Exception((String)"创建Particle3DRenderer失败。原因是：\n" + exception->GetInfo());
+		auto newException = new Exception((String)"创建RenderPipleline失败。原因是：\n" + exception->GetInfo());
 		exceptionManager->PushException(newException);
 		return false;
 	}
-	particle3DRenderer->Retain();
+	pipeline->Retain();
 
-
-	meshRenderer = MeshRenderer::Create();
-	if (meshRenderer == nullptr)
-	{
-		auto exception = exceptionManager->GetException();
-		auto newException = new Exception((String)"创建MeshRenderer失败。原因是：\n" + exception->GetInfo());
-		exceptionManager->PushException(newException);
-		return false;
-	}
-	meshRenderer->Retain();
-
-	defaultFont = Font::CreateFontFromFile("res/font/font-fps-opensans.png","res/font/font-fps-opensans.txt");
+	defaultFont = Font::CreateFontFromFile("res/font/font-fps-opensans.png", "res/font/font-fps-opensans.txt");
 	if (defaultFont == nullptr)
 	{
 		auto exception = exceptionManager->GetException();
@@ -105,6 +129,7 @@ bool Game::CreateGame(int width, int height, bool fullScreen, String title,
 		exceptionManager->PushException(newException);
 		return false;
 	}
+	defaultFont->Retain();
 
 	input = Input::Create(app);
 	if (input == nullptr)
@@ -126,19 +151,42 @@ bool Game::CreateGame(int width, int height, bool fullScreen, String title,
 	}
 	audio->Retain();
 
+	dataStack = DataStack::GetInstance();
+	dataStack->Retain();
+
+	LARGE_INTEGER frequency;
+	QueryPerformanceFrequency(&frequency);
+	this->timerFrequency = frequency.QuadPart;
+
 	return true;
+}
+
+int Game::GetWidth() const
+{
+	return this->config->width;
+}
+
+int Game::GetHeight() const
+{
+	return this->config->height;
+}
+
+const String& Game::GetTitle() const
+{
+	return this->config->title;
 }
 
 int Game::Run()
 {
+	auto device = app->GetDevice();
 	while (!app->NeedQuit())
 	{
-		if (app->IsDeviceLost())
+		if (device->IsDeviceLost())
 		{
-			if (app->NeedResetDevice())
+			if (device->NeedResetDevice())
 			{
-				app->OnLostDevice();
-				app->OnResetDevice();
+				device->OnLostDevice();
+				device->OnResetDevice();
 			}
 		}
 
@@ -156,20 +204,45 @@ int Game::Run()
 			enterBackground = false;
 		}
 
-		if(enterBackground == false)
+		if (enterBackground == false)
 		{
-			CalcFPS();
-			Update();
-			Draw();
+			if (this->speedCounter < 1.0f)
+			{
+				this->speedCounter += this->speedReciprocal;
+				Update();
+			}
+			if (this->speedCounter >= 1.0f)
+			{
+				this->speedCounter -= 1.0f;
+				if (config->useVSync)
+				{
+					CalcFPS();
+					Draw();
+				}
+				else
+				{
+					while (true)
+					{
+						Time currentTime = SystemClock::GetInstance()->GetTime();
+						long long deltaTime = currentTime.ToMicroSecond() - this->lastTimeStamp.ToMicroSecond();
+						if (deltaTime > 1000000.0f / config->fps)
+						{
+							CalcFPS();
+							Draw();
+							this->lastTimeStamp = currentTime;
+							break;
+						}
+					}
+				}
+			}
 
 			if (nextScene)
 			{
 				if (scene)
 				{
-					scene->OnSceneChanged();
+					scene->OnDestroy();
 				}
 				SetScene(nextScene);
-				nextScene->OnLoad();
 				nextScene = nullptr;
 			}
 		}
@@ -182,20 +255,26 @@ int Game::Run()
 	return returnCode;
 }
 
+void Game::Quit()
+{
+	app->Quit();
+}
+
 void Game::OnEnterBackground()
 {
-
 }
 
 void Game::OnReturnToForeground()
 {
-
 }
 
 void Game::Update()
 {
+	EngineObject::Update();
+
 	input->Update();
 	eventSystem->Update();
+	audio->Update();
 
 	if (scene && scene->IsPaused() == false)
 	{
@@ -205,23 +284,21 @@ void Game::Update()
 
 void Game::Draw()
 {
-	app->ClearBuffer();
+	auto device = app->GetDevice();
+	device->ClearBuffer();
 
-	app->BeginRender();
-
+	device->BeginRender();
 	if (scene)
 	{
 		scene->Draw();
 	}
-	
 	if (showFPS)
 	{
 		DrawFPS();
 	}
+	device->EndRender();
 
-	app->EndRender();
-	
-	app->SwapBuffers();
+	device->SwapBuffers();
 }
 
 void Game::SetScene(Scene* scene)
@@ -234,34 +311,61 @@ void Game::SetScene(Scene* scene)
 void Game::LoadScene(Scene* scene)
 {
 	nextScene = scene;
-}
-
-void Game::Render()
-{
-	spriteQueue->Render();
-	spriteQueue->Clear();
-
-	normalQueue->Render();
-	normalQueue->Clear();
-}
-
-
-void Game::SendToRenderQueue(RenderQueueType type, GameObject* obj)
-{
-	switch (type)
+	if (scene->loaded == false)
 	{
-	case SPRITE:
-		spriteQueue->Add(obj);
-		break;
-	case NORMAL:
-		normalQueue->Add(obj);
-		break;
+		nextScene->OnLoad(nullptr);
 	}
+}
+
+void Game::LoadSceneAsync(Scene* scene)
+{
+	if (scene->loaded)
+	{
+		return;
+	}
+	AsyncLoader::Load(scene, [this, scene]()
+	{
+		this->nextScene = scene;
+	});
+}
+
+void Game::LoadSceneAsync(Scene* scene, int delay, const std::function<void()>& onLoadCompleted)
+{
+	if (scene->loaded)
+	{
+		return;
+	}
+	AsyncLoader::Load(scene, [this, scene, delay, onLoadCompleted]()
+	{
+		FrameTimer* timer = new FrameTimer();
+		timer->SetFrame(delay);
+		timer->run = [this, scene]() {
+			this->nextScene = scene;
+		};
+		this->GetScheduler()->AddFrameTimer(timer);
+		onLoadCompleted();
+	});
+}
+
+AsyncInfo* Game::LoadSceneAsyncWithInfo(Scene* scene, bool autoChange)
+{
+	if (scene->loaded)
+	{
+		return nullptr;
+	}
+	if (autoChange)
+	{
+		return AsyncLoader::LoadWithInfo(scene, [this, scene]()
+		{
+			this->nextScene = scene;
+		});
+	}
+	return AsyncLoader::LoadWithInfo(scene);
 }
 
 void Game::CalcFPS()
 {
-	currentTime = GetTickCount();
+	this->currentTime = GetTickCount();
 	frameCount++;
 	if (lastTime < 0)
 	{
@@ -270,7 +374,7 @@ void Game::CalcFPS()
 	}
 	if (currentTime - lastTime >= 1000)
 	{
-		fps = (float)frameCount / (currentTime - lastTime) * 1000;
+		fps = (double)frameCount / (currentTime - lastTime) * 1000;
 		lastTime = currentTime;
 		frameCount = 0;
 	}
@@ -278,33 +382,33 @@ void Game::CalcFPS()
 
 void Game::DrawFPS()
 {
-	app->SetViewport(0, 0, width, height);
-	app->SetOrtho(0, 0, width, height, 0, TH_MAX_Z);
+	auto device = app->GetDevice();
+	device->SetViewport(0, 0, GetWidth(), GetHeight());
+	device->SetOrtho(0, 0, GetWidth(), GetHeight(), 0, TH_MAX_Z);
 
 	char buffer[10];
 	sprintf(buffer, "%.2f", fps);
-	defaultFont->DrawString(buffer, width - 65, 30);
+	defaultFont->DrawString(buffer, GetWidth() - 65, 30);
 }
 
 void Game::Shutdown()
 {
 	OnShutdown();
 
+	TH_SAFE_RELEASE(pipeline);
 	TH_SAFE_RELEASE(scene);
 
-	TH_SAFE_RELEASE(spriteQueue);
-	TH_SAFE_RELEASE(normalQueue);
-	TH_SAFE_RELEASE(spriteRenderer);
-	TH_SAFE_RELEASE(particle3DRenderer);
-	TH_SAFE_RELEASE(meshRenderer);
-	
 	TH_SAFE_RELEASE(eventSystem);
 	TH_SAFE_RELEASE(defaultFont);
-	
+
 	TH_SAFE_RELEASE(input);
+	TH_SAFE_RELEASE(shaderStock);
 	TH_SAFE_RELEASE(assetManager);
 	TH_SAFE_RELEASE(audio);
 	TH_SAFE_RELEASE(app);
+	TH_SAFE_RELEASE(dataStack);
+
+	TH_SAFE_DELETE(config);
 
 	delete Logger::GetInstance();
 	delete exceptionManager;
@@ -312,5 +416,4 @@ void Game::Shutdown()
 
 void Game::OnShutdown()
 {
-
 }

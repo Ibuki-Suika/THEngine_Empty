@@ -1,10 +1,10 @@
 #include "THTween.h"
+#include "THTweener.h"
 
 namespace THEngine
 {
 	Tween::Tween()
 	{
-
 	}
 
 	Tween::Tween(const Tween& tween) : Object(tween)
@@ -16,7 +16,6 @@ namespace THEngine
 
 	Tween::~Tween()
 	{
-		
 	}
 
 	Object* Tween::Clone()
@@ -39,7 +38,6 @@ namespace THEngine
 
 	void Tween::DoTween()
 	{
-
 	}
 
 	void Tween::OnReset()
@@ -59,8 +57,7 @@ namespace THEngine
 		onFinished();
 	}
 
-
-	void Tween::Bind(RenderObject* object)
+	void Tween::Bind(GameObject* object)
 	{
 		this->object = object;
 	}
@@ -68,12 +65,10 @@ namespace THEngine
 	////////////////////////////////////////
 	TweenUnit::TweenUnit()
 	{
-
 	}
 
 	TweenUnit::TweenUnit(const TweenUnit& tweenUnit) : Tween(tweenUnit)
 	{
-
 	}
 
 	TweenUnit::~TweenUnit()
@@ -91,7 +86,7 @@ namespace THEngine
 		if (tweener)
 		{
 			tweener->Update();
-			if (tweener->elapsed == tweener->duration)
+			if (tweener->elapsed >= tweener->duration)
 			{
 				if (looped)
 				{
@@ -130,7 +125,6 @@ namespace THEngine
 
 	TweenSequence::~TweenSequence()
 	{
-
 	}
 
 	Object* TweenSequence::Clone()
@@ -141,7 +135,7 @@ namespace THEngine
 	void TweenSequence::DoTween()
 	{
 		auto tween = tweenList.Get(currentIndex);
-		
+
 		tween->Update();
 
 		if (tween->IsFinished())
@@ -186,7 +180,7 @@ namespace THEngine
 		}
 	}
 
-	void TweenSequence::Bind(RenderObject* object)
+	void TweenSequence::Bind(GameObject* object)
 	{
 		Tween::Bind(object);
 

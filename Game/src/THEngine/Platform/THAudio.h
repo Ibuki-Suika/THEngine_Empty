@@ -1,9 +1,10 @@
 #ifndef THAUDIO_H
 #define THAUDIO_H
 
-#include "../Common/THCommon.h"
+#include <Common\THCommon.h>
 #include <xaudio2.h>
 #include "THSound.h"
+#include "THMusic.h"
 
 namespace THEngine
 {
@@ -16,28 +17,43 @@ namespace THEngine
 		IXAudio2MasteringVoice* masterVoice = nullptr;
 
 		ArrayList<Sound*> soundList;
+		ArrayList<Music*> musicList;
 
-		int volume = 10;    //Range from 0 to 100
+		int volume = 20;    //Range from 0 to 100
+		int musicVolume = 50;
 
+		Music* currentMusic = nullptr;
 	private:
 		Audio();
 		bool Init();
 
-		Sound* LoadWav(String filePath);
+		Sound* LoadWav(const String& filePath);
 
 	public:
 		virtual ~Audio();
 
 		static Audio* GetInstance();
 
-		Sound* CreateSound(String filePath);
+		Sound* CreateSound(const String& filePath);
+		Music* CreateMusic(const String& filePath);
 
 		inline void DestroySound(Sound* sound)
 		{
 			soundList.Remove(sound);
 		}
+		void DestroyMusic(Music* music);
 
 		inline void SetVolume(int volume) { this->volume = volume; }
+
+		void PlayMusic(Music* music);
+		void PlayMusic(Music* music, bool looped);
+		void StopMusic(Music* music);
+
+		inline Music* GetCurrentMusic() const { return this->currentMusic; }
+
+		void Update();
+
+		void OnMusicFinished();
 	};
 }
 

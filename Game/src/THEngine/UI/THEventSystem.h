@@ -1,12 +1,12 @@
-#ifndef THEVENTSYSTEM_H
-#define THEVENTSYSTEM_H
+#ifndef TH_EVENT_SYSTEM_H
+#define TH_EVENT_SYSTEM_H
 
-#include "../Common/THCommon.h"
-#include "THEvents.h"
-#include <list>
+#include <Common\THCommon.h>
 
 namespace THEngine
 {
+	class IKeyDownListener;
+
 	class EventSystem : public Object
 	{
 	private:

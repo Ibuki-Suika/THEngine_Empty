@@ -1,64 +1,77 @@
 #include "THScene.h"
+#include <Platform\THDevice.h>
 
-using namespace THEngine;
-
-void Scene::AddLayer(Layer* layer)
+namespace THEngine
 {
-	auto iter = layers.GetIterator();
-	while (iter->HasNext())
+	Scene::Scene()
 	{
-		Layer* curLayer = iter->Next();
-		if (curLayer->order < layer->order)
+	}
+
+	Scene::~Scene()
+	{
+		auto iter = layers.GetIterator();
+		while (iter->HasNext())
 		{
-			iter->AddBefore(layer);
-			return;
+			Layer* curLayer = iter->Next();
+			curLayer->OnDestroy();
+			iter->Remove();
 		}
 	}
-	iter->AddAfter(layer);
-}
 
-void Scene::Update()
-{
-	EngineObject::Update();
-
-	auto iter = layers.GetIterator();
-	while (iter->HasNext())
+	void Scene::AddLayer(Layer* layer)
 	{
-		Layer* curLayer = iter->Next();
-		if (curLayer->IsPaused() == false)
+		auto iter = layers.GetIterator();
+		while (iter->HasNext())
 		{
-			if (curLayer->activated == false)
+			Layer* curLayer = iter->Next();
+			if (curLayer->order < layer->order)
 			{
-				curLayer->OnActivate();
+				iter->AddBefore(layer);
+				return;
 			}
-			curLayer->Update();
+		}
+		iter->AddAfter(layer);
+	}
+
+	void Scene::Update()
+	{
+		EngineObject::Update();
+
+		auto iter = layers.GetIterator();
+		while (iter->HasNext())
+		{
+			Layer* curLayer = iter->Next();
+			if (curLayer->IsPaused() == false)
+			{
+				curLayer->Update();
+			}
 		}
 	}
-}
 
-void Scene::Draw()
-{
-	auto iter = layers.GetIterator();
-	while (iter->HasNext())
+	void Scene::Draw()
 	{
-		Layer* curLayer = iter->Next();
-		curLayer->Draw();
-		Application::GetInstance()->GetRenderState()->Clear();
+		auto iter = layers.GetIterator();
+		while (iter->HasNext())
+		{
+			Layer* curLayer = iter->Next();
+			curLayer->Draw();
+			Device::GetInstance()->GetRenderState()->Clear();
+		}
 	}
-}
 
-void Scene::OnLoad()
-{
-
-}
-
-void Scene::OnSceneChanged()
-{
-	auto iter = layers.GetIterator();
-	while (iter->HasNext())
+	void Scene::OnLoad(AsyncInfo* info)
 	{
-		Layer* curLayer = iter->Next();
-		curLayer->OnDestroy();
-		iter->Remove();
+		EngineObject::OnLoad(info);
+
+		auto iter = layers.GetIterator();
+		while (iter->HasNext())
+		{
+			Layer* curLayer = iter->Next();
+			curLayer->OnLoad(info);
+		}
+	}
+
+	void Scene::OnDestroy()
+	{
 	}
 }

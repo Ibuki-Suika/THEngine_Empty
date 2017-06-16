@@ -1,24 +1,24 @@
 #ifndef THTWEEN_H
 #define THTWEEN_H
 
-#include "THTweener.h"
-#include <functional>
+#include <Common\THCommon.h>
 
 namespace THEngine
 {
-	class RenderObject;
+	class GameObject;
+	class Tweener;
 
 	class Tween : public Object
 	{
 	protected:
-		RenderObject* object = nullptr;
+		GameObject* object = nullptr;
 
 		bool finished = false;
 		bool looped = false;
 		bool started = false;
 
 	public:
-		std::function<void()> onFinished = [](){};
+		std::function<void()> onFinished = []() {};
 
 	public:
 		Tween();
@@ -35,7 +35,7 @@ namespace THEngine
 		virtual void OnFinish();
 		virtual void OnReset();
 
-		virtual void Bind(RenderObject* object);
+		virtual void Bind(GameObject* object);
 
 		inline bool IsFinished() { return finished; }
 
@@ -51,6 +51,7 @@ namespace THEngine
 	{
 	protected:
 		Tweener* tweener = nullptr;
+		int duration;
 
 	public:
 		TweenUnit();
@@ -81,10 +82,10 @@ namespace THEngine
 		virtual void OnStart() override;
 		virtual void OnReset() override;
 
-		virtual void Bind(RenderObject* object) override;
+		virtual void Bind(GameObject* object) override;
 
 		inline void AddTween(Tween* tween)
-		{ 
+		{
 			tween->object = this->object;
 			tweenList.Add(tween);
 		}

@@ -1,12 +1,14 @@
 #ifndef THSHADER_H
 #define THSHADER_H
 
-#include "../Common/THCommon.h"
-#include "THTexture.h"
+#include <Common\THCommon.h>
+#include <Math\THMath.h>
 
 namespace THEngine
 {
 	class AssetManager;
+	class Texture;
+	class CubeMap;
 
 	class Shader : public Object
 	{
@@ -14,32 +16,41 @@ namespace THEngine
 		ID3DXEffect* effect;
 		UINT passNum;
 		String path;
+		int currentPass = -1;
 
 	public:
 		Shader();
 		virtual ~Shader();
 
-		inline void SetTechnique(char* technique)
+		void SetTechnique(char* technique);
+
+		void Use();
+
+		void End();
+
+		inline void CommitChanges()
 		{
-			effect->SetTechnique(technique);
+			this->effect->CommitChanges();
 		}
 
-		inline void Begin() { effect->Begin(&passNum, 0); }
-		inline void End() { effect->End();}
+		void UsePass(unsigned int pass);
 
-		inline void BeginPass(unsigned int pass) { effect->BeginPass(pass); }
-		inline void EndPass() { effect->EndPass(); }
+		void EndPass();
 
 		inline UINT GetPassNum() { return passNum; }
 
-		inline void SetTexture(char* textureName, Texture* texture)
-		{
-			effect->SetTexture(textureName, texture->texture);
-		}
+		void SetTexture(char* textureName, Texture* texture);
+
+		void SetCubeMap(char* textureName, CubeMap* cubeMap);
 
 		inline void SetInt(char* name, int value)
 		{
 			effect->SetInt(name, value);
+		}
+
+		inline void SetFloat(char* name, float value)
+		{
+			effect->SetFloat(name, value);
 		}
 
 		inline void SetBoolean(char* name, bool value)
@@ -52,9 +63,14 @@ namespace THEngine
 			effect->SetFloatArray(name, value, count);
 		}
 
-		inline void SetMatrix(char* name, D3DXMATRIX* value)
+		inline void SetFloat4(char* name, const Vector4f vector)
 		{
-			effect->SetMatrix(name, value);
+			effect->SetFloatArray(name, vector._data, 4);
+		}
+
+		inline void SetMatrix(char* name, const Matrix& value)
+		{
+			effect->SetMatrix(name, &value.matrix);
 		}
 
 		inline void SetValue(char* name, void* value, int size)

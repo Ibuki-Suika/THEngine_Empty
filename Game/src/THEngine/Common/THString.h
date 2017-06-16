@@ -9,8 +9,8 @@ namespace THEngine
 	class String
 	{
 	private:
-		TCHAR* buffer;
-		int length;
+		TCHAR* buffer = nullptr;
+		int length = 0;
 	public:
 		String();
 		String(const TCHAR* str);
@@ -18,20 +18,20 @@ namespace THEngine
 		String(const String& str);
 		~String();
 
-		inline TCHAR* GetBuffer()
+		inline TCHAR* GetBuffer() const
 		{
 			return buffer;
 		}
 
-		inline int GetLength()
+		inline int GetLength() const
 		{
 			return length;
 		}
 
-		std::string ToStdString();
+		std::string ToStdString() const;
 
-		int LastIndexOf(TCHAR ch);
-		String SubString(int start, int end);
+		int LastIndexOf(TCHAR ch) const;
+		String SubString(int start, int end) const;
 
 		String operator +(const String& str);
 		String operator +(int number);

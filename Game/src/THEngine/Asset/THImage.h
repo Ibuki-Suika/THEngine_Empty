@@ -1,7 +1,7 @@
 #ifndef THIMAGE_H
 #define THIMAGE_H
 
-#include "../Common/THCommon.h"
+#include <Common\THCommon.h>
 
 namespace THEngine
 {
@@ -20,7 +20,7 @@ namespace THEngine
 		Image(int width, int height);
 		virtual ~Image();
 
-		static Image* Load(String filePath);
+		static Image* Load(const String& filePath);
 		
 		inline int GetWidth() { return width; }
 		inline int GetHeight() { return height; }

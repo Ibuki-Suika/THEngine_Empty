@@ -1,5 +1,4 @@
 #include "THTweener.h"
-#include "../Core/THRenderObject.h"
 
 namespace THEngine
 {

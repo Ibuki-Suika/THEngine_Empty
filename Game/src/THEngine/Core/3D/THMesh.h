@@ -1,11 +1,12 @@
 #ifndef THMESH_H
 #define THMESH_H
 
-#include "../THRenderObject.h"
-#include "../../Asset/THTexture.h"
+#include <Core\THGameObject.h>
 
 namespace THEngine
 {
+	class Texture;
+
 	class Material
 	{
 	public:
@@ -20,14 +21,14 @@ namespace THEngine
 	struct MeshVertex
 	{
 		float x, y, z;
-		float u, v;
 		float nx, ny, nz;
+		float u, v;
 		MeshVertex() {}
 		MeshVertex(float x, float y, float z, float nx, float ny, float nz, float u, float v) :
 			x(x), y(y), z(z), nx(nx), ny(ny), nz(nz), u(u), v(v) {}
 	};
 
-	class Mesh : public RenderObject
+	class Mesh : public GameObject
 	{
 	public:
 		enum PrimitiveType
@@ -54,6 +55,8 @@ namespace THEngine
 
 			virtual Object* Clone() override;
 
+			void DrawGeometry();
+
 			friend class MeshRenderer;
 		};
 
@@ -79,6 +82,7 @@ namespace THEngine
 		virtual void Draw() override;
 		virtual void SendToRenderQueue() override;
 		virtual Object* Clone() override;
+		virtual void DrawGeometry() override;
 
 		inline void SetMaterial(Material material) { this->material = material; }
 

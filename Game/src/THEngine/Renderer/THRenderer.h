@@ -1,22 +1,20 @@
 #ifndef THRENDERER_H
 #define THRENDERER_H
 
-#include "../Common/THCommon.h"
-#include "THRenderQueue.h"
-#include "../Asset/THShader.h"
-
+#include <Common\THCommon.h>
 
 namespace THEngine
 {
-	class RenderObject;
+	class GameObject;
 
 	class Renderer : public Object
 	{
 	protected:
-		IDirect3DDevice9* device;
+		void SetupRenderState(GameObject* object);
+		void SetupWorldTransform(GameObject* object);
 
 	public:
-		virtual void Render(RenderObject* obj) = 0;
+		virtual void Render(GameObject* obj) = 0;
 	};
 }
 

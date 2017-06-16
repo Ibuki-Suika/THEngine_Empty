@@ -1,36 +1,92 @@
-#ifndef THRENDERSTATE_H
-#define THRENDERSTATE_H
+#ifndef TH_RENDER_STATE_H
+#define TH_RENDER_STATE_H
 
-#include "../Common/THCommon.h"
-#include "../Math/Matrix.h"
+#include <Common\THCommon.h>
+#include <Math\THMath.h>
 #include "3D\THLight.h"
 
 namespace THEngine
 {
-	struct Fog
+	class RenderTexture;
+	class Surface;
+	class Camera;
+	class Environment;
+	struct Fog;
+
+	struct Viewport
 	{
-		Vector4f fogColor;
-		float fogStart;
-		float fogEnd;
+		int x;
+		int y;
+		int width;
+		int height;
+		int minZ;
+		int maxZ;
+	};
+
+	enum BlendMode
+	{
+		ALPHA_BLEND = 1,
+		ADD = 2
 	};
 
 	class RenderState : public Object
 	{
-	public:
-		bool fogEnable = false;
-		Fog fog;
+	private:
+		Environment* environment;
 
-		bool lightingEnable = false;
+		Matrix world;
+		Matrix projection;
+		Matrix view;
 
-		D3DXMATRIX world, projection, view;
+		Viewport viewport;
 
-		ArrayList<DirectionalLight*> directionalLights;
+		BlendMode blendMode;
+
+		Shader* shader = nullptr;
+
+		RenderTexture* renderTarget = nullptr;
+		Surface* depthBuffer = nullptr;
+		Surface* colorBuffer = nullptr;
+		Camera* camera = nullptr;
+
+		bool isDepthTestEnabled = true;
 
 	public:
 		RenderState();
 		virtual ~RenderState();
 
+		bool IsFogEnabled() const;
+		bool IsLightingEnabled() const;
+
+		const Fog& GetFog() const;
+
+		inline const Matrix& GetWorldMatrix() { return this->world; }
+		inline const Matrix& GetProjectionMatrix() { return this->projection; }
+		inline const Matrix& GetViewMatrix() { return this->view; }
+		inline const Viewport& GetViewport() const { return this->viewport; }
+
+		const Vector4f& GetAmbientLight() const;
+		LinkedList<Light*>* GetLights() const;
+
+		inline Shader* GetCurrentShader() const { return this->shader; }
+
+		inline RenderTexture* GetRenderTarget() const { return this->renderTarget; }
+
+		inline Surface* GetDepthBuffer() const { return this->depthBuffer; }
+		inline Surface* GetColorBuffer() const { return this->colorBuffer; }
+
+		inline Camera* GetCamera() const { return this->camera; }
+
+		inline BlendMode GetBlendMode() const { return this->blendMode; }
+
+		inline bool IsDepthTestEnabled() const { return this->isDepthTestEnabled; }
+
 		void Clear();
+
+		friend class Device;
+		friend class Layer;
+		friend class Shader;
+		friend class Camera;
 	};
 }
 

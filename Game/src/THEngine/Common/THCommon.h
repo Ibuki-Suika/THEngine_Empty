@@ -11,6 +11,17 @@
 #pragma comment(lib,"legacy_stdio_definitions.lib")
 #endif
 
+#ifdef WIN32
+#pragma comment(lib,"d3d9.lib")
+#pragma comment(lib,"d3dx9.lib")
+#pragma comment(lib,"dxguid.lib")
+#pragma comment(lib,"dxerr.lib")
+#pragma comment(lib,"dinput8.lib")
+#pragma comment(lib,"xaudio2.lib")
+#pragma comment(lib,"winmm.lib")
+#pragma comment(lib,"Dbghelp.lib")
+#endif
+
 #ifndef DIRECTINPUT_VERSION
 #define DIRECTINPUT_VERSION   0x0800
 #endif
