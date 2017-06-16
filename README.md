@@ -2,7 +2,7 @@
 
 This is a game engine based on DirectX 9.0c.
 
-##How to use this engine
+## How to use this engine
 
 Directly clone this repository and open in Visual Studio 2013 or higher version.
 
