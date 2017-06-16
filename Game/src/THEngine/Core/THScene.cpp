@@ -1,5 +1,5 @@
 #include "THScene.h"
-#include <Platform\THApplication.h>
+#include <Platform\THDevice.h>
 
 namespace THEngine
 {
@@ -55,7 +55,7 @@ namespace THEngine
 		{
 			Layer* curLayer = iter->Next();
 			curLayer->Draw();
-			Application::GetInstance()->GetRenderState()->Clear();
+			Device::GetInstance()->GetRenderState()->Clear();
 		}
 	}
 

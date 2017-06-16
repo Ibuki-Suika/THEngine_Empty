@@ -1,7 +1,7 @@
 #include "THMeshRenderer.h"
 #include "THShadowMap.h"
 #include "THRenderQueue.h"
-#include <Platform\THApplication.h>
+#include <Platform\THDevice.h>
 #include <Asset\THAssetManager.h>
 #include <Asset\THShaderStock.h>
 #include <Asset\THFloatTexture.h>
@@ -30,9 +30,8 @@ namespace THEngine
 
 	void MeshRenderer::SetupRenderState()
 	{
-		auto app = Application::GetInstance();
-		auto device = app->GetDevice();
-		auto renderState = app->GetRenderState();
+		auto device = Device::GetInstance()->GetD3DDevice();
+		auto renderState = Device::GetInstance()->GetRenderState();
 
 		if (renderState->IsLightingEnabled())
 		{
@@ -46,7 +45,7 @@ namespace THEngine
 
 	void MeshRenderer::SetupShaderParams(Mesh* mesh)
 	{
-		auto app = Application::GetInstance();
+		auto device = Device::GetInstance();
 		auto meshShader = ShaderStock::GetInstance()->GetMeshShader();
 
 		SetupWorldTransform(mesh);
@@ -59,7 +58,7 @@ namespace THEngine
 		argb[2] = mesh->color.y;
 		argb[3] = mesh->color.z;
 
-		auto renderState = app->GetRenderState();
+		auto renderState = device->GetRenderState();
 
 		Matrix mv = renderState->GetWorldMatrix() * renderState->GetViewMatrix();
 		Matrix normalMatrix = mv;
@@ -107,8 +106,8 @@ namespace THEngine
 
 	void MeshRenderer::Shade(Mesh* mesh)
 	{
-		auto app = Application::GetInstance();
-		auto renderState = app->GetRenderState();
+		auto device = Device::GetInstance();
+		auto renderState = device->GetRenderState();
 
 		if (Game::GetInstance()->GetConfig()->useLighting && renderState->IsLightingEnabled())
 		{
@@ -131,7 +130,7 @@ namespace THEngine
 	void MeshRenderer::Render(GameObject* object)
 	{
 		Mesh* mesh = (Mesh*)object;
-		auto app = Application::GetInstance();
+		auto device = Device::GetInstance();
 
 		SetupShaderParams(mesh);
 
@@ -172,8 +171,8 @@ namespace THEngine
 			Vector3f direction;
 		};
 
-		auto app = Application::GetInstance();
-		auto renderState = app->GetRenderState();
+		auto device = Device::GetInstance();
+		auto renderState = device->GetRenderState();
 		auto meshShader = ShaderStock::GetInstance()->GetMeshShader();
 
 		DirectionalLight_For_Render lightForRender;

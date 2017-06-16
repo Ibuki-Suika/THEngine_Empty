@@ -32,7 +32,7 @@ namespace THEngine
 	class RenderState : public Object
 	{
 	private:
-		Environment* environment; 
+		Environment* environment;
 
 		Matrix world;
 		Matrix projection;
@@ -46,6 +46,7 @@ namespace THEngine
 
 		RenderTexture* renderTarget = nullptr;
 		Surface* depthBuffer = nullptr;
+		Surface* colorBuffer = nullptr;
 		Camera* camera = nullptr;
 
 		bool isDepthTestEnabled = true;
@@ -64,14 +65,15 @@ namespace THEngine
 		inline const Matrix& GetViewMatrix() { return this->view; }
 		inline const Viewport& GetViewport() const { return this->viewport; }
 
-		const Vector4f& GetAmbientLight() const; 
-		LinkedList<Light*>* GetLights() const; 
+		const Vector4f& GetAmbientLight() const;
+		LinkedList<Light*>* GetLights() const;
 
 		inline Shader* GetCurrentShader() const { return this->shader; }
 
 		inline RenderTexture* GetRenderTarget() const { return this->renderTarget; }
 
 		inline Surface* GetDepthBuffer() const { return this->depthBuffer; }
+		inline Surface* GetColorBuffer() const { return this->colorBuffer; }
 
 		inline Camera* GetCamera() const { return this->camera; }
 
@@ -81,7 +83,7 @@ namespace THEngine
 
 		void Clear();
 
-		friend class Application;
+		friend class Device;
 		friend class Layer;
 		friend class Shader;
 		friend class Camera;

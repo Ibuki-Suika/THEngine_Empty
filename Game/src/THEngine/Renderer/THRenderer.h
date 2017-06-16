@@ -10,9 +10,6 @@ namespace THEngine
 	class Renderer : public Object
 	{
 	protected:
-		IDirect3DDevice9* device;
-
-	protected:
 		void SetupRenderState(GameObject* object);
 		void SetupWorldTransform(GameObject* object);
 

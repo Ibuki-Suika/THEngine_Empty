@@ -7,6 +7,7 @@
 #include <Scheduling\THScheduler.h>
 #include <Scheduling\THFrameTimer.h>
 #include <Platform\THApplication.h>
+#include <Platform\THDevice.h>
 #include <Platform\THInput.h>
 #include <Platform\THAudio.h>
 #include <Platform\THSystemClock.h>
@@ -71,8 +72,10 @@ bool Game::CreateGame(const Config& config, int bigIcon, int smallIcon)
 {
 	exceptionManager = ExceptionManager::GetInstance();
 
+	this->config = new Config(config);
+
 	app = new Application();
-	if (app->Init(config, bigIcon, smallIcon) == false)
+	if (app->Init(*this->config, bigIcon, smallIcon) == false)
 	{
 		return false;
 	}
@@ -155,7 +158,6 @@ bool Game::CreateGame(const Config& config, int bigIcon, int smallIcon)
 	QueryPerformanceFrequency(&frequency);
 	this->timerFrequency = frequency.QuadPart;
 
-	this->config = new Config(config);
 	return true;
 }
 
@@ -176,14 +178,15 @@ const String& Game::GetTitle() const
 
 int Game::Run()
 {
+	auto device = app->GetDevice();
 	while (!app->NeedQuit())
 	{
-		if (app->IsDeviceLost())
+		if (device->IsDeviceLost())
 		{
-			if (app->NeedResetDevice())
+			if (device->NeedResetDevice())
 			{
-				app->OnLostDevice();
-				app->OnResetDevice();
+				device->OnLostDevice();
+				device->OnResetDevice();
 			}
 		}
 
@@ -281,23 +284,21 @@ void Game::Update()
 
 void Game::Draw()
 {
-	app->ClearBuffer();
+	auto device = app->GetDevice();
+	device->ClearBuffer();
 
-	app->BeginRender();
-
+	device->BeginRender();
 	if (scene)
 	{
 		scene->Draw();
 	}
-
 	if (showFPS)
 	{
 		DrawFPS();
 	}
+	device->EndRender();
 
-	app->EndRender();
-
-	app->SwapBuffers();
+	device->SwapBuffers();
 }
 
 void Game::SetScene(Scene* scene)
@@ -381,8 +382,9 @@ void Game::CalcFPS()
 
 void Game::DrawFPS()
 {
-	app->SetViewport(0, 0, GetWidth(), GetHeight());
-	app->SetOrtho(0, 0, GetWidth(), GetHeight(), 0, TH_MAX_Z);
+	auto device = app->GetDevice();
+	device->SetViewport(0, 0, GetWidth(), GetHeight());
+	device->SetOrtho(0, 0, GetWidth(), GetHeight(), 0, TH_MAX_Z);
 
 	char buffer[10];
 	sprintf(buffer, "%.2f", fps);

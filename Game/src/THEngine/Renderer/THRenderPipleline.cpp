@@ -8,7 +8,7 @@
 #include <Core\THGame.h>
 #include <Core\THGameObject.h>
 #include <Core\THConfig.h>
-#include <Platform\THApplication.h>
+#include <Platform\THDevice.h>
 
 namespace THEngine
 {
@@ -134,8 +134,8 @@ namespace THEngine
 
 	void RenderPipeline::Render3D()
 	{
-		auto app = Application::GetInstance();
-		auto renderState = app->GetRenderState();
+		auto device = Device::GetInstance();
+		auto renderState = device->GetRenderState();
 
 		auto config = Game::GetInstance()->GetConfig();
 		if (config->useLighting && renderState->IsLightingEnabled())
@@ -144,7 +144,7 @@ namespace THEngine
 			normalQueue->Render();
 			this->meshRenderer->SetRenderAmbient(false);
 
-			app->SetBlendMode(BlendMode::ADD);
+			device->SetBlendMode(BlendMode::ADD);
 			auto lights = renderState->GetLights();
 			auto iter = lights->GetIterator();
 			while (iter->HasNext())
@@ -152,7 +152,7 @@ namespace THEngine
 				auto light = iter->Next();
 				RenderWithLight(light);
 			}
-			app->SetBlendMode(BlendMode::ALPHA_BLEND);
+			device->SetBlendMode(BlendMode::ALPHA_BLEND);
 		}
 		else
 		{

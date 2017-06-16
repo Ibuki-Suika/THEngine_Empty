@@ -15,7 +15,7 @@ namespace THEngine
 
 		bool SaveToFile(const String& path);
 
-		friend class Application;
+		friend class Device;
 	};
 }
 

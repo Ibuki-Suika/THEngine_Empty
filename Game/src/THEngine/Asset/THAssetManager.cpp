@@ -3,7 +3,7 @@
 #include "THRenderTexture.h"
 #include "THFloatTexture.h"
 #include <Core\THGame.h>
-#include <Platform\THApplication.h>
+#include <Platform\THDevice.h>
 
 namespace THEngine
 {
@@ -30,7 +30,7 @@ namespace THEngine
 	Shader* AssetManager::CreateShaderFromFile(String filePath)
 	{
 		Shader* shader = new Shader();
-		auto device = Application::GetInstance()->GetDevice();
+		auto device = Device::GetInstance()->GetD3DDevice();
 
 		ID3DXBuffer *error;
 		HRESULT hr;
@@ -92,7 +92,7 @@ namespace THEngine
 		auto exceptionManager = ExceptionManager::GetInstance();
 		TextureImpl* texImpl = new TextureImpl();
 
-		auto device = Application::GetInstance()->GetDevice();
+		auto device = Device::GetInstance()->GetD3DDevice();
 
 		Image* image = Image::Load(filePath);
 		if (image == nullptr)
@@ -154,7 +154,7 @@ namespace THEngine
 	{
 		CubeMapImpl* cubeMapImpl = new CubeMapImpl();
 		auto exceptionManager = ExceptionManager::GetInstance();
-		auto device = Application::GetInstance()->GetDevice();
+		auto device = Device::GetInstance()->GetD3DDevice();
 
 		Image* frontImage = Image::Load(front);
 		Image* backImage = Image::Load(back);
@@ -263,7 +263,7 @@ namespace THEngine
 	RenderTexture* AssetManager::CreateRenderTexture(int width, int height)
 	{
 		TextureImpl* texImpl = new TextureImpl();
-		auto device = Application::GetInstance()->GetDevice();
+		auto device = Device::GetInstance()->GetD3DDevice();
 
 		texImpl->width = width;
 		texImpl->height = height;
@@ -283,7 +283,7 @@ namespace THEngine
 	FloatTexture* AssetManager::CreateFloatTexture(int width, int height)
 	{
 		TextureImpl* texImpl = new TextureImpl();
-		auto device = Application::GetInstance()->GetDevice();
+		auto device = Device::GetInstance()->GetD3DDevice();
 
 		texImpl->width = width;
 		texImpl->height = height;

@@ -1,7 +1,7 @@
 #include "THShader.h"
 #include "THTexture.h"
 #include "THCubeMap.h"
-#include <Platform\THApplication.h>
+#include <Platform\THDevice.h>
 
 namespace THEngine
 {
@@ -22,7 +22,7 @@ namespace THEngine
 
 	void Shader::OnResetDevice()
 	{
-		auto device = Application::GetInstance()->GetDevice();
+		auto device = Device::GetInstance()->GetD3DDevice();
 
 		ID3DXBuffer *error;
 		if (FAILED(D3DXCreateEffectFromFile(device, path.GetBuffer(), NULL, NULL,
@@ -52,7 +52,7 @@ namespace THEngine
 
 	void Shader::SetTechnique(char* technique)
 	{
-		auto renderState = Application::GetInstance()->GetRenderState();
+		auto renderState = Device::GetInstance()->GetRenderState();
 		if (renderState->shader == this)
 		{
 			End();
@@ -67,7 +67,7 @@ namespace THEngine
 
 	void Shader::Use()
 	{
-		auto renderState = Application::GetInstance()->GetRenderState();
+		auto renderState = Device::GetInstance()->GetRenderState();
 		if (renderState->shader != this)
 		{
 			if (renderState->shader)
@@ -82,7 +82,7 @@ namespace THEngine
 
 	void Shader::End()
 	{
-		auto renderState = Application::GetInstance()->GetRenderState();
+		auto renderState = Device::GetInstance()->GetRenderState();
 		if (renderState->shader == this)
 		{
 			if (this->currentPass >= 0)
@@ -113,4 +113,3 @@ namespace THEngine
 		}
 	}
 }
-

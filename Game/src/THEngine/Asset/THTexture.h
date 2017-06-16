@@ -30,7 +30,7 @@ namespace THEngine
 		void GenerateMipmap();
 
 		friend class Texture;
-		friend class Application;
+		friend class Device;
 		friend class AssetManager;
 		friend class Shader;
 		friend class SpriteRenderer;
@@ -57,7 +57,7 @@ namespace THEngine
 
 		inline void GenerateMipmap() { return texImpl->GenerateMipmap(); }
 
-		friend class Application;
+		friend class Device;
 		friend class AssetManager;
 		friend class Shader;
 		friend class SpriteRenderer;

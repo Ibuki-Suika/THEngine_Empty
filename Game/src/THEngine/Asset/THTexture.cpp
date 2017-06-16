@@ -1,13 +1,12 @@
 #include "THTexture.h"
 #include "THAssetManager.h"
 #include "THImage.h"
-#include <Platform\THApplication.h>
+#include <Platform\THDevice.h>
 
 namespace THEngine
 {
 	TextureImpl::TextureImpl()
 	{
-		
 	}
 
 	TextureImpl::~TextureImpl()
@@ -74,10 +73,9 @@ namespace THEngine
 		TH_SAFE_RELEASE(texture);
 	}
 
-
 	void TextureImpl::OnResetDevice()
 	{
-		auto device = Application::GetInstance()->GetDevice();
+		auto device = Device::GetInstance()->GetD3DDevice();
 
 		if (FAILED(D3DXCreateTexture(device, width, height, 0, D3DUSAGE_AUTOGENMIPMAP, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &texture)))
 		{
@@ -125,8 +123,3 @@ namespace THEngine
 		assetManager->DestroyTexture(this);
 	}
 }
-
-
-
-
-

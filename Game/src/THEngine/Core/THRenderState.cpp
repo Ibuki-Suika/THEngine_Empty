@@ -9,7 +9,6 @@ namespace THEngine
 {
 	RenderState::RenderState()
 	{
-
 	}
 
 	RenderState::~RenderState()
@@ -17,6 +16,7 @@ namespace THEngine
 		TH_SAFE_RELEASE(this->shader);
 		TH_SAFE_RELEASE(this->renderTarget);
 		TH_SAFE_RELEASE(this->depthBuffer);
+		TH_SAFE_RELEASE(this->colorBuffer);
 		TH_SAFE_RELEASE(this->camera);
 	}
 
@@ -45,9 +45,7 @@ namespace THEngine
 		return this->environment->lightingEnable;
 	}
 
-
 	void RenderState::Clear()
 	{
-
 	}
 }

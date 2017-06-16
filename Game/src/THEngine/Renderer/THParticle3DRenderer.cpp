@@ -4,18 +4,16 @@
 #include <Asset\THShaderStock.h>
 #include <Asset\THTexture.h>
 #include <Asset\THShader.h>
-#include <Platform\THApplication.h>
+#include <Platform\THDevice.h>
 
 using namespace THEngine;
 
 Particle3DRenderer::Particle3DRenderer()
 {
-
 }
 
 Particle3DRenderer::~Particle3DRenderer()
 {
-
 }
 
 Particle3DRenderer* Particle3DRenderer::Create()
@@ -23,10 +21,10 @@ Particle3DRenderer* Particle3DRenderer::Create()
 	Particle3DRenderer* renderer = new Particle3DRenderer();
 	if (renderer)
 	{
-		auto app = Application::GetInstance();
+		auto device = Device::GetInstance();
 
-		renderer->device = app->GetDevice();
-		renderer->device->CreateVertexBuffer(4 * sizeof(ParticleVertex), D3DUSAGE_DYNAMIC,
+		auto d3dDevice = device->GetD3DDevice();
+		d3dDevice->CreateVertexBuffer(4 * sizeof(ParticleVertex), D3DUSAGE_DYNAMIC,
 			PARTICLE_FVF, D3DPOOL_DEFAULT, &renderer->vb, NULL);
 		if (renderer->vb == nullptr)
 		{
@@ -41,9 +39,9 @@ Particle3DRenderer* Particle3DRenderer::Create()
 void Particle3DRenderer::Render(GameObject* obj)
 {
 	Particle3D* particle = (Particle3D*)obj;
-	
+
 	auto spriteShader = ShaderStock::GetInstance()->GetSpriteShader();
-	auto app = Application::GetInstance();
+	auto device = Device::GetInstance();
 
 	const int texWidth = particle->texture->GetWidth();
 	const int texHeight = particle->texture->GetHeight();
@@ -113,15 +111,15 @@ void Particle3DRenderer::Render(GameObject* obj)
 		particle->positionForRender.z);
 	transform *= temp;
 
-	app->SetWorldMatrix(transform);
+	device->SetWorldMatrix(transform);
 
-	device->SetFVF(PARTICLE_FVF);
-	device->SetStreamSource(0, vb, 0, sizeof(ParticleVertex));
+	device->GetD3DDevice()->SetFVF(PARTICLE_FVF);
+	device->GetD3DDevice()->SetStreamSource(0, vb, 0, sizeof(ParticleVertex));
 
-	auto renderState = app->GetRenderState();
+	auto renderState = device->GetRenderState();
 
 	spriteShader->Use();
-	
+
 	spriteShader->SetFloatArray("argb", argb, 4);
 	spriteShader->SetTexture("tex", particle->texture);
 	spriteShader->SetInt("texWidth", texWidth);
@@ -132,5 +130,5 @@ void Particle3DRenderer::Render(GameObject* obj)
 
 	spriteShader->CommitChanges();
 	spriteShader->UsePass(0);
-	device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+	device->GetD3DDevice()->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 }

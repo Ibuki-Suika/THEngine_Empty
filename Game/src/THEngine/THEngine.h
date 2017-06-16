@@ -13,6 +13,7 @@
 #include <UI\THMenuItem.h>
 #include <Asset\THAssetManager.h>
 #include <Platform\THApplication.h>
+#include <Platform\THDevice.h>
 #include <Platform\THAudio.h>
 #include <Platform\THInput.h>
 #include <Scheduling\THScheduler.h>

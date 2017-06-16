@@ -1,6 +1,6 @@
 #include "THShadowRenderer.h"
 #include "THRenderQueue.h"
-#include <Platform\THApplication.h>
+#include <Platform\THDevice.h>
 #include <Platform\THSurface.h>
 #include <Asset\THAssetManager.h>
 #include <Asset\THShaderStock.h>
@@ -32,8 +32,8 @@ namespace THEngine
 
 	void ShadowRenderer::Render(GameObject* obj)
 	{
-		auto app = Application::GetInstance();
-		auto renderState = app->GetRenderState();
+		auto device = Device::GetInstance();
+		auto renderState = device->GetRenderState();
 		auto shadowShader = ShaderStock::GetInstance()->GetShadowShader();
 
 		SetupWorldTransform(obj);
@@ -50,8 +50,8 @@ namespace THEngine
 
 	void ShadowRenderer::Begin()
 	{
-		auto app = Application::GetInstance();
-		auto renderState = app->GetRenderState();
+		auto device = Device::GetInstance();
+		auto renderState = device->GetRenderState();
 
 		//store the  matrices
 		this->projPrev = renderState->GetProjectionMatrix();
@@ -62,28 +62,28 @@ namespace THEngine
 		this->depthBufferPrev = renderState->GetDepthBuffer();
 		this->blendModePrev = renderState->GetBlendMode();
 
-		app->GetDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
-		app->GetDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ZERO);
+		device->GetD3DDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
+		device->GetD3DDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ZERO);
 		//app->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
-		app->SetDepthBuffer(depthBuffer);
+		device->SetDepthBuffer(depthBuffer);
 
 		ShaderStock::GetInstance()->GetShadowShader()->Use();
 	}
 
 	void ShadowRenderer::End()
 	{
-		auto app = Application::GetInstance();
+		auto device = Device::GetInstance();
 
-		app->SetRenderTarget(this->renderTargetPrev);
-		app->SetProjectionMatrix(this->projPrev);
-		app->SetViewMatrix(this->viewPrev);
-		app->SetViewport(this->viewportPrev.x, this->viewportPrev.y, this->viewportPrev.width, this->viewportPrev.height);
-		app->SetDepthBuffer(this->depthBufferPrev);
-		app->EnableDepthTest(this->depthTestEnabledPrev);
-		app->SetBlendMode(this->blendModePrev);
+		device->SetRenderTarget(this->renderTargetPrev);
+		device->SetProjectionMatrix(this->projPrev);
+		device->SetViewMatrix(this->viewPrev);
+		device->SetViewport(this->viewportPrev.x, this->viewportPrev.y, this->viewportPrev.width, this->viewportPrev.height);
+		device->SetDepthBuffer(this->depthBufferPrev);
+		device->EnableDepthTest(this->depthTestEnabledPrev);
+		device->SetBlendMode(this->blendModePrev);
 
-		app->GetDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+		device->GetD3DDevice()->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 	}
 
 	/////////////////////////////////////////////////
@@ -113,7 +113,7 @@ namespace THEngine
 			renderer->cascadedShadowMaps.Add(shadowMap);
 		}
 
-		renderer->depthBuffer = Application::GetInstance()->CreateDepthBuffer(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
+		renderer->depthBuffer = Device::GetInstance()->CreateDepthBuffer(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 		if (renderer->depthBuffer == nullptr)
 		{
 			ExceptionManager::GetInstance()->PushException(new Exception(("创建shadow map深度缓存失败。")));
@@ -127,7 +127,7 @@ namespace THEngine
 
 	void DirectionalLightShadowRenderer::RenderShadow(RenderQueue* renderQueue)
 	{
-		auto app = Application::GetInstance();
+		auto device = Device::GetInstance();
 
 		Begin();
 		SetupLightView();
@@ -135,11 +135,11 @@ namespace THEngine
 		for (int i = 0; i < MAX_CASCADED_LEVEL; i++)
 		{
 			SetupLightProjection(i);
-			app->SetRenderTarget(this->cascadedShadowMaps.Get(i)->GetShadowMap());
-			app->ClearDepthBuffer();
-			app->ClearColorBuffer(Vector4f(1, 0, 0, 1));
-			app->EnableDepthTest(true);
-			app->SetViewport(0, 0, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
+			device->SetRenderTarget(this->cascadedShadowMaps.Get(i)->GetShadowMap());
+			device->ClearDepthBuffer();
+			device->ClearColorBuffer(Vector4f(1, 0, 0, 1));
+			device->EnableDepthTest(true);
+			device->SetViewport(0, 0, SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 
 			auto objects = renderQueue->GetObjects();
 			auto iter = objects->GetIterator();
@@ -154,7 +154,7 @@ namespace THEngine
 
 	void DirectionalLightShadowRenderer::SetupLightView()
 	{
-		auto app = Application::GetInstance();
+		auto device = Device::GetInstance();
 
 		Vector3f up;
 		if (light->GetDirection().x == 0 && light->GetDirection().y == 0)
@@ -170,7 +170,7 @@ namespace THEngine
 			up.z = 0;
 		}
 		Matrix::LookAt(&this->lightView, -10000 * light->GetDirection(), Vector3f(0, 0, 0), up);
-		app->SetViewMatrix(this->lightView);
+		device->SetViewMatrix(this->lightView);
 
 		auto iter = this->cascadedShadowMaps.GetIterator();
 		while (iter->HasNext())
@@ -181,7 +181,7 @@ namespace THEngine
 
 	void DirectionalLightShadowRenderer::SetupLightProjection(int cascadedLevel)
 	{
-		auto app = Application::GetInstance();
+		auto device = Device::GetInstance();
 
 		Vector3f frustumVerts[8];
 		ComputeFrustum(cascadedLevel, frustumVerts);
@@ -220,13 +220,13 @@ namespace THEngine
 		auto shadowMap = this->cascadedShadowMaps.Get(cascadedLevel);
 		Matrix::Ortho(&shadowMap->lightProjection, bbox.xmin, bbox.xmax, bbox.ymin, bbox.ymax,
 			bbox.zmin, bbox.zmax);
-		app->SetProjectionMatrix(shadowMap->lightProjection);
+		device->SetProjectionMatrix(shadowMap->lightProjection);
 	}
 
 	void DirectionalLightShadowRenderer::ComputeFrustum(int cascadedLevel, Vector3f* output)
 	{
-		auto app = Application::GetInstance();
-		auto camera = (Camera3D*)(app->GetRenderState()->GetCamera());
+		auto device = Device::GetInstance();
+		auto camera = (Camera3D*)(device->GetRenderState()->GetCamera());
 		Picker picker(camera);
 		int width = camera->GetViewport().Width();
 		int height = camera->GetViewport().Height();

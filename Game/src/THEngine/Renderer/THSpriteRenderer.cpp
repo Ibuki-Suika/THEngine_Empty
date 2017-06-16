@@ -4,7 +4,7 @@
 #include <Asset\THShaderStock.h>
 #include <Asset\THTexture.h>
 #include <Asset\THShader.h>
-#include <Platform\THApplication.h>
+#include <Platform\THDevice.h>
 
 using namespace THEngine;
 
@@ -19,12 +19,11 @@ SpriteRenderer::~SpriteRenderer()
 
 SpriteRenderer* SpriteRenderer::Create()
 {
-	auto app = Application::GetInstance();
 	SpriteRenderer* renderer = new SpriteRenderer();
 	if (renderer)
 	{
-		renderer->device = app->GetDevice();
-		renderer->device->CreateVertexBuffer(4 * sizeof(SpriteVertex), D3DUSAGE_DYNAMIC,
+		auto device = Device::GetInstance()->GetD3DDevice();
+		device->CreateVertexBuffer(4 * sizeof(SpriteVertex), D3DUSAGE_DYNAMIC,
 			SPRITE_FVF, D3DPOOL_DEFAULT, &renderer->vb, NULL);
 		if (renderer->vb == nullptr)
 		{
@@ -42,7 +41,8 @@ void SpriteRenderer::Render(GameObject* obj)
 	ASSERT(sprite != nullptr);
 
 	auto game = Game::GetInstance();
-	auto app = Application::GetInstance();
+	auto device = Device::GetInstance();
+	auto d3dDevice = device->GetD3DDevice();
 	auto spriteShader = ShaderStock::GetInstance()->GetSpriteShader();
 
 	const int texWidth = sprite->texture->GetWidth();
@@ -114,12 +114,12 @@ void SpriteRenderer::Render(GameObject* obj)
 	}
 	transform *= temp;
 
-	app->SetWorldMatrix(transform);
+	device->SetWorldMatrix(transform);
 
-	device->SetFVF(SPRITE_FVF);
-	device->SetStreamSource(0, vb, 0, sizeof(SpriteVertex));
+	d3dDevice->SetFVF(SPRITE_FVF);
+	d3dDevice->SetStreamSource(0, vb, 0, sizeof(SpriteVertex));
 
-	auto renderState = app->GetRenderState();
+	auto renderState = device->GetRenderState();
 
 	spriteShader->Use();
 
@@ -137,7 +137,7 @@ void SpriteRenderer::Render(GameObject* obj)
 
 	spriteShader->CommitChanges();
 	spriteShader->UsePass(0);
-	device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+	d3dDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 }
 /*Sprite* sprite = (Sprite*)obj;
 if (this->spriteBatch.texture && this->spriteBatch.spriteCount < MAX_SPRITE

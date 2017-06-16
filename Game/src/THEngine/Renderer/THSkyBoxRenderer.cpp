@@ -4,13 +4,12 @@
 #include <Core\THCamera.h>
 #include <Asset\THShaderStock.h>
 #include <Asset\THShader.h>
-#include <Platform\THApplication.h>
+#include <Platform\THDevice.h>
 
 namespace THEngine
 {
 	SkyBoxRenderer::SkyBoxRenderer()
 	{
-
 	}
 
 	SkyBoxRenderer::~SkyBoxRenderer()
@@ -23,7 +22,7 @@ namespace THEngine
 		SkyBoxRenderer* renderer = new SkyBoxRenderer();
 		if (renderer)
 		{
-			auto device = Application::GetInstance()->GetDevice();
+			auto device = Device::GetInstance()->GetD3DDevice();
 			device->CreateVertexBuffer(4 * sizeof(SkyBoxVertex), D3DUSAGE_DYNAMIC,
 				SKYBOX_FVF, D3DPOOL_DEFAULT, &renderer->vb, NULL);
 			if (renderer->vb == nullptr)
@@ -41,18 +40,18 @@ namespace THEngine
 		CubeMap* skyBox = layer->GetSkyBox();
 
 		auto skyBoxShader = ShaderStock::GetInstance()->GetSkyBoxShader();
-		auto app = Application::GetInstance();
-		auto renderState = app->GetRenderState();
+		auto device = Device::GetInstance();
+		auto d3dDevice = device->GetD3DDevice();
+		auto renderState = device->GetRenderState();
 		auto& viewport = renderState->GetViewport();
-		auto device = app->GetDevice();
 
 		Matrix matrix;
 		Matrix::Ortho(&matrix, 0, viewport.width, 0, viewport.height, 0, TH_MAX_Z);
-		app->SetProjectionMatrix(matrix);
+		device->SetProjectionMatrix(matrix);
 
 		Matrix::Identity(&matrix);
-		app->SetWorldMatrix(matrix);
-		app->SetViewMatrix(matrix);
+		device->SetWorldMatrix(matrix);
+		device->SetViewMatrix(matrix);
 
 		SkyBoxVertex* vertices;
 		vb->Lock(0, 0, (void**)&vertices, D3DLOCK_DISCARD);
@@ -62,8 +61,8 @@ namespace THEngine
 		vertices[3] = SkyBoxVertex(viewport.width, viewport.height, 1);
 		vb->Unlock();
 
-		device->SetFVF(SKYBOX_FVF);
-		device->SetStreamSource(0, this->vb, 0, sizeof(SkyBoxVertex));
+		d3dDevice->SetFVF(SKYBOX_FVF);
+		d3dDevice->SetStreamSource(0, this->vb, 0, sizeof(SkyBoxVertex));
 
 		Vector3f lookDir = camera->GetLookAt() - camera->GetPosition();
 
@@ -80,9 +79,9 @@ namespace THEngine
 		skyBoxShader->SetMatrix("view", renderState->GetViewMatrix());
 
 		skyBoxShader->UsePass(0);
-		device->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
+		d3dDevice->DrawPrimitive(D3DPT_TRIANGLESTRIP, 0, 2);
 		skyBoxShader->EndPass();
 
-		app->ClearDepthBuffer();
+		device->ClearDepthBuffer();
 	}
 }

@@ -2,7 +2,7 @@
 #include "THGame.h"
 #include "THDataStack.h"
 #include <Asset\THCubeMap.h>
-#include <Platform\THApplication.h>
+#include <Platform\THDevice.h>
 
 namespace THEngine
 {
@@ -172,8 +172,8 @@ namespace THEngine
 
 	void Layer::SetupRenderState()
 	{
-		auto app = Application::GetInstance();
-		auto renderState = app->GetRenderState();
+		auto device = Device::GetInstance();
+		auto renderState = device->GetRenderState();
 
 		renderState->environment = &this->environment;
 	}
