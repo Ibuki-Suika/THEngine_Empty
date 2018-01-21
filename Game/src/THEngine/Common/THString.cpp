@@ -89,7 +89,7 @@ String String::SubString(int start, int end) const
 	return ret;
 }
 
-String String::operator + (const String& str)
+String String::operator + (const String& str) const
 {
 	int newLength = this->length + str.length;
 	TCHAR* newBuffer = new TCHAR[newLength + 1];
@@ -102,7 +102,7 @@ String String::operator + (const String& str)
 	return ret;
 }
 
-String String::operator + (int number)
+String String::operator + (int number) const
 {
 	std::string s;
 	std::strstream buf;
@@ -124,13 +124,13 @@ void String::operator = (const String& str)
 	lstrcpy(buffer, str.buffer);
 }
 
-TCHAR& String::operator[](int number)
+const TCHAR& String::operator[](int number) const
 {
 	ASSERT(number < length && number >= 0);
 	return buffer[number];
 }
 
-bool String::operator ==(const String& str)
+bool String::operator ==(const String& str) const
 {
 	if (length != str.length)
 	{

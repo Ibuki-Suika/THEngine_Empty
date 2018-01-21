@@ -10,12 +10,6 @@ namespace THEngine
 		this->frequency = intFrequency.QuadPart;
 	}
 
-	SystemClock* SystemClock::GetInstance()
-	{
-		static SystemClock instance;
-		return &instance;
-	}
-
 	Time SystemClock::GetTime()
 	{
 		LARGE_INTEGER intCurrentTime;

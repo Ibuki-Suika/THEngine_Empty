@@ -18,9 +18,9 @@ namespace THEngine
 	{
 	}
 
-	Object* Tween::Clone()
+	Ptr<Object> Tween::Clone() const
 	{
-		return new Tween(*this);
+		return Ptr<Tween>::New(*this).Get();
 	}
 
 	void Tween::Update()
@@ -57,9 +57,9 @@ namespace THEngine
 		onFinished();
 	}
 
-	void Tween::Bind(GameObject* object)
+	void Tween::Bind(Ptr<GameObject> object)
 	{
-		this->object = object;
+		this->object = object.Get();
 	}
 
 	////////////////////////////////////////
@@ -73,17 +73,16 @@ namespace THEngine
 
 	TweenUnit::~TweenUnit()
 	{
-		TH_SAFE_RELEASE(tweener);
 	}
 
-	Object* TweenUnit::Clone()
+	Ptr<Object> TweenUnit::Clone() const
 	{
-		return new TweenUnit(*this);
+		return Ptr<TweenUnit>::New(*this).Get();
 	}
 
 	void TweenUnit::DoTween()
 	{
-		if (tweener)
+		if (tweener != nullptr)
 		{
 			tweener->Update();
 			if (tweener->elapsed >= tweener->duration)
@@ -103,8 +102,6 @@ namespace THEngine
 	void TweenUnit::OnReset()
 	{
 		Tween::OnReset();
-
-		TH_SAFE_RELEASE(tweener);
 	}
 
 	////////////////////////////////////////
@@ -119,7 +116,7 @@ namespace THEngine
 		while (iter->HasNext())
 		{
 			auto tween = iter->Next();
-			AddTween((Tween*)tween->Clone());
+			AddTween((Tween*)tween->Clone().Get());
 		}
 	}
 
@@ -127,9 +124,9 @@ namespace THEngine
 	{
 	}
 
-	Object* TweenSequence::Clone()
+	Ptr<Object> TweenSequence::Clone() const
 	{
-		return new TweenSequence(*this);
+		return Ptr<TweenSequence>::New(*this).Get();
 	}
 
 	void TweenSequence::DoTween()
@@ -180,7 +177,7 @@ namespace THEngine
 		}
 	}
 
-	void TweenSequence::Bind(GameObject* object)
+	void TweenSequence::Bind(Ptr<GameObject> object)
 	{
 		Tween::Bind(object);
 

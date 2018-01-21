@@ -26,7 +26,7 @@ namespace THEngine
 	class CubeMap : public Object
 	{
 	private:
-		CubeMapImpl* impl = nullptr;
+		CubeMapImpl* impl = nullptr;  //don't use smart pointer here
 
 	public:
 		CubeMap();

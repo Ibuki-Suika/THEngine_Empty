@@ -25,7 +25,7 @@ namespace THEngine
 		Tween(const Tween& tween);
 		virtual ~Tween();
 
-		virtual Object* Clone() override;
+		virtual Ptr<Object> Clone() const override;
 
 		virtual void Update();
 
@@ -35,7 +35,7 @@ namespace THEngine
 		virtual void OnFinish();
 		virtual void OnReset();
 
-		virtual void Bind(GameObject* object);
+		virtual void Bind(Ptr<GameObject> object);
 
 		inline bool IsFinished() { return finished; }
 
@@ -50,7 +50,7 @@ namespace THEngine
 	class TweenUnit : public Tween
 	{
 	protected:
-		Tweener* tweener = nullptr;
+	    Ptr<Tweener> tweener;
 		int duration;
 
 	public:
@@ -58,7 +58,7 @@ namespace THEngine
 		TweenUnit(const TweenUnit& tweenUnit);
 		virtual ~TweenUnit();
 
-		virtual Object* Clone() override;
+		virtual Ptr<Object> Clone() const override;
 
 		virtual void DoTween() override;
 		virtual void OnReset() override;
@@ -68,7 +68,7 @@ namespace THEngine
 	class TweenSequence : public Tween
 	{
 	protected:
-		ArrayList<Tween*> tweenList;
+		ArrayList<Ptr<Tween>> tweenList;
 		int currentIndex = 0;
 
 	public:
@@ -76,15 +76,15 @@ namespace THEngine
 		TweenSequence(const TweenSequence& sequence);
 		virtual ~TweenSequence();
 
-		virtual Object* Clone() override;
+		virtual Ptr<Object> Clone() const override;
 
 		virtual void DoTween() override;
 		virtual void OnStart() override;
 		virtual void OnReset() override;
 
-		virtual void Bind(GameObject* object) override;
+		virtual void Bind(Ptr<GameObject> object) override;
 
-		inline void AddTween(Tween* tween)
+		inline void AddTween(Ptr<Tween> tween)
 		{
 			tween->object = this->object;
 			tweenList.Add(tween);

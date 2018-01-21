@@ -10,11 +10,11 @@ namespace THEngine
 	class Renderer : public Object
 	{
 	protected:
-		void SetupRenderState(GameObject* object);
-		void SetupWorldTransform(GameObject* object);
+		void SetupRenderState(Ptr<GameObject> object);
+		void SetupWorldTransform(Ptr<GameObject> object);
 
 	public:
-		virtual void Render(GameObject* obj) = 0;
+		virtual void Render(Ptr<GameObject> obj) = 0;
 	};
 }
 

@@ -12,7 +12,6 @@ namespace THEngine
 	TextureImpl::~TextureImpl()
 	{
 		TH_SAFE_RELEASE(texture);
-		TH_SAFE_RELEASE(texImage);
 	}
 
 	bool TextureImpl::SaveToFile(const String& path)
@@ -46,7 +45,7 @@ namespace THEngine
 
 	void TextureImpl::OnLostDevice()
 	{
-		texImage = new Image(width, height);
+		texImage = Ptr<Image>::New(width, height);
 
 		D3DLOCKED_RECT rect;
 		texture->LockRect(0, &rect, nullptr, 0);
@@ -67,9 +66,6 @@ namespace THEngine
 		}
 
 		texture->UnlockRect(0);
-
-		texImage->Retain();
-
 		TH_SAFE_RELEASE(texture);
 	}
 
@@ -79,7 +75,7 @@ namespace THEngine
 
 		if (FAILED(D3DXCreateTexture(device, width, height, 0, D3DUSAGE_AUTOGENMIPMAP, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &texture)))
 		{
-			ExceptionManager::GetInstance()->PushException(new Exception(
+			ExceptionManager::GetInstance()->PushException(Ptr<Exception>::New(
 				((String)"纹理加载失败。原因是：\nD3DXCreateTexture失败。")));
 			return;
 		}
@@ -103,8 +99,6 @@ namespace THEngine
 		}
 
 		texture->UnlockRect(0);
-
-		TH_SAFE_RELEASE(texImage);
 	}
 
 	void TextureImpl::GenerateMipmap()
@@ -120,6 +114,6 @@ namespace THEngine
 	Texture::~Texture()
 	{
 		auto assetManager = AssetManager::GetInstance();
-		assetManager->DestroyTexture(this);
+		assetManager->DestroyTexture(this->texImpl);
 	}
 }

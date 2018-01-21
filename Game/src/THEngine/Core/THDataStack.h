@@ -6,17 +6,14 @@
 
 namespace THEngine
 {
-	class DataStack : public Object
+	class DataStack : public Object, public Singleton<DataStack>
 	{
+		friend class Singleton<DataStack>;
 	private:
-		static DataStack* instance;
-
 		Vector3f position;
 
 	private:
 		DataStack();
-
-		static DataStack* GetInstance();
 
 		void Reset();
 

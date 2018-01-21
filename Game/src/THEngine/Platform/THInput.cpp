@@ -3,75 +3,50 @@
 
 using namespace THEngine;
 
-Input* Input::instance = nullptr;
-
-Input::Input()
-{
-	input = nullptr;
-}
-
 Input::~Input()
 {
 	TH_SAFE_RELEASE(input);
 }
 
-Input* Input::Create(Application* app)
+bool Input::Init()
 {
-	ASSERT(instance == nullptr);
-
-	instance = new Input();
-
+	auto app = Application::GetInstance();
 	HRESULT hr;
-	hr = DirectInput8Create(app->hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&instance->input, NULL);
+	hr = DirectInput8Create(app->hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&input, NULL);
 	if (FAILED(hr))
 	{
 		THMessageBox(TEXT("Create DirectInput failed!"));
-		delete instance;
-		instance = nullptr;
-		return instance;
+		return false;
 	}
 
-	hr = instance->input->CreateDevice(GUID_SysKeyboard, &instance->keyboard, NULL);
+	hr = input->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
 	if (FAILED(hr))
 	{
 		THMessageBox(TEXT("Create keyboard device failed!"));
-		delete instance;
-		instance = nullptr;
-		return instance;
+		return false;
 	}
 
-	hr = instance->keyboard->SetCooperativeLevel(app->hWnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
+	hr = keyboard->SetCooperativeLevel(app->hWnd, DISCL_BACKGROUND | DISCL_NONEXCLUSIVE);
 	if (FAILED(hr))
 	{
 		THMessageBox(TEXT("Set keyboard cooperative level failed!"));
-		delete instance;
-		instance = nullptr;
-		return instance;
+		return false;
 	}
 
-	hr = instance->keyboard->SetDataFormat(&c_dfDIKeyboard);
+	hr = keyboard->SetDataFormat(&c_dfDIKeyboard);
 	if (FAILED(hr))
 	{
 		THMessageBox(TEXT("Set keyboard data format failed!"));
-		delete instance;
-		instance = nullptr;
-		return instance;
+		return false;
 	}
 
-	hr = instance->keyboard->Acquire();
+	hr = keyboard->Acquire();
 	if (FAILED(hr))
 	{
 		THMessageBox(TEXT("Acquire keyboard failed!"));
-		delete instance;
-		instance = nullptr;
-		return instance;
+		return false;
 	}
-	return instance;
-}
-
-Input* Input::GetInstance()
-{
-	return instance;
+	return true;
 }
 
 void Input::Update()

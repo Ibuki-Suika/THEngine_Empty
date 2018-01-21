@@ -40,12 +40,12 @@ namespace THEngine
 		}
 	}
 
-	void Shader::SetTexture(char* textureName, Texture* texture)
+	void Shader::SetTexture(char* textureName, Ptr<Texture> texture)
 	{
 		effect->SetTexture(textureName, texture->texImpl->texture);
 	}
 
-	void Shader::SetCubeMap(char* textureName, CubeMap* cubeMap)
+	void Shader::SetCubeMap(char* textureName, Ptr<CubeMap> cubeMap)
 	{
 		effect->SetTexture(textureName, cubeMap->impl->cubeTexture);
 	}
@@ -70,11 +70,11 @@ namespace THEngine
 		auto renderState = Device::GetInstance()->GetRenderState();
 		if (renderState->shader != this)
 		{
-			if (renderState->shader)
+			if (renderState->shader != nullptr)
 			{
 				renderState->shader->End();
 			}
-			TH_SET(renderState->shader, this);
+			renderState->shader = this;
 			this->effect->Begin(&passNum, 0);
 			this->currentPass = -1;
 		}
@@ -90,7 +90,7 @@ namespace THEngine
 				EndPass();
 			}
 			this->effect->End();
-			TH_SAFE_RELEASE(renderState->shader);
+			renderState->shader = nullptr;
 		}
 	}
 

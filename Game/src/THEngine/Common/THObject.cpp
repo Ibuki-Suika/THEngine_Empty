@@ -1,17 +1,12 @@
 #include "THObject.h"
 #include "THDefine.h"
-#include <typeinfo>
+#include "THPtr.h"
 
 namespace THEngine
 {
-	Object::Object()
-	{
-		refCount = 0;
-	}
-
 	Object::Object(const Object& object)
 	{
-		refCount = 0;
+		refCount_ = 1;
 	}
 
 	Object::~Object()
@@ -20,26 +15,27 @@ namespace THEngine
 
 	Object& Object::operator=(const Object& object)
 	{
-		this->refCount = 0;
+		this->refCount_ = 0;
 		return *this;
 	}
 
-	Object* Object::Clone()
+	Ptr<Object> Object::Clone() const
 	{
-		return nullptr;
+		throw std::runtime_error("trying to clone a non clonable object!");
 	}
 
 	void Object::Retain()
 	{
-		refCount++;
+		refCount_++;
 	}
 
 	void Object::Release()
 	{
-		ASSERT(refCount > 0);
-		refCount--;
-		if (refCount == 0)
+		ASSERT(refCount_ > 0 && alive);
+		refCount_--;
+		if (refCount_ == 0)
 		{
+			alive = false;
 			delete this;
 		}
 	}

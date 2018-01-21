@@ -22,18 +22,15 @@ Sprite::Sprite()
 
 	flipX = false;
 	flipY = false;
-
-	texture = nullptr;
 }
 
 Sprite::~Sprite()
 {
-	TH_SAFE_RELEASE(this->texture);
 }
 
-void Sprite::SetTexture(Texture* texture)
+void Sprite::SetTexture(Ptr<Texture> texture)
 {
-	TH_SET(this->texture, texture);
+	this->texture = texture;
 }
 
 void Sprite::SendToRenderQueue()

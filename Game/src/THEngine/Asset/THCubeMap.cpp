@@ -32,6 +32,6 @@ namespace THEngine
 	CubeMap::~CubeMap()
 	{
 		auto assetManager = AssetManager::GetInstance();
-		assetManager->DestroyCubeMap(this);
+		assetManager->DestroyCubeMap(this->impl);
 	}
 }

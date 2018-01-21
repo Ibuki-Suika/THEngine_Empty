@@ -17,27 +17,28 @@ namespace THEngine
 		TH_SAFE_RELEASE(vb);
 	}
 
-	SkyBoxRenderer* SkyBoxRenderer::Create()
+	Ptr<SkyBoxRenderer> SkyBoxRenderer::Create()
 	{
-		SkyBoxRenderer* renderer = new SkyBoxRenderer();
-		if (renderer)
+		SkyBoxRenderer* r = (SkyBoxRenderer*)malloc(sizeof(SkyBoxRenderer));
+		new(r) SkyBoxRenderer();
+		Ptr<SkyBoxRenderer> renderer = Ptr<SkyBoxRenderer>::Create_NoRetain(r);
+		if (renderer != nullptr)
 		{
 			auto device = Device::GetInstance()->GetD3DDevice();
 			device->CreateVertexBuffer(4 * sizeof(SkyBoxVertex), D3DUSAGE_DYNAMIC,
 				SKYBOX_FVF, D3DPOOL_DEFAULT, &renderer->vb, NULL);
 			if (renderer->vb == nullptr)
 			{
-				ExceptionManager::GetInstance()->PushException(new Exception(("¥¥Ω®∂•µ„ª∫¥Ê ß∞‹°£")));
-				delete renderer;
+				ExceptionManager::GetInstance()->PushException(Ptr<Exception>::New(("¥¥Ω®∂•µ„ª∫¥Ê ß∞‹°£")));
 				return nullptr;
 			}
 		}
 		return renderer;
 	}
 
-	void SkyBoxRenderer::RenderSkyBox(Camera3D* camera, Layer* layer)
+	void SkyBoxRenderer::RenderSkyBox(Ptr<Camera3D> camera, Ptr<Layer> layer)
 	{
-		CubeMap* skyBox = layer->GetSkyBox();
+		Ptr<CubeMap> skyBox = layer->GetSkyBox();
 
 		auto skyBoxShader = ShaderStock::GetInstance()->GetSkyBoxShader();
 		auto device = Device::GetInstance();

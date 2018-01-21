@@ -37,11 +37,11 @@ namespace THEngine
 		}
 	}
 
-	void Menu::AddMenuItem(MenuItem* menuItem)
+	void Menu::AddMenuItem(Ptr<MenuItem> menuItem)
 	{
 		itemList.Add(menuItem);
 		menuItem->menu = this;
-		AddChild(menuItem);
+		AddChild(menuItem.Get());
 
 		if (currentSelection < 0)
 		{
@@ -79,7 +79,7 @@ namespace THEngine
 
 		if (playSound)
 		{
-			if (soundSelect)
+			if (soundSelect != nullptr)
 			{
 				soundSelect->Play();
 			}
@@ -95,13 +95,13 @@ namespace THEngine
 		itemList.Get(index)->OnClick();
 		OnMenuItemClicked(index);
 
-		if (soundOK)
+		if (soundOK != nullptr)
 		{
 			soundOK->Play();
 		}
 	}
 
-	bool Menu::OnKeyDown(EngineObject* sender, int key)
+	bool Menu::OnKeyDown(Ptr<EngineObject> sender, int key)
 	{
 		switch (key)
 		{

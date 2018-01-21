@@ -18,93 +18,71 @@ namespace THEngine
 
 	RenderPipeline::~RenderPipeline()
 	{
-		TH_SAFE_RELEASE(spriteQueue);
-		TH_SAFE_RELEASE(normalQueue);
-		TH_SAFE_RELEASE(spriteRenderer);
-		TH_SAFE_RELEASE(particle3DRenderer);
-		TH_SAFE_RELEASE(meshRenderer);
-		TH_SAFE_RELEASE(skyBoxRenderer);
-		TH_SAFE_RELEASE(dirShadowRenderer);
-		TH_SAFE_RELEASE(dirLightRenderer);
 	}
 
-	RenderPipeline* RenderPipeline::Create()
+	Ptr<RenderPipeline> RenderPipeline::Create()
 	{
-		RenderPipeline* pipeline = new RenderPipeline();
+		RenderPipeline* r = (RenderPipeline*)malloc(sizeof(RenderPipeline));
+		new(r) RenderPipeline();
+		Ptr<RenderPipeline> pipeline = Ptr<RenderPipeline>::Create_NoRetain(r);
 		auto exceptionManager = ExceptionManager::GetInstance();
 
-		pipeline->spriteQueue = new SpriteRenderQueue();
-		pipeline->spriteQueue->Retain();
-
-		pipeline->normalQueue = new NormalRenderQueue();
-		pipeline->normalQueue->Retain();
-
+		pipeline->spriteQueue = Ptr<SpriteRenderQueue>::New();
+		pipeline->normalQueue = Ptr<NormalRenderQueue>::New();
 		pipeline->spriteRenderer = SpriteRenderer::Create();
 		if (pipeline->spriteRenderer == nullptr)
 		{
 			auto exception = exceptionManager->GetException();
-			auto newException = new Exception((String)"创建SpriteRenderer失败。原因是：\n" + exception->GetInfo());
+			auto newException = Ptr<Exception>::New((String)"创建SpriteRenderer失败。原因是：\n" + exception->GetInfo());
 			exceptionManager->PushException(newException);
-			delete pipeline;
 			return nullptr;
-		}
-		pipeline->spriteRenderer->Retain();
+		};
 
 		pipeline->particle3DRenderer = Particle3DRenderer::Create();
 		if (pipeline->particle3DRenderer == nullptr)
 		{
 			auto exception = exceptionManager->GetException();
-			auto newException = new Exception((String)"创建Particle3DRenderer失败。原因是：\n" + exception->GetInfo());
+			auto newException = Ptr<Exception>::New((String)"创建Particle3DRenderer失败。原因是：\n" + exception->GetInfo());
 			exceptionManager->PushException(newException);
-			delete pipeline;
 			return nullptr;
 		}
-		pipeline->particle3DRenderer->Retain();
 
 		pipeline->meshRenderer = MeshRenderer::Create();
 		if (pipeline->meshRenderer == nullptr)
 		{
 			auto exception = exceptionManager->GetException();
-			auto newException = new Exception((String)"创建MeshRenderer失败。原因是：\n" + exception->GetInfo());
+			auto newException = Ptr<Exception>::New((String)"创建MeshRenderer失败。原因是：\n" + exception->GetInfo());
 			exceptionManager->PushException(newException);
-			delete pipeline;
 			return nullptr;
 		}
-		pipeline->meshRenderer->Retain();
 
 		pipeline->dirLightRenderer = DirectionalLightRenderer::Create();
 		if (pipeline->dirLightRenderer == nullptr)
 		{
 			auto exception = exceptionManager->GetException();
-			auto newException = new Exception((String)"创建DirectionalLightRenderer失败。原因是：\n" + exception->GetInfo());
+			auto newException = Ptr<Exception>::New((String)"创建DirectionalLightRenderer失败。原因是：\n" + exception->GetInfo());
 			exceptionManager->PushException(newException);
-			delete pipeline;
 			return nullptr;
 		}
-		pipeline->dirLightRenderer->Retain();
 
 		pipeline->skyBoxRenderer = SkyBoxRenderer::Create();
 		if (pipeline->skyBoxRenderer == nullptr)
 		{
 			auto exception = exceptionManager->GetException();
-			auto newException = new Exception((String)"创建SkyBoxRenderer失败。原因是：\n" + exception->GetInfo());
+			auto newException = Ptr<Exception>::New((String)"创建SkyBoxRenderer失败。原因是：\n" + exception->GetInfo());
 			exceptionManager->PushException(newException);
-			delete pipeline;
 			return nullptr;
 		}
-		pipeline->skyBoxRenderer->Retain();
 
 		pipeline->dirShadowRenderer = DirectionalLightShadowRenderer::Create();
 		if (pipeline->dirShadowRenderer == nullptr)
 		{
 			auto exception = exceptionManager->GetException();
-			auto newException = new Exception((String)"创建DirectionalLightShadowRenderer失败。原因是：\n"
+			auto newException = Ptr<Exception>::New((String)"创建DirectionalLightShadowRenderer失败。原因是：\n"
 				+ exception->GetInfo());
 			exceptionManager->PushException(newException);
-			delete pipeline;
 			return nullptr;
 		}
-		pipeline->dirShadowRenderer->Retain();
 
 		return pipeline;
 	}
@@ -161,23 +139,23 @@ namespace THEngine
 		normalQueue->Clear();
 	}
 
-	void RenderPipeline::RenderShadowMap(Light* light)
+	void RenderPipeline::RenderShadowMap(Ptr<Light> light)
 	{
 		ShadowRenderer* shadowRenderer = nullptr;
 		switch (light->GetType())
 		{
 		case Light::DIRECTIONAL:
-			shadowRenderer = this->dirShadowRenderer;
-			this->dirShadowRenderer->SetLight((DirectionalLight*)light);
+			shadowRenderer = this->dirShadowRenderer.Get();
+			this->dirShadowRenderer->SetLight((DirectionalLight*)light.Get());
 			break;
 		default:
 			throw std::logic_error("not implemented");
 		}
 
-		shadowRenderer->RenderShadow(normalQueue);
+		shadowRenderer->RenderShadow(normalQueue.Get());
 	}
 
-	void RenderPipeline::RenderWithLight(Light* light)
+	void RenderPipeline::RenderWithLight(Ptr<Light> light)
 	{
 		RenderShadowMap(light);
 
@@ -188,7 +166,7 @@ namespace THEngine
 			this->dirLightRenderer->SetShadowMapNear(this->dirShadowRenderer->GetCascadedShadowMaps()->Get(0));
 			this->dirLightRenderer->SetShadowMapMid(this->dirShadowRenderer->GetCascadedShadowMaps()->Get(1));
 			this->dirLightRenderer->SetShadowMapFar(this->dirShadowRenderer->GetCascadedShadowMaps()->Get(2));
-			this->dirLightRenderer->RenderObjects(normalQueue);
+			this->dirLightRenderer->RenderObjects((NormalRenderQueue*)normalQueue.Get());
 			break;
 		default:
 			throw std::logic_error("not implemented");

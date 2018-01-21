@@ -35,7 +35,7 @@ bool SpriteRenderQueue::Compare(GameObject* sprite1, GameObject* sprite2)
 	{
 		return sp1->GetPosition().z > sp2->GetPosition().z;
 	}
-	return sp1->GetTexture() > sp2->GetTexture();
+	return sp1->GetTexture().Get() > sp2->GetTexture().Get();
 }
 
 void SpriteRenderQueue::Render()

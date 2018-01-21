@@ -7,14 +7,14 @@
 
 namespace THEngine
 {
-	void Renderer::SetupRenderState(GameObject* obj)
+	void Renderer::SetupRenderState(Ptr<GameObject> obj)
 	{
 		auto device = Device::GetInstance();
 
 		device->SetBlendMode(obj->GetBlendMode());
 	}
 
-	void Renderer::SetupWorldTransform(GameObject* object)
+	void Renderer::SetupWorldTransform(Ptr<GameObject> object)
 	{
 		Matrix world;
 		object->GetWorldMatrix(&world);

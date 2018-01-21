@@ -6,25 +6,9 @@
 
 namespace THEngine
 {
-	Application* Application::instance = nullptr;
-
-	Application::Application()
-	{
-		ASSERT(instance == nullptr);
-		needQuit = false;
-		instance = this;
-	}
-
 	Application::~Application()
 	{
 		UnregisterClass(TEXT("THGameEngine"), hInstance);
-
-		TH_SAFE_RELEASE(this->device);
-	}
-
-	Application* Application::GetInstance()
-	{
-		return instance;
 	}
 
 	bool Application::Init(const Config& config, int bigIcon, int smallIcon)
@@ -42,14 +26,14 @@ namespace THEngine
 		status = RegisterGameClass();
 		if (status == false)
 		{
-			exceptionManager->PushException(new Exception("注册窗口类失败。"));
+			exceptionManager->PushException(Ptr<Exception>::New("注册窗口类失败。"));
 			return status;
 		}
 
 		status = CreateGameWindow();
 		if (status == false)
 		{
-			exceptionManager->PushException(new Exception("创建窗口失败。"));
+			exceptionManager->PushException(Ptr<Exception>::New("创建窗口失败。"));
 			return status;
 		}
 
@@ -62,7 +46,7 @@ namespace THEngine
 		if (status == false)
 		{
 			auto exception = exceptionManager->GetException();
-			exceptionManager->PushException(new Exception((String)"初始化Direct3D失败。原因是：\n" + exception->GetInfo()));
+			exceptionManager->PushException(Ptr<Exception>::New((String)"初始化Direct3D失败。原因是：\n" + exception->GetInfo()));
 			return status;
 		}
 
@@ -133,12 +117,11 @@ namespace THEngine
 		THLog((String)"游戏开始于" + time.wYear + "年" + time.wMonth + "月" + time.wDay + "日"
 			+ time.wHour + ":" + time.wMinute + ":" + time.wSecond + "。");
 
-		this->device = new Device();
+		this->device = Device::GetInstance();
 		if (device->Init(config) == false)
 		{
 			return false;
 		}
-		this->device->Retain();
 
 		return true;
 	}
@@ -172,7 +155,7 @@ namespace THEngine
 
 	void Application::PrintScreen()
 	{
-		Surface* surface = this->device->GetColorBuffer();
+		Ptr<Surface> surface = this->device->GetColorBuffer();
 
 		String dir = "snapshot";
 		String path;

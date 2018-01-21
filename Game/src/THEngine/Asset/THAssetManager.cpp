@@ -7,29 +7,15 @@
 
 namespace THEngine
 {
-	AssetManager* AssetManager::instance = nullptr;
-
-	AssetManager::AssetManager()
+	bool AssetManager::Init()
 	{
-		ASSERT(instance == nullptr);
-		instance = this;
+		return true;
 	}
 
-	AssetManager* AssetManager::GetInstance()
+	Ptr<Shader> AssetManager::CreateShaderFromFile(const String& filePath)
 	{
-		return instance;
-	}
-
-	AssetManager* AssetManager::Create()
-	{
-		AssetManager* assetManager = new AssetManager();
-
-		return assetManager;
-	}
-
-	Shader* AssetManager::CreateShaderFromFile(String filePath)
-	{
-		Shader* shader = new Shader();
+		Ptr<Shader> shader = Ptr<Shader>::New();
+		auto dd = Device::GetInstance();
 		auto device = Device::GetInstance()->GetD3DDevice();
 
 		ID3DXBuffer *error;
@@ -46,23 +32,20 @@ namespace THEngine
 			{
 				THMessageBox((String)"无法打开文件:" + filePath);
 			}
-			delete shader;
 			return nullptr;
 		}
 
 		shader->path = filePath;
-
 		shaderList.Add(shader);
-
 		return shader;
 	}
 
-	void AssetManager::DestroyShader(Shader* shader)
+	inline void AssetManager::DestroyShader(Ptr<Shader> shader)
 	{
 		shaderList.Remove(shader);
 	}
 
-	void AssetManager::CopyImageToSurface(Image* image, IDirect3DSurface9* surface)
+	void AssetManager::CopyImageToSurface(Ptr<Image> image, IDirect3DSurface9* surface)
 	{
 		D3DLOCKED_RECT rect;
 		RECT imageRect;
@@ -87,22 +70,22 @@ namespace THEngine
 		surface->UnlockRect();
 	}
 
-	Texture* AssetManager::CreateTextureFromFile(String filePath)
+	Ptr<Texture> AssetManager::CreateTextureFromFile(const String& filePath)
 	{
 		auto exceptionManager = ExceptionManager::GetInstance();
-		TextureImpl* texImpl = new TextureImpl();
+		TextureImpl* p = (TextureImpl*)malloc(sizeof(TextureImpl));
+		new(p) TextureImpl();
+		Ptr<TextureImpl> texImpl = Ptr<TextureImpl>::Create_NoRetain(p);
 
 		auto device = Device::GetInstance()->GetD3DDevice();
 
-		Image* image = Image::Load(filePath);
+		Ptr<Image> image = Image::Load(filePath);
 		if (image == nullptr)
 		{
-			exceptionManager->PushException(new Exception(
+			exceptionManager->PushException(Ptr<Exception>::New(
 				((String)"无法加载纹理:" + filePath + "。原因是:\n" + exceptionManager->GetException()->GetInfo())));
-			delete texImpl;
 			return nullptr;
 		}
-		image->Retain();
 
 		texImpl->imageWidth = image->GetWidth();
 		texImpl->imageHeight = image->GetHeight();
@@ -122,9 +105,8 @@ namespace THEngine
 
 		if (FAILED(D3DXCreateTexture(device, texWidth, texHeight, 0, D3DUSAGE_AUTOGENMIPMAP, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &texImpl->texture)))
 		{
-			exceptionManager->PushException(new Exception(
+			exceptionManager->PushException(Ptr<Exception>::New(
 				((String)"无法加载纹理:" + filePath + "。原因是:\nD3DXCreateTexture失败。")));
-			delete texImpl;
 			return nullptr;
 		}
 
@@ -135,40 +117,39 @@ namespace THEngine
 		texImpl->xScale = (float)texImpl->imageWidth / texImpl->width;
 		texImpl->yScale = (float)texImpl->imageHeight / texImpl->height;
 
-		TH_SAFE_RELEASE(image);
-
 		TH_LOCK(this->mutex)
 		{
 			textureList.Add(texImpl);
 		}
 
-		Texture* texture = new Texture();
-		texture->name = filePath;
-		TH_SET(texture->texImpl, texImpl);
+		Ptr<Texture> texture = Ptr<Texture>::New();
+		texture->texImpl = texImpl.Get();
+		texture->texImpl->name = filePath;
 
 		return texture;
 	}
 
-	CubeMap* AssetManager::CreateCubeMapFromFile(const String& front, const String& back,
+	Ptr<CubeMap> AssetManager::CreateCubeMapFromFile(const String& front, const String& back,
 		const String& left, const String& right, const String& top, const String& bottom)
 	{
-		CubeMapImpl* cubeMapImpl = new CubeMapImpl();
+		CubeMapImpl* p = (CubeMapImpl*)malloc(sizeof(CubeMapImpl));
+		new(p) CubeMapImpl();
+		Ptr<CubeMapImpl> cubeMapImpl = Ptr<CubeMapImpl>::Create_NoRetain(p);
 		auto exceptionManager = ExceptionManager::GetInstance();
 		auto device = Device::GetInstance()->GetD3DDevice();
 
-		Image* frontImage = Image::Load(front);
-		Image* backImage = Image::Load(back);
-		Image* leftImage = Image::Load(left);
-		Image* rightImage = Image::Load(right);
-		Image* topImage = Image::Load(top);
-		Image* bottomImage = Image::Load(bottom);
+		Ptr<Image> frontImage = Image::Load(front);
+		Ptr<Image> backImage = Image::Load(back);
+		Ptr<Image> leftImage = Image::Load(left);
+		Ptr<Image> rightImage = Image::Load(right);
+		Ptr<Image> topImage = Image::Load(top);
+		Ptr<Image> bottomImage = Image::Load(bottom);
 
 		if (frontImage == nullptr || backImage == nullptr || leftImage == nullptr || rightImage == nullptr
 			|| topImage == nullptr || bottomImage == nullptr)
 		{
-			exceptionManager->PushException(new Exception(
+			exceptionManager->PushException(Ptr<Exception>::New(
 				((String)"无法加载立方体纹理。原因是:\n" + exceptionManager->GetException()->GetInfo())));
-			delete cubeMapImpl;
 			return nullptr;
 		}
 
@@ -176,9 +157,8 @@ namespace THEngine
 		int imgHeight = frontImage->GetHeight();
 		if (imgWidth != imgHeight)
 		{
-			exceptionManager->PushException(new Exception(
+			exceptionManager->PushException(Ptr<Exception>::New(
 				((String)"无法加载立方体纹理。原因是:\n纹理长宽不相等。")));
-			delete cubeMapImpl;
 			return nullptr;
 		}
 
@@ -188,9 +168,8 @@ namespace THEngine
 			|| (topImage->GetWidth() != imgWidth) || (topImage->GetHeight() != imgHeight)
 			|| (bottomImage->GetWidth() != imgWidth) || (bottomImage->GetHeight() != imgHeight))
 		{
-			exceptionManager->PushException(new Exception(
+			exceptionManager->PushException(Ptr<Exception>::New(
 				((String)"无法加载立方体纹理。原因是:\n各面纹理大小不一致")));
-			delete cubeMapImpl;
 			return nullptr;
 		}
 
@@ -215,9 +194,8 @@ namespace THEngine
 		if (FAILED(D3DXCreateCubeTexture(device, imgWidth, 0, D3DUSAGE_AUTOGENMIPMAP, D3DFMT_A8R8G8B8,
 			D3DPOOL_MANAGED, &cubeMapImpl->cubeTexture)))
 		{
-			exceptionManager->PushException(new Exception(
+			exceptionManager->PushException(Ptr<Exception>::New(
 				("无法加载立方体纹理。原因是:\nD3DXCreateCubeTexture失败。")));
-			delete cubeMapImpl;
 			return nullptr;
 		}
 
@@ -243,26 +221,21 @@ namespace THEngine
 		CopyImageToSurface(topImage, surfaceTop);
 		CopyImageToSurface(bottomImage, surfaceBottom);
 
-		delete frontImage;
-		delete backImage;
-		delete leftImage;
-		delete rightImage;
-		delete topImage;
-		delete bottomImage;
-
 		TH_LOCK(this->mutex)
 		{
 			this->cubeMapList.Add(cubeMapImpl);
 		}
 
-		CubeMap* cubeMap = new CubeMap();
-		TH_SET(cubeMap->impl, cubeMapImpl);
+		Ptr<CubeMap> cubeMap = Ptr<CubeMap>::New();
+		cubeMap->impl = cubeMapImpl.Get();
 		return cubeMap;
 	}
 
-	RenderTexture* AssetManager::CreateRenderTexture(int width, int height)
+	Ptr<RenderTexture> AssetManager::CreateRenderTexture(int width, int height)
 	{
-		TextureImpl* texImpl = new TextureImpl();
+		TextureImpl* p = (TextureImpl*)malloc(sizeof(TextureImpl));
+		new(p) TextureImpl();
+		Ptr<TextureImpl> texImpl = Ptr<TextureImpl>::Create_NoRetain(p);
 		auto device = Device::GetInstance()->GetD3DDevice();
 
 		texImpl->width = width;
@@ -274,15 +247,17 @@ namespace THEngine
 			textureList.Add(texImpl);
 		}
 
-		RenderTexture* texture = new RenderTexture();
-		TH_SET(texture->texImpl, texImpl);
+		Ptr<RenderTexture> texture = Ptr<RenderTexture>::New();
+		texture->texImpl = texImpl.Get();
 
 		return texture;
 	}
 
-	FloatTexture* AssetManager::CreateFloatTexture(int width, int height)
+	Ptr<FloatTexture> AssetManager::CreateFloatTexture(int width, int height)
 	{
-		TextureImpl* texImpl = new TextureImpl();
+		TextureImpl* p = (TextureImpl*)malloc(sizeof(TextureImpl));
+		new(p) TextureImpl();
+		Ptr<TextureImpl> texImpl = Ptr<TextureImpl>::Create_NoRetain(p);
 		auto device = Device::GetInstance()->GetD3DDevice();
 
 		texImpl->width = width;
@@ -294,28 +269,26 @@ namespace THEngine
 			textureList.Add(texImpl);
 		}
 
-		FloatTexture* texture = new FloatTexture();
-		TH_SET(texture->texImpl, texImpl);
+		Ptr<FloatTexture> texture = Ptr<FloatTexture>::New();
+	    texture->texImpl = texImpl.Get();
 
 		return texture;
 	}
 
-	void AssetManager::DestroyTexture(Texture* texture)
+	void AssetManager::DestroyTexture(Ptr<TextureImpl> texture)
 	{
 		TH_LOCK(this->mutex)
 		{
-			textureList.Remove(texture->texImpl);
+ 			textureList.Remove(texture);
 		}
-		TH_SAFE_RELEASE(texture->texImpl);
 	}
 
-	void AssetManager::DestroyCubeMap(CubeMap* cubeMap)
+	void AssetManager::DestroyCubeMap(Ptr<CubeMapImpl> cubeMap)
 	{
 		TH_LOCK(this->mutex)
 		{
-			cubeMapList.Remove(cubeMap->impl);
+			cubeMapList.Remove(cubeMap);
 		}
-		TH_SAFE_RELEASE(cubeMap->impl);
 	}
 
 	void AssetManager::OnLostDevice()

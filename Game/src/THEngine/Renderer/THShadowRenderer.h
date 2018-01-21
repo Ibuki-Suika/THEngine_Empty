@@ -16,14 +16,14 @@ namespace THEngine
 	class ShadowRenderer : public Renderer
 	{
 	protected:
-		Surface* depthBuffer = nullptr;
+		Ptr<Surface> depthBuffer;
 		bool depthTestEnabledPrev = true;
 
 		Matrix projPrev;
 		Matrix viewPrev;
-		RenderTexture* renderTargetPrev = nullptr;
+		Ptr<RenderTexture> renderTargetPrev;
 		Viewport viewportPrev;
-		Surface* depthBufferPrev = nullptr;
+		Ptr<Surface> depthBufferPrev;
 		BlendMode blendModePrev;
 
 		static const int SHADOW_MAP_SIZE = 256;
@@ -34,9 +34,9 @@ namespace THEngine
 	public:
 		virtual ~ShadowRenderer();
 
-		virtual void Render(GameObject* obj) override;
+		virtual void Render(Ptr<GameObject> obj) override;
 
-		virtual void RenderShadow(RenderQueue* renderQueue) = 0;
+		virtual void RenderShadow(Ptr<RenderQueue> renderQueue) = 0;
 
 		void Begin();
 		void End();
@@ -55,8 +55,8 @@ namespace THEngine
 			float zmax;
 		};
 
-		ArrayList<ShadowMap*> cascadedShadowMaps;
-		DirectionalLight* light = nullptr;
+		ArrayList<Ptr<ShadowMap>> cascadedShadowMaps;
+		Ptr<DirectionalLight> light;
 		Matrix lightView;
 
 		static const int MAX_CASCADED_LEVEL = 3;
@@ -78,13 +78,13 @@ namespace THEngine
 	public:
 		virtual ~DirectionalLightShadowRenderer();
 
-		static DirectionalLightShadowRenderer* Create();
+		static Ptr<DirectionalLightShadowRenderer> Create();
 
-		virtual void RenderShadow(RenderQueue* renderQueue) override;
+		virtual void RenderShadow(Ptr<RenderQueue> renderQueue) override;
 
-		inline ArrayList<ShadowMap*>* GetCascadedShadowMaps() { return &this->cascadedShadowMaps; }
+		inline ArrayList<Ptr<ShadowMap>>* GetCascadedShadowMaps() { return &this->cascadedShadowMaps; }
 
-		inline void SetLight(DirectionalLight* light) { TH_SET(this->light, light); }
+		inline void SetLight(Ptr<DirectionalLight> light) { this->light = light; }
 	};
 }
 

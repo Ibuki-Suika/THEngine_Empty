@@ -2,6 +2,7 @@
 #define THENGINEOBJECT_H
 
 #include "THObject.h"
+#include "THPtr.h"
 
 namespace THEngine
 {
@@ -11,7 +12,7 @@ namespace THEngine
 	class EngineObject : public Object
 	{
 	protected:
-		Scheduler* scheduler = nullptr;
+		Ptr<Scheduler> scheduler;
 		bool paused = false;
 		bool started = false;
 		bool loaded = false;
@@ -24,14 +25,14 @@ namespace THEngine
 		virtual void Update() = 0;
 		virtual void Draw() = 0;
 
-		inline Scheduler* GetScheduler() { return scheduler; }
+		inline Ptr<Scheduler> GetScheduler() { return scheduler; }
 
 		inline bool IsPaused() { return paused; }
 		inline void Pause() { paused = true; }
 		inline void Resume() { paused = false; }
 
 		virtual void OnStart();
-		virtual void OnLoad(AsyncInfo* info);
+		virtual void OnLoad(Ptr<AsyncInfo> info);
 
 		friend class Game;
 	};

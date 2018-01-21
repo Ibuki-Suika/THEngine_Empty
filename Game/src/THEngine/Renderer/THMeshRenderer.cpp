@@ -21,9 +21,11 @@ namespace THEngine
 	{
 	}
 
-	MeshRenderer* MeshRenderer::Create()
+	Ptr<MeshRenderer> MeshRenderer::Create()
 	{
-		MeshRenderer* renderer = new MeshRenderer();
+		MeshRenderer* r = (MeshRenderer*)malloc(sizeof(MeshRenderer));
+		new(r) MeshRenderer();
+		Ptr<MeshRenderer> renderer = Ptr<MeshRenderer>::Create_NoRetain(r);
 
 		return renderer;
 	}
@@ -127,9 +129,9 @@ namespace THEngine
 		}
 	}
 
-	void MeshRenderer::Render(GameObject* object)
+	void MeshRenderer::Render(Ptr<GameObject> object)
 	{
-		Mesh* mesh = (Mesh*)object;
+		Mesh* mesh = (Mesh*)object.Get();
 		auto device = Device::GetInstance();
 
 		SetupShaderParams(mesh);
@@ -137,7 +139,7 @@ namespace THEngine
 		Shade(mesh);
 	}
 
-	void MeshRenderer::RenderObjects(RenderQueue* renderQueue)
+	void MeshRenderer::RenderObjects(Ptr<RenderQueue> renderQueue)
 	{
 		auto objects = renderQueue->GetObjects();
 		auto iter = objects->GetIterator();
@@ -156,9 +158,11 @@ namespace THEngine
 	{
 	}
 
-	DirectionalLightRenderer* DirectionalLightRenderer::Create()
+	Ptr<DirectionalLightRenderer> DirectionalLightRenderer::Create()
 	{
-		DirectionalLightRenderer* renderer = new DirectionalLightRenderer();
+		DirectionalLightRenderer* r = (DirectionalLightRenderer*)malloc(sizeof(DirectionalLightRenderer));
+		new(r) DirectionalLightRenderer();
+		Ptr<DirectionalLightRenderer> renderer = Ptr<DirectionalLightRenderer>::Create_NoRetain(r);
 
 		return renderer;
 	}
@@ -181,7 +185,7 @@ namespace THEngine
 		lightForRender.color.z = this->currentLight->GetColor().z;
 		lightForRender.color.w = 1.0f;
 
-		DirectionalLight* dirLight = (DirectionalLight*)this->currentLight;
+		DirectionalLight* dirLight = (DirectionalLight*)this->currentLight.Get();
 		Vector4f lightDirInView;
 		lightDirInView.x = dirLight->GetDirection().x;
 		lightDirInView.y = dirLight->GetDirection().y;
@@ -201,15 +205,15 @@ namespace THEngine
 		meshShader->SetFloat("znear", znear);
 		meshShader->SetFloat("zfar", zfar);
 		meshShader->SetFloat("blendBand", (znear - zfar) / 30);
-		if (this->shadowMapNear)
+		if (this->shadowMapNear != nullptr)
 		{
-			meshShader->SetTexture("shadowMapNear", this->shadowMapNear->GetShadowMap());
-			meshShader->SetTexture("shadowMapMid", this->shadowMapMid->GetShadowMap());
-			meshShader->SetTexture("shadowMapFar", this->shadowMapFar->GetShadowMap());
+			meshShader->SetTexture("shadowMapNear", this->shadowMapNear->GetShadowMap().Get());
+			meshShader->SetTexture("shadowMapMid", this->shadowMapMid->GetShadowMap().Get());
+			meshShader->SetTexture("shadowMapFar", this->shadowMapFar->GetShadowMap().Get());
 			meshShader->SetInt("shadowMapWidth", this->shadowMapNear->GetShadowMap()->GetWidth());
 			meshShader->SetInt("shadowMapHeight", this->shadowMapNear->GetShadowMap()->GetHeight());
 		}
-		if (this->currentLight)
+		if (this->currentLight != nullptr)
 		{
 			Matrix lightVPNear = this->shadowMapNear->GetLightView() * this->shadowMapNear->GetLightProjection();
 			meshShader->SetMatrix("lightVPNear", lightVPNear);

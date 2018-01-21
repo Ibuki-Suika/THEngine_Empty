@@ -13,7 +13,7 @@ namespace THEngine
 		while (iter->HasNext())
 		{
 			auto tween = iter->Next();
-			AddTween((Tween*)tween->Clone());
+			AddTween((Tween*)tween->Clone().Get());
 		}
 	}
 

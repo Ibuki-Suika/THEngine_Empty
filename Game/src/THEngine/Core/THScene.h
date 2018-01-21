@@ -9,7 +9,7 @@ namespace THEngine
 	class Scene : public EngineObject
 	{
 	protected:
-		LinkedList<Layer*> layers;
+		LinkedList<Ptr<Layer>> layers;
 
 	public:
 		Scene();
@@ -17,11 +17,11 @@ namespace THEngine
 
 		virtual void Update() override;
 		virtual void Draw() override;
-		virtual void OnLoad(AsyncInfo* info) override;
+		virtual void OnLoad(Ptr<AsyncInfo> info) override;
 
 		virtual void OnDestroy();
 
-		void AddLayer(Layer* layer);
+		void AddLayer(Ptr<Layer> layer);
 	};
 }
 

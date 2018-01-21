@@ -22,13 +22,14 @@ namespace THEngine
 
 		const static DWORD SKYBOX_FVF = D3DFVF_XYZ;
 
-	public:
+	private:
 		SkyBoxRenderer();
 		virtual ~SkyBoxRenderer();
 
-		void RenderSkyBox(Camera3D* camera, Layer* layer);
+	public:
+		void RenderSkyBox(Ptr<Camera3D> camera, Ptr<Layer> layer);
 
-		static SkyBoxRenderer* Create();
+		static Ptr<SkyBoxRenderer> Create();
 	};
 }
 

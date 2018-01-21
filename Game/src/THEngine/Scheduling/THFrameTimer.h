@@ -2,6 +2,7 @@
 #define THFRAMETIMER_H
 
 #include <Common\THObject.h>
+#include <Common\THPtr.h>
 #include <functional>
 
 namespace THEngine
@@ -18,7 +19,7 @@ namespace THEngine
 
 		std::function<void()> run = []() {};
 
-		virtual Object* Clone() override;
+		virtual Ptr<Object> Clone() const override;
 
 		inline void Pause() { paused = true; }
 		inline void Resume() { paused = false; }

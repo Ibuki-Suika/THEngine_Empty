@@ -26,8 +26,10 @@ namespace THEngine
 	class Game : public EngineObject
 	{
 	private:
-		static Game* instance;
 		Config* config = nullptr;
+
+		static Ptr<Game> instance;
+		static std::mutex mtx_instance; //for GetInstance()
 
 		bool enterBackground = false;
 
@@ -47,35 +49,28 @@ namespace THEngine
 
 		CoreDumper coreDumper;
 
-		Application* app;
+		Ptr<Application> app;
+		Ptr<Scene> scene;
+		Ptr<Scene> nextScene;
+		Ptr<RenderPipeline> pipeline;
+		Ptr<AssetManager> assetManager;
+		Ptr<ShaderStock> shaderStock;
+		Ptr<EventSystem> eventSystem;
+		Ptr<Font> defaultFont;
+		Ptr<Input> input;
+		Ptr<Audio> audio;
+		Ptr<ExceptionManager> exceptionManager;
+		Ptr<DataStack> dataStack;
 
-		Scene* scene;
-		Scene* nextScene;
-
-		RenderPipeline* pipeline = nullptr;
-
-		AssetManager* assetManager;
-		ShaderStock* shaderStock;
-
-		EventSystem* eventSystem;
-
-		Font* defaultFont;
-
-		Input* input;
-
-		Audio* audio = nullptr;
-
-		ExceptionManager* exceptionManager = nullptr;
-
-		DataStack* dataStack = nullptr;
-
-	private:
+	protected:
 		void CalcFPS();
 		void DrawFPS();
 
 	public:
 		Game();
 		virtual ~Game();
+
+		static Ptr<Game> GetInstance();
 
 		virtual void Update() override;
 		virtual void Draw() override;
@@ -89,21 +84,19 @@ namespace THEngine
 
 		void Quit();
 
-		static Game* GetInstance();
-
 		bool CreateGame(int width, int height, bool fullScreen, const String& title, int bigIcon, int smallIcon);
 
 		bool CreateGame(const Config& config, int bigIcon, int smallIcon);
 
-		void SetScene(Scene* scene);
+		void SetScene(Ptr<Scene> scene);
 
-		void LoadScene(Scene* scene);
+		void LoadScene(Ptr<Scene> scene);
 
-		void LoadSceneAsync(Scene* scene);
+		void LoadSceneAsync(Ptr<Scene> scene);
 
-		void LoadSceneAsync(Scene* scene, int delay, const std::function<void()>& onLoadCompleted);
+		void LoadSceneAsync(Ptr<Scene> scene, int delay, const std::function<void()>& onLoadCompleted);
 
-		AsyncInfo* LoadSceneAsyncWithInfo(Scene* scene, bool autoChange);
+		Ptr<AsyncInfo> LoadSceneAsyncWithInfo(Ptr<Scene> scene, bool autoChange);
 
 		inline void SetSpeed(float speed)
 		{
@@ -114,11 +107,11 @@ namespace THEngine
 
 		inline Config* GetConfig() const { return this->config; }
 
-		inline Application* GetApplication() const { return app; }
+		inline Ptr<Application> GetApplication() const { return app; }
 
-		inline RenderPipeline* GetRenderPipeline() const { return pipeline; }
+		inline Ptr<RenderPipeline> GetRenderPipeline() const { return pipeline; }
 
-		inline AssetManager* GetAssetManager() const
+		inline Ptr<AssetManager> GetAssetManager() const
 		{
 			return assetManager;
 		}
@@ -126,7 +119,7 @@ namespace THEngine
 		int GetWidth() const;
 		int GetHeight() const;
 
-		inline Scene* GetScene() const { return scene; }
+		inline Ptr<Scene> GetScene() const { return scene; }
 
 		const String& GetTitle() const;
 	};

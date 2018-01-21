@@ -21,7 +21,7 @@ namespace THEngine
 		Game::GetInstance()->GetRenderPipeline()->SendToRenderQueue(RenderPipeline::SPRITE, this);
 	}
 
-	void Particle3D::RotateByAxis(Vector3f axis, float degree)
+	void Particle3D::RotateByAxis(const Vector3f& axis, float degree)
 	{
 		Quaternion temp;
 		Quaternion::RotateAngleAxis(&temp, Vector3f(axis.x, axis.y, axis.z), degree);

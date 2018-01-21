@@ -45,16 +45,10 @@
     <ClCompile Include="src\THEngine\Common\THExceptionManager.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\THEngine\Common\THFrameTimer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="src\THEngine\Common\THLogger.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\THEngine\Common\THObject.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\THEngine\Common\THScheduler.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\THEngine\Common\THString.cpp">
@@ -84,9 +78,6 @@
     <ClCompile Include="src\THEngine\Core\THParticle3D.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\THEngine\Core\THRenderObject.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="src\THEngine\Core\THRenderState.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -94,12 +85,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\THEngine\Core\THSprite.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\THEngine\Math\MathUtil.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\THEngine\Math\Matrix.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\THEngine\Platform\External\CWaveFile.cpp">
@@ -154,6 +139,90 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\THEngine\UI\THMenuItem.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Math\THMathUtil.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Math\THMatrix.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Math\THQuaternion.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Math\THRandomGenerator.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Math\THVector.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Asset\THAssetImpl.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Asset\THCubeMap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Asset\THFloatTexture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Asset\THRenderTexture.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Asset\THShaderStock.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Async\THAsyncInfo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Async\THAsyncLoader.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Core\THDataStack.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Core\THEnvironment.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Platform\THCoreDumper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Platform\THDevice.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Platform\THSurface.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Platform\THSystemClock.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Renderer\THRenderer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Renderer\THRenderPipleline.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Renderer\THShadowMap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Renderer\THShadowRenderer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Renderer\THSkyBoxRenderer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Scheduling\THFrameTimer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Scheduling\THScheduler.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Scheduling\THTime.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Scheduling\THTimer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\THEngine\Util\THPicker.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -347,6 +416,312 @@
     <ClInclude Include="src\THEngine\External\libjpeg\jpeglib.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\THEngine\Math\THMath.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Math\THMathUtil.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Math\THMatrix.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Math\THQuaternion.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Math\THRandomGenerator.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Math\THVector.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Asset\THAssetImpl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Asset\THCubeMap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Asset\THFloatTexture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Asset\THRenderTexture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Asset\THShaderStock.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Async\THAsyncInfo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Async\THAsyncLoader.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Common\THPtr.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Common\THTemplates.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Core\THConfig.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Core\THDataStack.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Core\THEnvironment.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\begin_code.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\close_code.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_assert.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_atomic.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_audio.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_bits.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_blendmode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_clipboard.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_config.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_cpuinfo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_egl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_endian.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_error.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_events.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_filesystem.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_gamecontroller.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_gesture.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_haptic.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_hints.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_joystick.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_keyboard.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_keycode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_loadso.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_log.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_main.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_messagebox.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_mixer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_mouse.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_mutex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_name.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_opengl.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_opengl_glext.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_opengles.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_opengles2.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_opengles2_gl2.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_opengles2_gl2ext.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_opengles2_gl2platform.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_opengles2_khrplatform.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_pixels.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_platform.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_power.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_quit.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_rect.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_render.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_revision.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_rwops.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_scancode.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_shape.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_stdinc.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_surface.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_system.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_syswm.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_test.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_test_assert.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_test_common.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_test_compare.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_test_crc32.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_test_font.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_test_fuzzer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_test_harness.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_test_images.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_test_log.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_test_md5.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_test_random.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_thread.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_timer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_touch.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_types.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_version.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\External\SDL2\SDL_video.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Platform\THCoreDumper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Platform\THDevice.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Platform\THSurface.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Platform\THSystemClock.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Renderer\THRenderPipeline.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Renderer\THShadowMap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Renderer\THShadowRenderer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Renderer\THSkyBoxRenderer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Scheduling\THFrameTimer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Scheduling\THScheduler.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Scheduling\THTime.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Scheduling\THTimer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\THEngine\Util\THPicker.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\font\font-fps-opensans.png">
@@ -373,10 +748,6 @@
     <None Include="fx\lighting.fx" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="lib\libpng\zlib-release.lib" />
-    <Library Include="lib\libpng\libpng16-release.lib" />
-    <Library Include="lib\libpng\libpng16-debug.lib" />
     <Library Include="lib\libjpeg\jpeg.lib" />
-    <Library Include="lib\libpng\zlib-debug.lib" />
   </ItemGroup>
 </Project>

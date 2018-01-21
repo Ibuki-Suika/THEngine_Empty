@@ -9,12 +9,6 @@
 
 namespace THEngine
 {
-	Audio* Audio::instance = nullptr;
-
-	Audio::Audio()
-	{
-	}
-
 	Audio::~Audio()
 	{
 		soundList.Clear();
@@ -27,20 +21,6 @@ namespace THEngine
 		CoUninitialize();
 
 		Mix_CloseAudio();
-	}
-
-	Audio* Audio::GetInstance()
-	{
-		if (instance == nullptr)
-		{
-			instance = new Audio();
-			if (!instance->Init())
-			{
-				delete instance;
-				instance = nullptr;
-			}
-		}
-		return instance;
 	}
 
 	bool Audio::Init()
@@ -70,10 +50,10 @@ namespace THEngine
 		return true;
 	}
 
-	Sound* Audio::CreateSound(const String& filePath)
+	Ptr<Sound> Audio::CreateSound(const String& filePath)
 	{
 		auto exceptionManager = ExceptionManager::GetInstance();
-		Sound* sound = nullptr;
+		Ptr<Sound> sound;
 
 		String ext = filePath.SubString(filePath.LastIndexOf(TCHAR('.')) + 1, filePath.GetLength());
 		if (ext == "wav")
@@ -82,11 +62,11 @@ namespace THEngine
 		}
 		else
 		{
-			Exception* exception = new Exception("不支持的文件格式。");
+			Ptr<Exception> exception = Ptr<Exception>::New("不支持的文件格式。");
 			exceptionManager->PushException(exception);
 		}
 
-		if (sound)
+		if (sound != nullptr)
 		{
 			sound->SetVolume(volume);
 			soundList.Add(sound);
@@ -94,7 +74,7 @@ namespace THEngine
 		else
 		{
 			auto exception = exceptionManager->GetException();
-			if (exception)
+			if (exception != nullptr)
 			{
 				THMessageBox((String)"无法加载音频文件：" + filePath + "原因是：\n" + exception->GetInfo());
 				exceptionManager->SetHandled();
@@ -103,28 +83,29 @@ namespace THEngine
 		return sound;
 	}
 
-	Sound* Audio::LoadWav(const String& filePath)
+	Ptr<Sound> Audio::LoadWav(const String& filePath)
 	{
-		Sound* sound = new Sound();
+		Ptr<Sound> sound = Ptr<Sound>::New();
 		auto exceptionManager = ExceptionManager::GetInstance();
 
 		CWaveFile wave;
 		WAVEFORMATEX wf;
-		if (FAILED(wave.Open(filePath.GetBuffer(), &wf, WAVEFILE_READ)))
+
+		//the windows API don't accept a const string buffer as parameter, so we cast to non-const
+		LPWSTR szFileName = const_cast<LPWSTR>(filePath.GetBuffer());
+		if (FAILED(wave.Open(szFileName, &wf, WAVEFILE_READ)))
 		{
-			Exception* exception = new Exception("无法打开文件。文件路径可能不正确，或文件可能已损坏。");
+			Ptr<Exception> exception = Ptr<Exception>::New("无法打开文件。文件路径可能不正确，或文件可能已损坏。");
 			exceptionManager->PushException(exception);
-			delete sound;
 			return nullptr;
 		}
 
-		sound->callback = new Sound::SoundCallback(sound);
+		sound->callback = new Sound::SoundCallback(sound.Get());
 
 		if (FAILED(xaudio->CreateSourceVoice(&sound->sourceVoice, wave.GetFormat(), 0, 2.0f, sound->callback)))
 		{
-			Exception* exception = new Exception("无法创建音频缓存。");
+			Ptr<Exception> exception = Ptr<Exception>::New("无法创建音频缓存。");
 			exceptionManager->PushException(exception);
-			delete sound;
 			return nullptr;
 		}
 
@@ -136,9 +117,8 @@ namespace THEngine
 		DWORD readSize;
 		if (FAILED(wave.Read((BYTE*)buffer->pAudioData, wave.GetSize(), &readSize)))
 		{
-			Exception* exception = new Exception("无法解析文件。文件可能已损坏。");
+			Ptr<Exception> exception = Ptr<Exception>::New("无法解析文件。文件可能已损坏。");
 			exceptionManager->PushException(exception);
-			delete sound;
 			return nullptr;
 		}
 
@@ -147,18 +127,17 @@ namespace THEngine
 		return sound;
 	}
 
-	Music* Audio::CreateMusic(const String& filePath)
+	Ptr<Music> Audio::CreateMusic(const String& filePath)
 	{
 		auto exceptionManager = ExceptionManager::GetInstance();
-		Music* music = new Music();
+		Ptr<Music> music = Ptr<Music>::New();
 
 		char path[256];
 		WideCharToMultiByte(CP_ACP, 0, filePath.GetBuffer(), -1, path, sizeof(path), NULL, NULL);
 		music->mixMusic = Mix_LoadMUS(path);
 		if (music->mixMusic == nullptr)
 		{
-			exceptionManager->PushException(new Exception(((String)"无法加载音频文件：" + filePath)));
-			delete music;
+			exceptionManager->PushException(Ptr<Exception>::New(((String)"无法加载音频文件：" + filePath)));
 			return nullptr;
 		}
 
@@ -166,17 +145,17 @@ namespace THEngine
 		return music;
 	}
 
-	void Audio::PlayMusic(Music* music)
+	void Audio::PlayMusic(Ptr<Music> music)
 	{
 		PlayMusic(music, false);
 	}
 
-	void Audio::PlayMusic(Music* music, bool looped)
+	void Audio::PlayMusic(Ptr<Music> music, bool looped)
 	{
 		if (currentMusic == music && Mix_PlayingMusic() == 1)
 			return;
 
-		if (currentMusic && currentMusic != music)
+		if (currentMusic != nullptr && currentMusic != music)
 		{
 			currentMusic->Stop();
 		}
@@ -194,7 +173,9 @@ namespace THEngine
 		Mix_VolumeMusic(volume * MIX_MAX_VOLUME);
 
 		Mix_HookMusicFinished([]() {
-			Audio::GetInstance()->OnMusicFinished();
+			auto audio = Audio::GetInstance();
+			if (audio)
+				audio->OnMusicFinished();
 		});
 	}
 
@@ -203,19 +184,19 @@ namespace THEngine
 		this->currentMusic = nullptr;
 	}
 
-	void Audio::StopMusic(Music* music)
+	void Audio::StopMusic(Ptr<Music> music)
 	{
 		if (currentMusic != music)
 			return;
 
-		if (music)
+		if (music != nullptr)
 		{
 			Mix_HaltMusic();
 		}
 		currentMusic = nullptr;
 	}
 
-	void Audio::DestroyMusic(Music* music)
+	void Audio::DestroyMusic(Ptr<Music> music)
 	{
 		if (music == currentMusic)
 		{

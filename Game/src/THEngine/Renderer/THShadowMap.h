@@ -10,17 +10,19 @@ namespace THEngine
 	class ShadowMap : public Object
 	{
 	private:
-		FloatTexture* shadowMap = nullptr;
+		Ptr<FloatTexture> shadowMap;
 		Matrix lightView;
 		Matrix lightProjection;
 
-	public:
+	private:
 		ShadowMap();
+
+	public:
 		virtual ~ShadowMap();
 
-		static ShadowMap* Create(int width, int height);
+		static Ptr<ShadowMap> Create(int width, int height);
 
-		inline FloatTexture* GetShadowMap() const { return this->shadowMap; }
+		inline Ptr<FloatTexture> GetShadowMap() const { return this->shadowMap; }
 		inline const Matrix& GetLightView() const { return this->lightView; }
 		inline const Matrix& GetLightProjection() const { return this->lightProjection; }
 

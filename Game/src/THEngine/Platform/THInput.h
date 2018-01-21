@@ -14,25 +14,24 @@ namespace THEngine
 {
 	class Application;
 
-	class Input : public Object
+	class Input : public Object, public Singleton<Input>
 	{
-	private:
-		static Input* instance;
+		friend class Singleton<Input>;
 
-		IDirectInput8* input;
+	private:
+		IDirectInput8* input = nullptr;
 		IDirectInputDevice8* keyboard;
 
 		BYTE keystate[256];
 
 	private:
+		Input() = default;
 		int GetKeyboardState();
 
 	public:
-		Input();
 		virtual ~Input();
 
-		static Input* GetInstance();
-		static Input* Create(Application* app);
+		bool Init();
 
 		//刷新键盘、输入设备的状态
 		void Update();

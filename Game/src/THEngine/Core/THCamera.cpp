@@ -20,7 +20,6 @@ namespace THEngine
 
 	Camera::~Camera()
 	{
-		TH_SAFE_RELEASE(renderTexture);
 	}
 
 	void Camera::Update()
@@ -32,22 +31,22 @@ namespace THEngine
 	{
 	}
 
-	void Camera::SetRenderTexture(RenderTexture* renderTexture)
+	void Camera::SetRenderTexture(Ptr<RenderTexture> renderTexture)
 	{
-		TH_SET(this->renderTexture, renderTexture);
+		this->renderTexture = renderTexture;
 	}
 
-	void Camera::SetupViewport(Layer* layer)
+	void Camera::SetupViewport(Ptr<Layer> layer)
 	{
 		auto device = Device::GetInstance();
 		device->SetViewport(layer->GetLeft() + this->viewport.left, layer->GetTop() + this->viewport.top,
 			this->viewport.Width(), this->viewport.Height());
 	}
 
-	void Camera::Render(Layer* layer)
+	void Camera::Render(Ptr<Layer> layer)
 	{
 		auto renderState = Device::GetInstance()->GetRenderState();
-		TH_SET(renderState->camera, this);
+		renderState->camera = this;
 	}
 
 	/////////////////////////////////////////
@@ -65,7 +64,7 @@ namespace THEngine
 	{
 	}
 
-	void Camera2D::Render(Layer* layer)
+	void Camera2D::Render(Ptr<Layer> layer)
 	{
 		Camera::Render(layer);
 
@@ -99,7 +98,7 @@ namespace THEngine
 	{
 	}
 
-	void Camera3D::Render(Layer* layer)
+	void Camera3D::Render(Ptr<Layer> layer)
 	{
 		Camera::Render(layer);
 
@@ -107,7 +106,7 @@ namespace THEngine
 
 		SetupViewport(layer);
 
-		if (layer->GetSkyBox())
+		if (layer->GetSkyBox() != nullptr)
 		{
 			Game::GetInstance()->GetRenderPipeline()->GetSkyBoxRenderer()->RenderSkyBox(this, layer);
 		}

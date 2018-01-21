@@ -4,54 +4,41 @@
 
 namespace THEngine
 {
-	void AsyncLoader::Load(EngineObject* object)
+	void AsyncLoader::Load(Ptr<EngineObject> object)
 	{
-		Load(object, []() {}, nullptr);
+		Load(object, []() {});
 	}
 
-	void AsyncLoader::Load(EngineObject* object, const Callback& onCompleted)
+	void AsyncLoader::Load(Ptr<EngineObject> object, const Callback& onCompleted)
 	{
-		Load(object, onCompleted, nullptr);
+		_Load(object, onCompleted);
 	}
 
-	void AsyncLoader::Load(EngineObject* object, const Callback& onCompleted, AsyncInfo* outputInfo)
+	Ptr<AsyncInfo> AsyncLoader::_Load(Ptr<EngineObject> object, const Callback& onCompleted)
 	{
-		AsyncInfo* info;
-
-		if (outputInfo)
-		{
-			outputInfo->Retain();
-			info = outputInfo;
-		}
-		else
-		{
-			info = new AsyncInfo();
-		}
+		Ptr<AsyncInfo> info = Ptr<AsyncInfo>::New();
 		info->onFinished = onCompleted;
 
 		std::thread threadLoad(&AsyncLoader::ThreadFuncLoad, info, object);
 		threadLoad.detach();
+
+		return info;
 	}
 
-	AsyncInfo* AsyncLoader::LoadWithInfo(EngineObject* object)
+	Ptr<AsyncInfo> AsyncLoader::LoadWithInfo(Ptr<EngineObject> object)
 	{
 		return LoadWithInfo(object, []() {});
 	}
 
-	AsyncInfo* AsyncLoader::LoadWithInfo(EngineObject* object, const Callback& onCompleted)
+	Ptr<AsyncInfo> AsyncLoader::LoadWithInfo(Ptr<EngineObject> object, const Callback& onCompleted)
 	{
-		AsyncInfo* info = new AsyncInfo();
-		Load(object, onCompleted, info);
+		Ptr<AsyncInfo> info = _Load(object, onCompleted);
 		return info;
 	}
 
-	void AsyncLoader::ThreadFuncLoad(AsyncInfo* info, EngineObject* object)
+	void AsyncLoader::ThreadFuncLoad(Ptr<AsyncInfo> info, Ptr<EngineObject> object)
 	{
-		info->Retain();
 		object->OnLoad(info);
-
 		info->onFinished();
-
-		TH_SAFE_RELEASE(info);
 	}
 }

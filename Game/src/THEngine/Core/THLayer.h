@@ -18,11 +18,11 @@ namespace THEngine
 		int order;
 		GameObject rootNode;
 
-		LinkedList<Camera*> cameraList;
+		LinkedList<Ptr<Camera>> cameraList;
 
 		Environment environment;
 
-		CubeMap* skyBox = nullptr;
+		Ptr<CubeMap> skyBox = nullptr;
 
 	protected:
 		void SetupRenderState();
@@ -33,7 +33,7 @@ namespace THEngine
 		virtual ~Layer();
 		virtual void Update() override;
 		virtual void Draw() override;
-		virtual void OnLoad(AsyncInfo* info) override;
+		virtual void OnLoad(Ptr<AsyncInfo> info) override;
 
 		virtual void OnDestroy();
 
@@ -42,25 +42,25 @@ namespace THEngine
 		inline int GetLeft() const { return left; }
 		inline int GetTop() const { return top; }
 
-		void AddChild(GameObject* obj);
+		void AddChild(Ptr<GameObject> obj);
 
 		void Clear();
 
-		inline void AddLight(Light* light) { this->environment.lights.Add(light); }
+		inline void AddLight(Ptr<Light> light) { this->environment.lights.Add(light); }
 
-		inline void RemoveLight(Light* light) { this->environment.lights.Remove(light); }
+		inline void RemoveLight(Ptr<Light> light) { this->environment.lights.Remove(light); }
 
-		inline LinkedList<Camera*>* GetCameraList() { return &cameraList; }
+		inline LinkedList<Ptr<Camera>>* GetCameraList() { return &cameraList; }
 
-		Camera* GetCameraByName(const String& name);
-		Camera* GetCameraByIndex(int index);
-		Camera* GetFirstCamera();
+		Ptr<Camera> GetCameraByName(const String& name);
+		Ptr<Camera> GetCameraByIndex(int index);
+		Ptr<Camera> GetFirstCamera();
 
-		void AddCamera(Camera* camera);
+		void AddCamera(Ptr<Camera> camera);
 
-		void SetCameraByName(Camera* camera, const String& name);
-		void SetCameraByIndex(Camera* camera, int index);
-		void SetFirstCamera(Camera* camera);
+		void SetCameraByName(Ptr<Camera> camera, const String& name);
+		void SetCameraByIndex(Ptr<Camera> camera, int index);
+		void SetFirstCamera(Ptr<Camera> camera);
 
 		inline void SetOrder(int order) { this->order = order; }
 
@@ -72,9 +72,9 @@ namespace THEngine
 
 		inline void SetFog(Fog fog) { this->environment.fog = fog; }
 
-		void SetSkyBox(CubeMap* skyBox);
+		void SetSkyBox(Ptr<CubeMap> skyBox);
 
-		inline CubeMap* GetSkyBox() const { return skyBox; }
+		inline Ptr<CubeMap> GetSkyBox() const { return skyBox; }
 
 		void DestroyObjectImmediately(GameObject* obj);
 

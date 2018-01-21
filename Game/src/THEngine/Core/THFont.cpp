@@ -1,5 +1,7 @@
 #include "THFont.h"
 #include "THSprite.h"
+#include "THGame.h"
+#include <Platform\THDevice.h>
 #include "../Asset/THAssetManager.h"
 #include <fstream>
 #include <sstream>
@@ -8,25 +10,22 @@ using namespace THEngine;
 
 Font::Font()
 {
-
 }
 
 Font::~Font()
 {
-	TH_SAFE_RELEASE(texture);
+	int test = 1;
 }
 
-Font* Font::CreateFontFromFile(String imagePath, String txtPath)
+Ptr<Font> Font::CreateFontFromFile(const String& imagePath, const String& txtPath)
 {
 	std::string s = txtPath.ToStdString();
 
-	Font* font = new Font();
+	Ptr<Font> font = Ptr<Font>::New();
 	font->texture = AssetManager::GetInstance()->CreateTextureFromFile(imagePath);
-	font->texture->Retain();
 
 	if (font->texture == nullptr)
 	{
-		delete font;
 		return nullptr;
 	}
 
@@ -50,15 +49,25 @@ Font* Font::CreateFontFromFile(String imagePath, String txtPath)
 		rc.top = top;
 		rc.bottom = top + height;
 
-		font->charset.insert(std::pair<char,Rect>(c,rc));
+		font->charset.insert(std::pair<char, Rect>(c, rc));
 	}
 	in.close();
 	return font;
 }
 
-void Font::DrawString(String text,float x,float y)
+void Font::DrawString(const String& text, float x, float y)
 {
-	Sprite* sprite = new Sprite();
+	Ptr<Sprite> sprite = Ptr<Sprite>::New();
+
+	//setup transform matrices
+	auto game = Game::GetInstance();
+	auto device = Device::GetInstance();
+	Matrix proj, view;
+	Matrix::Ortho(&proj, 0, game->GetWidth(), 0, game->GetHeight(), 0, TH_MAX_Z);
+	Matrix::Identity(&view);
+	device->SetProjectionMatrix(proj);
+	device->SetViewMatrix(view);
+
 	for (int i = 0; i < text.GetLength(); i++)
 	{
 		TCHAR c = text[i];
@@ -74,5 +83,4 @@ void Font::DrawString(String text,float x,float y)
 		sprite->Draw();
 		x += rc.Width();
 	}
-	delete sprite;
 }

@@ -27,10 +27,9 @@ namespace THEngine
 
 	ShadowRenderer::~ShadowRenderer()
 	{
-		TH_SAFE_RELEASE(this->depthBuffer);
 	}
 
-	void ShadowRenderer::Render(GameObject* obj)
+	void ShadowRenderer::Render(Ptr<GameObject> obj)
 	{
 		auto device = Device::GetInstance();
 		auto renderState = device->GetRenderState();
@@ -59,8 +58,8 @@ namespace THEngine
 		this->renderTargetPrev = renderState->GetRenderTarget();
 		this->viewportPrev = renderState->GetViewport();
 		this->depthTestEnabledPrev = renderState->IsDepthTestEnabled();
-		this->depthBufferPrev = renderState->GetDepthBuffer();
 		this->blendModePrev = renderState->GetBlendMode();
+		this->depthBufferPrev = renderState->GetDepthBuffer();
 
 		device->GetD3DDevice()->SetRenderState(D3DRS_SRCBLEND, D3DBLEND_ONE);
 		device->GetD3DDevice()->SetRenderState(D3DRS_DESTBLEND, D3DBLEND_ZERO);
@@ -93,21 +92,21 @@ namespace THEngine
 
 	DirectionalLightShadowRenderer::~DirectionalLightShadowRenderer()
 	{
-		TH_SAFE_RELEASE(this->light);
 	}
 
-	DirectionalLightShadowRenderer* DirectionalLightShadowRenderer::Create()
+	Ptr<DirectionalLightShadowRenderer> DirectionalLightShadowRenderer::Create()
 	{
-		DirectionalLightShadowRenderer* renderer = new DirectionalLightShadowRenderer();
+		DirectionalLightShadowRenderer* r = (DirectionalLightShadowRenderer*)malloc(sizeof(DirectionalLightShadowRenderer));
+		new(r) DirectionalLightShadowRenderer();
+		Ptr<DirectionalLightShadowRenderer> renderer = Ptr<DirectionalLightShadowRenderer>::Create_NoRetain(r);
 		auto assetManager = AssetManager::GetInstance();
 
 		for (int i = 0; i < MAX_CASCADED_LEVEL; i++)
 		{
-			ShadowMap* shadowMap = ShadowMap::Create(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
+			Ptr<ShadowMap> shadowMap = ShadowMap::Create(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 			if (shadowMap == nullptr)
 			{
-				ExceptionManager::GetInstance()->PushException(new Exception(("创建shadow map失败。")));
-				delete renderer;
+				ExceptionManager::GetInstance()->PushException(Ptr<Exception>::New(("创建shadow map失败。")));
 				return nullptr;
 			}
 			renderer->cascadedShadowMaps.Add(shadowMap);
@@ -116,16 +115,14 @@ namespace THEngine
 		renderer->depthBuffer = Device::GetInstance()->CreateDepthBuffer(SHADOW_MAP_SIZE, SHADOW_MAP_SIZE);
 		if (renderer->depthBuffer == nullptr)
 		{
-			ExceptionManager::GetInstance()->PushException(new Exception(("创建shadow map深度缓存失败。")));
-			delete renderer;
+			ExceptionManager::GetInstance()->PushException(Ptr<Exception>::New(("创建shadow map深度缓存失败。")));
 			return nullptr;
 		}
-		renderer->depthBuffer->Retain();
 
 		return renderer;
 	}
 
-	void DirectionalLightShadowRenderer::RenderShadow(RenderQueue* renderQueue)
+	void DirectionalLightShadowRenderer::RenderShadow(Ptr<RenderQueue> renderQueue)
 	{
 		auto device = Device::GetInstance();
 
@@ -135,7 +132,7 @@ namespace THEngine
 		for (int i = 0; i < MAX_CASCADED_LEVEL; i++)
 		{
 			SetupLightProjection(i);
-			device->SetRenderTarget(this->cascadedShadowMaps.Get(i)->GetShadowMap());
+			device->SetRenderTarget(this->cascadedShadowMaps.Get(i)->GetShadowMap().Get());
 			device->ClearDepthBuffer();
 			device->ClearColorBuffer(Vector4f(1, 0, 0, 1));
 			device->EnableDepthTest(true);
@@ -226,7 +223,7 @@ namespace THEngine
 	void DirectionalLightShadowRenderer::ComputeFrustum(int cascadedLevel, Vector3f* output)
 	{
 		auto device = Device::GetInstance();
-		auto camera = (Camera3D*)(device->GetRenderState()->GetCamera());
+		auto camera = (Camera3D*)(device->GetRenderState()->GetCamera().Get());
 		Picker picker(camera);
 		int width = camera->GetViewport().Width();
 		int height = camera->GetViewport().Height();

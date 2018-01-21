@@ -11,10 +11,11 @@ namespace THEngine
 	{
 	private:
 		IDirect3DTexture9* texture = nullptr;
-		Image* texImage = nullptr;
+		Ptr<Image> texImage;    //used for device lost
 		int width, height;
 		int imageWidth, imageHeight;
 		float xScale, yScale;
+		String name;
 
 	protected:
 		TextureImpl();
@@ -39,9 +40,7 @@ namespace THEngine
 	class Texture : public Object
 	{
 	protected:
-		TextureImpl* texImpl = nullptr;
-
-		String name;
+		TextureImpl* texImpl = nullptr;  //don't use smart pointer here
 
 	public:
 		Texture();
@@ -51,7 +50,7 @@ namespace THEngine
 		inline int GetHeight() const { return texImpl->height; }
 		inline int GetImageWidth() const { return texImpl->imageWidth; }
 		inline int GetImageHeight() const { return texImpl->imageHeight; }
-		inline String GetName() const { return name; }
+		inline const String& GetName() const { return texImpl->name; }
 
 		inline bool SaveToFile(const String& path) const { return texImpl->SaveToFile(path); }
 
