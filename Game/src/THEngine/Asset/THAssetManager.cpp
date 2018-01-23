@@ -73,10 +73,7 @@ namespace THEngine
 	Ptr<Texture> AssetManager::CreateTextureFromFile(const String& filePath)
 	{
 		auto exceptionManager = ExceptionManager::GetInstance();
-		TextureImpl* p = (TextureImpl*)malloc(sizeof(TextureImpl));
-		new(p) TextureImpl();
-		Ptr<TextureImpl> texImpl = Ptr<TextureImpl>::Create_NoRetain(p);
-
+		auto texture = Ptr<Texture>::New();
 		auto device = Device::GetInstance()->GetD3DDevice();
 
 		Ptr<Image> image = Image::Load(filePath);
@@ -87,23 +84,23 @@ namespace THEngine
 			return nullptr;
 		}
 
-		texImpl->imageWidth = image->GetWidth();
-		texImpl->imageHeight = image->GetHeight();
+		texture->imageWidth = image->GetWidth();
+		texture->imageHeight = image->GetHeight();
 
 		int texWidth, texHeight;
 		texWidth = texHeight = 1;
-		while (texWidth < texImpl->imageWidth)
+		while (texWidth < texture->imageWidth)
 		{
 			texWidth *= 2;
 		}
-		while (texHeight < texImpl->imageHeight)
+		while (texHeight < texture->imageHeight)
 		{
 			texHeight *= 2;
 		}
-		texImpl->width = texWidth;
-		texImpl->height = texHeight;
+		texture->width = texWidth;
+		texture->height = texHeight;
 
-		if (FAILED(D3DXCreateTexture(device, texWidth, texHeight, 0, D3DUSAGE_AUTOGENMIPMAP, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &texImpl->texture)))
+		if (FAILED(D3DXCreateTexture(device, texWidth, texHeight, 0, D3DUSAGE_AUTOGENMIPMAP, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &texture->texture)))
 		{
 			exceptionManager->PushException(Ptr<Exception>::New(
 				((String)"无法加载纹理:" + filePath + "。原因是:\nD3DXCreateTexture失败。")));
@@ -111,20 +108,17 @@ namespace THEngine
 		}
 
 		IDirect3DSurface9* surface;
-		texImpl->texture->GetSurfaceLevel(0, &surface);
+		texture->texture->GetSurfaceLevel(0, &surface);
 		CopyImageToSurface(image, surface);
 
-		texImpl->xScale = (float)texImpl->imageWidth / texImpl->width;
-		texImpl->yScale = (float)texImpl->imageHeight / texImpl->height;
+		texture->xScale = (float)texture->imageWidth / texture->width;
+		texture->yScale = (float)texture->imageHeight / texture->height;
+		texture->name = filePath;
 
 		TH_LOCK(this->mutex)
 		{
-			textureList.Add(texImpl);
+			textureList.Add(texture);
 		}
-
-		Ptr<Texture> texture = Ptr<Texture>::New();
-		texture->texImpl = texImpl.Get();
-		texture->texImpl->name = filePath;
 
 		return texture;
 	}
@@ -132,11 +126,9 @@ namespace THEngine
 	Ptr<CubeMap> AssetManager::CreateCubeMapFromFile(const String& front, const String& back,
 		const String& left, const String& right, const String& top, const String& bottom)
 	{
-		CubeMapImpl* p = (CubeMapImpl*)malloc(sizeof(CubeMapImpl));
-		new(p) CubeMapImpl();
-		Ptr<CubeMapImpl> cubeMapImpl = Ptr<CubeMapImpl>::Create_NoRetain(p);
 		auto exceptionManager = ExceptionManager::GetInstance();
 		auto device = Device::GetInstance()->GetD3DDevice();
+		auto cubeMap = Ptr<CubeMap>::New();
 
 		Ptr<Image> frontImage = Image::Load(front);
 		Ptr<Image> backImage = Image::Load(back);
@@ -192,7 +184,7 @@ namespace THEngine
 		}
 
 		if (FAILED(D3DXCreateCubeTexture(device, imgWidth, 0, D3DUSAGE_AUTOGENMIPMAP, D3DFMT_A8R8G8B8,
-			D3DPOOL_MANAGED, &cubeMapImpl->cubeTexture)))
+			D3DPOOL_MANAGED, &cubeMap->cubeTexture)))
 		{
 			exceptionManager->PushException(Ptr<Exception>::New(
 				("无法加载立方体纹理。原因是:\nD3DXCreateCubeTexture失败。")));
@@ -207,12 +199,12 @@ namespace THEngine
 		IDirect3DSurface9* surfaceTop = nullptr;
 		IDirect3DSurface9* surfaceBottom = nullptr;
 
-		cubeMapImpl->cubeTexture->GetCubeMapSurface(D3DCUBEMAP_FACE_POSITIVE_Z, 0, &surfaceFront);
-		cubeMapImpl->cubeTexture->GetCubeMapSurface(D3DCUBEMAP_FACE_NEGATIVE_Z, 0, &surfaceBack);
-		cubeMapImpl->cubeTexture->GetCubeMapSurface(D3DCUBEMAP_FACE_POSITIVE_X, 0, &surfaceLeft);
-		cubeMapImpl->cubeTexture->GetCubeMapSurface(D3DCUBEMAP_FACE_NEGATIVE_X, 0, &surfaceRight);
-		cubeMapImpl->cubeTexture->GetCubeMapSurface(D3DCUBEMAP_FACE_POSITIVE_Y, 0, &surfaceTop);
-		cubeMapImpl->cubeTexture->GetCubeMapSurface(D3DCUBEMAP_FACE_NEGATIVE_Y, 0, &surfaceBottom);
+		cubeMap->cubeTexture->GetCubeMapSurface(D3DCUBEMAP_FACE_POSITIVE_Z, 0, &surfaceFront);
+		cubeMap->cubeTexture->GetCubeMapSurface(D3DCUBEMAP_FACE_NEGATIVE_Z, 0, &surfaceBack);
+		cubeMap->cubeTexture->GetCubeMapSurface(D3DCUBEMAP_FACE_POSITIVE_X, 0, &surfaceLeft);
+		cubeMap->cubeTexture->GetCubeMapSurface(D3DCUBEMAP_FACE_NEGATIVE_X, 0, &surfaceRight);
+		cubeMap->cubeTexture->GetCubeMapSurface(D3DCUBEMAP_FACE_POSITIVE_Y, 0, &surfaceTop);
+		cubeMap->cubeTexture->GetCubeMapSurface(D3DCUBEMAP_FACE_NEGATIVE_Y, 0, &surfaceBottom);
 
 		CopyImageToSurface(frontImage, surfaceFront);
 		CopyImageToSurface(backImage, surfaceBack);
@@ -223,72 +215,44 @@ namespace THEngine
 
 		TH_LOCK(this->mutex)
 		{
-			this->cubeMapList.Add(cubeMapImpl);
+			this->cubeMapList.Add(cubeMap);
 		}
 
-		Ptr<CubeMap> cubeMap = Ptr<CubeMap>::New();
-		cubeMap->impl = cubeMapImpl.Get();
 		return cubeMap;
 	}
 
 	Ptr<RenderTexture> AssetManager::CreateRenderTexture(int width, int height)
 	{
-		TextureImpl* p = (TextureImpl*)malloc(sizeof(TextureImpl));
-		new(p) TextureImpl();
-		Ptr<TextureImpl> texImpl = Ptr<TextureImpl>::Create_NoRetain(p);
+		auto texture = Ptr<RenderTexture>::New();
 		auto device = Device::GetInstance()->GetD3DDevice();
 
-		texImpl->width = width;
-		texImpl->height = height;
-		D3DXCreateTexture(device, width, height, 0, D3DUSAGE_AUTOGENMIPMAP | D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &texImpl->texture);
+		texture->width = width;
+		texture->height = height;
+		D3DXCreateTexture(device, width, height, 0, D3DUSAGE_AUTOGENMIPMAP | D3DUSAGE_RENDERTARGET, D3DFMT_A8R8G8B8, D3DPOOL_DEFAULT, &texture->texture);
 
 		TH_LOCK(this->mutex)
 		{
-			textureList.Add(texImpl);
+			textureList.Add(texture.Get());
 		}
-
-		Ptr<RenderTexture> texture = Ptr<RenderTexture>::New();
-		texture->texImpl = texImpl.Get();
 
 		return texture;
 	}
 
 	Ptr<FloatTexture> AssetManager::CreateFloatTexture(int width, int height)
 	{
-		TextureImpl* p = (TextureImpl*)malloc(sizeof(TextureImpl));
-		new(p) TextureImpl();
-		Ptr<TextureImpl> texImpl = Ptr<TextureImpl>::Create_NoRetain(p);
+		auto texture = Ptr<FloatTexture>::New();
 		auto device = Device::GetInstance()->GetD3DDevice();
 
-		texImpl->width = width;
-		texImpl->height = height;
-		D3DXCreateTexture(device, width, height, 0, D3DUSAGE_AUTOGENMIPMAP | D3DUSAGE_RENDERTARGET, D3DFMT_G32R32F, D3DPOOL_DEFAULT, &texImpl->texture);
+		texture->width = width;
+		texture->height = height;
+		D3DXCreateTexture(device, width, height, 0, D3DUSAGE_AUTOGENMIPMAP | D3DUSAGE_RENDERTARGET, D3DFMT_G32R32F, D3DPOOL_DEFAULT, &texture->texture);
 
 		TH_LOCK(this->mutex)
 		{
-			textureList.Add(texImpl);
+			textureList.Add(texture.Get());
 		}
-
-		Ptr<FloatTexture> texture = Ptr<FloatTexture>::New();
-	    texture->texImpl = texImpl.Get();
 
 		return texture;
-	}
-
-	void AssetManager::DestroyTexture(Ptr<TextureImpl> texture)
-	{
-		TH_LOCK(this->mutex)
-		{
- 			textureList.Remove(texture);
-		}
-	}
-
-	void AssetManager::DestroyCubeMap(Ptr<CubeMapImpl> cubeMap)
-	{
-		TH_LOCK(this->mutex)
-		{
-			cubeMapList.Remove(cubeMap);
-		}
 	}
 
 	void AssetManager::OnLostDevice()
@@ -318,6 +282,23 @@ namespace THEngine
 		while (iter2->HasNext())
 		{
 			iter2->Next()->OnResetDevice();
+		}
+	}
+
+	void AssetManager::Update()
+	{
+		for (auto iter = textureList.GetIterator(); iter->HasNext();)
+		{
+			auto texture = iter->Next();
+			if (texture->RefCount() == 2)  // one is refered here, anothre is refered inside the list.
+				iter->Remove();
+		}
+
+		for (auto iter = cubeMapList.GetIterator(); iter->HasNext();)
+		{
+			auto cubeMap = iter->Next();
+			if (cubeMap->RefCount() == 2) // one is refered here, anothre is refered inside the list.
+				iter->Remove();
 		}
 	}
 }

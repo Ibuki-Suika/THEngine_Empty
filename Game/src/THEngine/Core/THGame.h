@@ -26,7 +26,7 @@ namespace THEngine
 	class Game : public EngineObject
 	{
 	private:
-		Config* config = nullptr;
+		Config * config = nullptr;
 
 		static Ptr<Game> instance;
 		static std::mutex mtx_instance; //for GetInstance()

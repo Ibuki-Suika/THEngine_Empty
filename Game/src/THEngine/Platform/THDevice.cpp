@@ -310,7 +310,7 @@ namespace THEngine
 		if (texture != nullptr)
 		{
 			IDirect3DSurface9* surface = nullptr;
-			texture->texImpl->texture->GetSurfaceLevel(0, &surface);
+			texture->texture->GetSurfaceLevel(0, &surface);
 			device->SetRenderTarget(0, surface);
 		}
 		else

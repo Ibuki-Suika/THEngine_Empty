@@ -16,8 +16,8 @@ namespace THEngine
 		friend class Singleton<AssetManager>;
 	private:
 		ArrayList<Ptr<Shader>> shaderList;
-		ArrayList<Ptr<TextureImpl>> textureList;
-		ArrayList<Ptr<CubeMapImpl>> cubeMapList;
+		ArrayList<Ptr<Texture>> textureList;
+		ArrayList<Ptr<CubeMap>> cubeMapList;
 
 		std::mutex mutex;
 
@@ -26,7 +26,7 @@ namespace THEngine
 		void CopyImageToSurface(Ptr<Image> image, IDirect3DSurface9* surface);
 
 	public:
-	    bool Init();
+		bool Init();
 
 		Ptr<Shader> CreateShaderFromFile(const String& filePath);
 		void DestroyShader(Ptr<Shader> shader);
@@ -37,11 +37,9 @@ namespace THEngine
 		Ptr<RenderTexture> CreateRenderTexture(int width, int height);
 		Ptr<FloatTexture> CreateFloatTexture(int width, int height);
 
-		void DestroyTexture(Ptr<TextureImpl> texture);
-		void DestroyCubeMap(Ptr<CubeMapImpl> cubeMap);
-
 		void OnLostDevice();
 		void OnResetDevice();
+		void Update();
 	};
 }
 

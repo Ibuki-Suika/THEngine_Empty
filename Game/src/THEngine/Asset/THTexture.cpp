@@ -5,16 +5,19 @@
 
 namespace THEngine
 {
-	TextureImpl::TextureImpl()
+	Texture::Texture()
 	{
 	}
 
-	TextureImpl::~TextureImpl()
+	Texture::~Texture()
 	{
+#ifdef _DEBUG
+		THLog((String)"ÊÍ·Å" + this->name);
+#endif
 		TH_SAFE_RELEASE(texture);
 	}
 
-	bool TextureImpl::SaveToFile(const String& path)
+	bool Texture::SaveToFile(const String& path)
 	{
 		IDirect3DSurface9* surface;
 		texture->GetSurfaceLevel(0, &surface);
@@ -43,7 +46,7 @@ namespace THEngine
 		return true;
 	}
 
-	void TextureImpl::OnLostDevice()
+	void Texture::OnLostDevice()
 	{
 		texImage = Ptr<Image>::New(width, height);
 
@@ -69,7 +72,7 @@ namespace THEngine
 		TH_SAFE_RELEASE(texture);
 	}
 
-	void TextureImpl::OnResetDevice()
+	void Texture::OnResetDevice()
 	{
 		auto device = Device::GetInstance()->GetD3DDevice();
 
@@ -101,19 +104,8 @@ namespace THEngine
 		texture->UnlockRect(0);
 	}
 
-	void TextureImpl::GenerateMipmap()
+	void Texture::GenerateMipmap()
 	{
 		this->texture->GenerateMipSubLevels();
-	}
-
-	////////////////////////////////////////////
-	Texture::Texture()
-	{
-	}
-
-	Texture::~Texture()
-	{
-		auto assetManager = AssetManager::GetInstance();
-		assetManager->DestroyTexture(this->texImpl);
 	}
 }

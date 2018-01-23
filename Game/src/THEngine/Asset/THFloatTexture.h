@@ -8,8 +8,8 @@ namespace THEngine
 	class FloatTexture : public RenderTexture
 	{
 	public:
-		FloatTexture();
-		virtual ~FloatTexture();
+		FloatTexture() = default;
+		virtual ~FloatTexture() = default;
 	};
 }
 

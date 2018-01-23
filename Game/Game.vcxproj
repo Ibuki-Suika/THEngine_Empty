@@ -91,12 +91,9 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\stdafx.cpp" />
-    <ClCompile Include="src\THEngine\Asset\THAssetImpl.cpp" />
     <ClCompile Include="src\THEngine\Asset\THAssetManager.cpp" />
     <ClCompile Include="src\THEngine\Asset\THCubeMap.cpp" />
-    <ClCompile Include="src\THEngine\Asset\THFloatTexture.cpp" />
     <ClCompile Include="src\THEngine\Asset\THImage.cpp" />
-    <ClCompile Include="src\THEngine\Asset\THRenderTexture.cpp" />
     <ClCompile Include="src\THEngine\Asset\THShader.cpp" />
     <ClCompile Include="src\THEngine\Asset\THShaderStock.cpp" />
     <ClCompile Include="src\THEngine\Asset\THTexture.cpp" />

@@ -4,27 +4,27 @@
 #include <stdlib.h>
 
 #if _MSC_VER >= 1910
-#pragma comment(lib,"libjpeg/vs2017/jpeg.lib")
+	#pragma comment(lib,"libjpeg/vs2017/jpeg.lib")
 #elif
-#pragma comment(lib,"libjpeg/vs2013/jpeg.lib")
+	#pragma comment(lib,"libjpeg/vs2013/jpeg.lib")
 #endif
 
 #ifdef _DEBUG
-#if _MSC_VER >= 1910
-#pragma comment(lib,"libpng/vs2017/libpng16-debug.lib")
-#pragma comment(lib,"libpng/vs2017/zlib-debug.lib")
-#elif
-#pragma comment(lib,"libpng/vs2013/libpng16-debug.lib")
-#pragma comment(lib,"libpng/vs2013/zlib-debug.lib")
-#endif
+	#if _MSC_VER >= 1910
+		#pragma comment(lib,"libpng/vs2017/libpng16-debug.lib")
+		#pragma comment(lib,"libpng/vs2017/zlib-debug.lib")
+	#elif
+		#pragma comment(lib,"libpng/vs2013/libpng16-debug.lib")
+		#pragma comment(lib,"libpng/vs2013/zlib-debug.lib")
+	#endif
 #else
-#if _MSC_VER >= 1910
-#pragma comment(lib,"libpng/vs2017/libpng16-release.lib")
-#pragma comment(lib,"libpng/vs2017/zlib-release.lib")
-#elif
-#pragma comment(lib,"libpng/vs2013/libpng16-release.lib")
-#pragma comment(lib,"libpng/vs2013/zlib-release.lib")
-#endif
+	#if _MSC_VER >= 1910
+		#pragma comment(lib,"libpng/vs2017/libpng16-release.lib")
+		#pragma comment(lib,"libpng/vs2017/zlib-release.lib")
+	#elif
+		#pragma comment(lib,"libpng/vs2013/libpng16-release.lib")
+		#pragma comment(lib,"libpng/vs2013/zlib-release.lib")
+	#endif
 #endif
 
 using namespace THEngine;

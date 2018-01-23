@@ -5,11 +5,11 @@
 
 namespace THEngine
 {
-	class AssetImpl : public Object
+	class BaseAsset : public Object
 	{
 	protected:
-		AssetImpl();
-		virtual ~AssetImpl();
+		BaseAsset() = default;
+		virtual ~BaseAsset() = default;
 
 		virtual void OnLostDevice() = 0;
 		virtual void OnResetDevice() = 0;

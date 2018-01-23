@@ -156,16 +156,7 @@
     <ClCompile Include="src\THEngine\Math\THVector.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\THEngine\Asset\THAssetImpl.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="src\THEngine\Asset\THCubeMap.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\THEngine\Asset\THFloatTexture.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\THEngine\Asset\THRenderTexture.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\THEngine\Asset\THShaderStock.cpp">

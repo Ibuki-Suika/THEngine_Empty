@@ -23,6 +23,8 @@ namespace THEngine
 		void operator delete(void* ptr, void* place) { return ::operator delete(ptr, place); }
 		void operator delete[](void* ptr, void* place) { return ::operator delete(ptr, place); }
 
+		int RefCount() const { return this->refCount_; }
+
 	protected:
 		Object() = default;
 		Object(const Object& object);

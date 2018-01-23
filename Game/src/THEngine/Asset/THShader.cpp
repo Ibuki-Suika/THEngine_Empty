@@ -42,12 +42,12 @@ namespace THEngine
 
 	void Shader::SetTexture(char* textureName, Ptr<Texture> texture)
 	{
-		effect->SetTexture(textureName, texture->texImpl->texture);
+		effect->SetTexture(textureName, texture->texture);
 	}
 
 	void Shader::SetCubeMap(char* textureName, Ptr<CubeMap> cubeMap)
 	{
-		effect->SetTexture(textureName, cubeMap->impl->cubeTexture);
+		effect->SetTexture(textureName, cubeMap->cubeTexture);
 	}
 
 	void Shader::SetTechnique(char* technique)

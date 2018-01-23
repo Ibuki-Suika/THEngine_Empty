@@ -270,6 +270,8 @@ void Game::Update()
 	{
 		scene->Update();
 	}
+
+	assetManager->Update();
 }
 
 void Game::Draw()
