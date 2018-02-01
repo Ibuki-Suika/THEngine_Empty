@@ -4,86 +4,59 @@
 
 namespace THEngine
 {
-	ShaderStock* ShaderStock::instance = nullptr;
-
-	ShaderStock::ShaderStock()
-	{
-		ASSERT(instance == nullptr);
-	}
-
 	ShaderStock::~ShaderStock()
 	{
-		//TH_SAFE_RELEASE(this->shadowShader);
-		//TH_SAFE_RELEASE(this->skyBoxShader);
-	}
-	
-	ShaderStock* ShaderStock::GetInstance()
-	{
-		if (instance == nullptr)
-		{
-			instance = Create();
-		}
-		return instance;
 	}
 
-	ShaderStock* ShaderStock::Create()
+	bool ShaderStock::Init()
 	{
-		ASSERT(instance == nullptr);
-
-		ShaderStock* stock = new ShaderStock();
 		auto assetManager = AssetManager::GetInstance();
 		auto exceptionManager = ExceptionManager::GetInstance();
 
-		stock->shadowShader = assetManager->CreateShaderFromFile("fx/shadow.fx");
-		if (stock->shadowShader)
+		shadowShader = assetManager->CreateShaderFromFile("fx/shadow.fx");
+		if (shadowShader != nullptr)
 		{
-			stock->shadowShader->SetTechnique("Shadow");
+			shadowShader->SetTechnique("Shadow");
 		}
 		else
 		{
-			exceptionManager->PushException(new Exception("º”‘ÿshadow shader ß∞‹°£"));
-			delete stock;
-			return nullptr;
+			exceptionManager->PushException(Ptr<Exception>::New("º”‘ÿshadow shader ß∞‹°£"));
+			return false;
 		}
 
-		stock->skyBoxShader = Game::GetInstance()->GetAssetManager()->CreateShaderFromFile("fx/skybox.fx");
-		if (stock->skyBoxShader)
+		skyBoxShader = Game::GetInstance()->GetAssetManager()->CreateShaderFromFile("fx/skybox.fx");
+		if (skyBoxShader != nullptr)
 		{
-			stock->skyBoxShader->SetTechnique("SkyBox");
+			skyBoxShader->SetTechnique("SkyBox");
 		}
 		else
 		{
-			exceptionManager->PushException(new Exception("º”‘ÿskybox shader ß∞‹°£"));
-			delete stock;
-			return nullptr;
+			exceptionManager->PushException(Ptr<Exception>::New("º”‘ÿskybox shader ß∞‹°£"));
+			return false;
 		}
 
-		stock->meshShader = assetManager->CreateShaderFromFile("fx/mesh.fx");
-		if (stock->meshShader)
+		meshShader = assetManager->CreateShaderFromFile("fx/mesh.fx");
+		if (meshShader != nullptr)
 		{
-			stock->meshShader->SetTechnique("Mesh");
+			meshShader->SetTechnique("Mesh");
 		}
 		else
 		{
-			exceptionManager->PushException(new Exception("º”‘ÿmesh shader ß∞‹°£"));
-			delete stock;
-			return nullptr;
+			exceptionManager->PushException(Ptr<Exception>::New("º”‘ÿmesh shader ß∞‹°£"));
+			return false;
 		}
 
-		stock->spriteShader = Game::GetInstance()->GetAssetManager()->CreateShaderFromFile("fx/sprite.fx");
-		if (stock->spriteShader)
+		spriteShader = Game::GetInstance()->GetAssetManager()->CreateShaderFromFile("fx/sprite.fx");
+		if (spriteShader != nullptr)
 		{
-			stock->spriteShader->SetTechnique("Sprite");
+			spriteShader->SetTechnique("Sprite");
 		}
 		else
 		{
-			exceptionManager->PushException(new Exception("º”‘ÿsprite shader ß∞‹°£"));
-			delete stock;
-			return nullptr;
+			exceptionManager->PushException(Ptr<Exception>::New("º”‘ÿsprite shader ß∞‹°£"));
+			return false;
 		}
 
-		instance = stock;
-
-		return stock;
+		return true;
 	}
 }

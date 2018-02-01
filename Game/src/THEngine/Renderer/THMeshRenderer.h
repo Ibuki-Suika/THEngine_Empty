@@ -18,7 +18,7 @@ namespace THEngine
 		IDirect3DVertexBuffer9* vertexBuffer = nullptr;
 		IDirect3DIndexBuffer9* indexBuffer = nullptr;
 
-		Light* currentLight = nullptr;
+		Ptr<Light> currentLight;
 
 		bool isRenderingAmbient = false;
 
@@ -35,27 +35,29 @@ namespace THEngine
 
 		void DrawMesh(Mesh* mesh);
 
-	public:
+	protected:
 		MeshRenderer();
+
+	public:
 		virtual ~MeshRenderer();
 
-		virtual void Render(GameObject* object) override;
+		virtual void Render(Ptr<GameObject> object) override;
 
-		void RenderObjects(RenderQueue* renderQueue);
+		void RenderObjects(Ptr<RenderQueue> renderQueue);
 
 		inline void SetRenderAmbient(bool renderAmbient) { this->isRenderingAmbient = renderAmbient; }
-		inline void SetCurrentLight(Light* light) { this->currentLight = light; }
+		inline void SetCurrentLight(Ptr<Light> light) { this->currentLight = light; }
 
-		static MeshRenderer* Create();
+		static Ptr<MeshRenderer> Create();
 	};
 
 	//////////////////////////////////////////////
 	class DirectionalLightRenderer : public MeshRenderer
 	{
 	private:
-		ShadowMap* shadowMapNear = nullptr;
-		ShadowMap* shadowMapMid = nullptr;
-		ShadowMap* shadowMapFar = nullptr;
+		Ptr<ShadowMap> shadowMapNear;
+		Ptr<ShadowMap> shadowMapMid;
+		Ptr<ShadowMap> shadowMapFar;
 
 	private:
 		DirectionalLightRenderer();
@@ -63,13 +65,13 @@ namespace THEngine
 	public:
 		virtual ~DirectionalLightRenderer();
 
-		static DirectionalLightRenderer* Create();
+		static Ptr<DirectionalLightRenderer> Create();
 
 		virtual void ShadeWithLight(Mesh* mesh) override;
 
-		inline void SetShadowMapNear(ShadowMap* shadowMap) { this->shadowMapNear = shadowMap; }
-		inline void SetShadowMapMid(ShadowMap* shadowMap) { this->shadowMapMid = shadowMap; }
-		inline void SetShadowMapFar(ShadowMap* shadowMap) { this->shadowMapFar = shadowMap; }
+		inline void SetShadowMapNear(Ptr<ShadowMap> shadowMap) { this->shadowMapNear = shadowMap; }
+		inline void SetShadowMapMid(Ptr<ShadowMap> shadowMap) { this->shadowMapMid = shadowMap; }
+		inline void SetShadowMapFar(Ptr<ShadowMap> shadowMap) { this->shadowMapFar = shadowMap; }
 	};
 }
 

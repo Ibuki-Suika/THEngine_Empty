@@ -8,48 +8,47 @@
 
 namespace THEngine
 {
-	class Audio : public Object
+	class Audio : public Object, public Singleton<Audio>
 	{
-	private:
-		static Audio* instance;
+		friend class Singleton<Audio>;
 
+	private:
 		IXAudio2* xaudio = nullptr;
 		IXAudio2MasteringVoice* masterVoice = nullptr;
 
-		ArrayList<Sound*> soundList;
-		ArrayList<Music*> musicList;
+		ArrayList<Ptr<Sound>> soundList;
+		ArrayList<Ptr<Music>> musicList;
 
 		int volume = 20;    //Range from 0 to 100
 		int musicVolume = 50;
 
-		Music* currentMusic = nullptr;
-	private:
-		Audio();
-		bool Init();
+		Ptr<Music> currentMusic;
 
-		Sound* LoadWav(const String& filePath);
+	private:
+		Audio() = default;
+		Ptr<Sound> LoadWav(const String& filePath);
 
 	public:
 		virtual ~Audio();
 
-		static Audio* GetInstance();
+		bool Init();
 
-		Sound* CreateSound(const String& filePath);
-		Music* CreateMusic(const String& filePath);
+		Ptr<Sound> CreateSound(const String& filePath);
+		Ptr<Music> CreateMusic(const String& filePath);
 
-		inline void DestroySound(Sound* sound)
+		inline void DestroySound(Ptr<Sound> sound)
 		{
 			soundList.Remove(sound);
 		}
-		void DestroyMusic(Music* music);
+		void DestroyMusic(Ptr<Music> music);
 
 		inline void SetVolume(int volume) { this->volume = volume; }
 
-		void PlayMusic(Music* music);
-		void PlayMusic(Music* music, bool looped);
-		void StopMusic(Music* music);
+		void PlayMusic(Ptr<Music> music);
+		void PlayMusic(Ptr<Music> music, bool looped);
+		void StopMusic(Ptr<Music> music);
 
-		inline Music* GetCurrentMusic() const { return this->currentMusic; }
+		inline Ptr<Music> GetCurrentMusic() const { return this->currentMusic; }
 
 		void Update();
 

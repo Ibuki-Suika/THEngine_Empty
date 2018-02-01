@@ -2,29 +2,26 @@
 #define THEXCEPTIONMANAGER_H
 
 #include "THException.h"
+#include "THTemplates.h"
 
 namespace THEngine
 {
-	class ExceptionManager : public Object
+	class ExceptionManager : public Object, public Singleton<ExceptionManager>
 	{
+		friend class Singleton<ExceptionManager>;
 	private:
-		Exception* exception = nullptr;
-
-		static ExceptionManager* instance;
+		Ptr<Exception> exception = Ptr<Exception>::New();
 
 	private:
-		ExceptionManager();
+		ExceptionManager() = default;
 
 	public:
 		virtual ~ExceptionManager();
-
-		static ExceptionManager* GetInstance();
-
-		inline Exception* GetException() { return exception; }
+		inline Ptr<Exception> GetException() { return exception; }
 
 		void SetHandled();
 
-		void PushException(Exception* exception);
+		void PushException(Ptr<Exception> exception);
 	};
 }
 

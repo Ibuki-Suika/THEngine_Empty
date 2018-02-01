@@ -13,12 +13,12 @@ namespace THEngine
 	class Menu : public Layer, public IKeyDownListener
 	{
 	protected:
-		ArrayList<MenuItem*> itemList;
+		ArrayList<Ptr<MenuItem>> itemList;
 
 		int currentSelection = -1;
 
-		Sound* soundSelect = nullptr;
-		Sound* soundOK = nullptr;
+		Ptr<Sound> soundSelect;
+		Ptr<Sound> soundOK;
 
 	public:
 		Menu();
@@ -26,7 +26,7 @@ namespace THEngine
 		virtual ~Menu();
 
 		virtual void Update() override;
-		virtual bool OnKeyDown(EngineObject* sender, int key) override;
+		virtual bool OnKeyDown(Ptr<EngineObject> sender, int key) override;
 
 		virtual void OnStart() override;
 		virtual void OnDestroy() override;
@@ -39,16 +39,14 @@ namespace THEngine
 
 		void Select(int index, bool playSound);
 
-		void SetSelection(int index);
-
-		inline void SetSoundSelect(Sound* sound) { soundSelect = sound; }
-		inline void SetSoundOK(Sound* sound) { soundOK = sound; }
+		inline void SetSoundSelect(Ptr<Sound> sound) { soundSelect = sound; }
+		inline void SetSoundOK(Ptr<Sound> sound) { soundOK = sound; }
 
 		inline int GetItemCount() { return itemList.Size(); }
-		inline MenuItem* GetMenuItem(int index) { return itemList.Get(index); }
-		inline ArrayList<MenuItem*>* GetMenuItems() { return &this->itemList; }
+		inline Ptr<MenuItem> GetMenuItem(int index) { return itemList.Get(index); }
+		inline ArrayList<Ptr<MenuItem>>* GetMenuItems() { return &this->itemList; }
 
-		void AddMenuItem(MenuItem* menuItem);
+		void AddMenuItem(Ptr<MenuItem> menuItem);
 
 		inline void ClearItems()
 		{

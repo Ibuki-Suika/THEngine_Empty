@@ -5,17 +5,19 @@
 
 namespace THEngine
 {
-	TextureImpl::TextureImpl()
+	Texture::Texture()
 	{
 	}
 
-	TextureImpl::~TextureImpl()
+	Texture::~Texture()
 	{
+#ifdef _DEBUG
+		THLog((String)"释放" + this->name);
+#endif
 		TH_SAFE_RELEASE(texture);
-		TH_SAFE_RELEASE(texImage);
 	}
 
-	bool TextureImpl::SaveToFile(const String& path)
+	bool Texture::SaveToFile(const String& path)
 	{
 		IDirect3DSurface9* surface;
 		texture->GetSurfaceLevel(0, &surface);
@@ -44,9 +46,9 @@ namespace THEngine
 		return true;
 	}
 
-	void TextureImpl::OnLostDevice()
+	void Texture::OnLostDevice()
 	{
-		texImage = new Image(width, height);
+		texImage = Ptr<Image>::New(width, height);
 
 		D3DLOCKED_RECT rect;
 		texture->LockRect(0, &rect, nullptr, 0);
@@ -67,19 +69,16 @@ namespace THEngine
 		}
 
 		texture->UnlockRect(0);
-
-		texImage->Retain();
-
 		TH_SAFE_RELEASE(texture);
 	}
 
-	void TextureImpl::OnResetDevice()
+	void Texture::OnResetDevice()
 	{
 		auto device = Device::GetInstance()->GetD3DDevice();
 
 		if (FAILED(D3DXCreateTexture(device, width, height, 0, D3DUSAGE_AUTOGENMIPMAP, D3DFMT_A8R8G8B8, D3DPOOL_MANAGED, &texture)))
 		{
-			ExceptionManager::GetInstance()->PushException(new Exception(
+			ExceptionManager::GetInstance()->PushException(Ptr<Exception>::New(
 				((String)"纹理加载失败。原因是：\nD3DXCreateTexture失败。")));
 			return;
 		}
@@ -103,23 +102,10 @@ namespace THEngine
 		}
 
 		texture->UnlockRect(0);
-
-		TH_SAFE_RELEASE(texImage);
 	}
 
-	void TextureImpl::GenerateMipmap()
+	void Texture::GenerateMipmap()
 	{
 		this->texture->GenerateMipSubLevels();
-	}
-
-	////////////////////////////////////////////
-	Texture::Texture()
-	{
-	}
-
-	Texture::~Texture()
-	{
-		auto assetManager = AssetManager::GetInstance();
-		assetManager->DestroyTexture(this);
 	}
 }

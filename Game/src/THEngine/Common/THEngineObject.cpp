@@ -6,20 +6,17 @@ namespace THEngine
 {
 	EngineObject::EngineObject()
 	{
-		scheduler = new Scheduler();
-		scheduler->Retain();
+		scheduler = Ptr<Scheduler>::New();
 	}
 
 	EngineObject::EngineObject(const EngineObject& engineObject) : Object(engineObject)
 	{
 		paused = engineObject.paused;
-		scheduler = new Scheduler(*engineObject.scheduler);
-		scheduler->Retain();
+		scheduler = Ptr<Scheduler>::New(*engineObject.scheduler.Get());
 	}
 
 	EngineObject::~EngineObject()
 	{
-		TH_SAFE_RELEASE(scheduler);
 	}
 
 	void EngineObject::Update()
@@ -36,7 +33,7 @@ namespace THEngine
 	{
 	}
 
-	void EngineObject::OnLoad(AsyncInfo* info)
+	void EngineObject::OnLoad(Ptr<AsyncInfo> info)
 	{
 		if (loaded)
 		{

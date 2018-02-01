@@ -20,7 +20,7 @@ namespace THEngine
 		Image(int width, int height);
 		virtual ~Image();
 
-		static Image* Load(const String& filePath);
+		static Ptr<Image> Load(const String& filePath);
 		
 		inline int GetWidth() { return width; }
 		inline int GetHeight() { return height; }

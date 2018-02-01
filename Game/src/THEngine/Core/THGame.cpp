@@ -19,12 +19,17 @@
 
 using namespace THEngine;
 
-Game* Game::instance = nullptr;
+Ptr<Game> Game::instance;
+std::mutex Game::mtx_instance;
 
 Game::Game()
 {
-	ASSERT(instance == nullptr);
-	instance = this;
+	TH_LOCK(mtx_instance)
+	{
+		if (instance != nullptr)
+			throw std::logic_error("Trying to construct more than one instance of Game.");
+		instance = this;
+	}
 
 	app = nullptr;
 	scene = nullptr;
@@ -41,17 +46,11 @@ Game::Game()
 
 Game::~Game()
 {
-	ASSERT(this == instance);
-
 	OnShutdown();
 }
 
-Game* Game::GetInstance()
+Ptr<Game> Game::GetInstance()
 {
-	if (instance == NULL)
-	{
-		instance = new Game();
-	}
 	return instance;
 }
 
@@ -74,85 +73,76 @@ bool Game::CreateGame(const Config& config, int bigIcon, int smallIcon)
 
 	this->config = new Config(config);
 
-	app = new Application();
+	app = Application::GetInstance();
 	if (app->Init(*this->config, bigIcon, smallIcon) == false)
 	{
 		return false;
 	}
-	app->Retain();
 
-	assetManager = AssetManager::Create();
-	if (assetManager == nullptr)
+	assetManager = AssetManager::GetInstance();
+	if (assetManager->Init() == false)
 	{
 		auto exception = exceptionManager->GetException();
-		auto newException = new Exception((String)"创建AssetManager失败。原因是：\n" + exception->GetInfo());
+		auto newException = Ptr<Exception>::New((String)"创建AssetManager失败。原因是：\n" + exception->GetInfo());
 		exceptionManager->PushException(newException);
 		return false;
 	}
-	assetManager->Retain();
 
-	shaderStock = ShaderStock::Create();
-	if (shaderStock == nullptr)
+	shaderStock = ShaderStock::GetInstance();
+	if (shaderStock->Init() == false)
 	{
 		auto exception = exceptionManager->GetException();
-		auto newException = new Exception((String)"创建ShaderStock失败。原因是：\n" + exception->GetInfo());
+		auto newException = Ptr<Exception>::New((String)"创建ShaderStock失败。原因是：\n" + exception->GetInfo());
 		exceptionManager->PushException(newException);
 		return false;
 	}
-	shaderStock->Retain();
 
-	eventSystem = EventSystem::Create();
-	if (eventSystem == nullptr)
+	eventSystem = EventSystem::GetInstance();
+	if (eventSystem->Init() == false)
 	{
 		auto exception = exceptionManager->GetException();
-		auto newException = new Exception((String)"创建EventSystem失败。原因是：\n" + exception->GetInfo());
+		auto newException = Ptr<Exception>::New((String)"创建EventSystem失败。原因是：\n" + exception->GetInfo());
 		exceptionManager->PushException(newException);
 		return false;
 	}
-	eventSystem->Retain();
 
 	pipeline = RenderPipeline::Create();
 	if (pipeline == nullptr)
 	{
 		auto exception = exceptionManager->GetException();
-		auto newException = new Exception((String)"创建RenderPipleline失败。原因是：\n" + exception->GetInfo());
+		auto newException = Ptr<Exception>::New((String)"创建RenderPipleline失败。原因是：\n" + exception->GetInfo());
 		exceptionManager->PushException(newException);
 		return false;
 	}
-	pipeline->Retain();
 
 	defaultFont = Font::CreateFontFromFile("res/font/font-fps-opensans.png", "res/font/font-fps-opensans.txt");
 	if (defaultFont == nullptr)
 	{
 		auto exception = exceptionManager->GetException();
-		auto newException = new Exception((String)"创建defaultFont失败。原因是：\n" + exception->GetInfo());
+		auto newException = Ptr<Exception>::New((String)"创建defaultFont失败。原因是：\n" + exception->GetInfo());
 		exceptionManager->PushException(newException);
 		return false;
 	}
-	defaultFont->Retain();
 
-	input = Input::Create(app);
-	if (input == nullptr)
+	input = Input::GetInstance();
+	if (input->Init() == false)
 	{
 		auto exception = exceptionManager->GetException();
-		auto newException = new Exception((String)"初始化DirectInput失败。原因是：\n" + exception->GetInfo());
+		auto newException = Ptr<Exception>::New((String)"初始化DirectInput失败。原因是：\n" + exception->GetInfo());
 		exceptionManager->PushException(newException);
 		return false;
 	}
-	input->Retain();
 
 	audio = Audio::GetInstance();
-	if (audio == nullptr)
+	if (audio->Init() == false)
 	{
 		auto exception = exceptionManager->GetException();
-		auto newException = new Exception((String)"初始化DirectSound失败。原因是：\n" + exception->GetInfo());
+		auto newException = Ptr<Exception>::New((String)"初始化DirectSound失败。原因是：\n" + exception->GetInfo());
 		exceptionManager->PushException(newException);
 		return false;
 	}
-	audio->Retain();
 
 	dataStack = DataStack::GetInstance();
-	dataStack->Retain();
 
 	LARGE_INTEGER frequency;
 	QueryPerformanceFrequency(&frequency);
@@ -236,9 +226,9 @@ int Game::Run()
 				}
 			}
 
-			if (nextScene)
+			if (nextScene != nullptr)
 			{
-				if (scene)
+				if (scene != nullptr)
 				{
 					scene->OnDestroy();
 				}
@@ -276,10 +266,12 @@ void Game::Update()
 	eventSystem->Update();
 	audio->Update();
 
-	if (scene && scene->IsPaused() == false)
+	if (scene != nullptr && scene->IsPaused() == false)
 	{
 		scene->Update();
 	}
+
+	assetManager->Update();
 }
 
 void Game::Draw()
@@ -288,7 +280,7 @@ void Game::Draw()
 	device->ClearBuffer();
 
 	device->BeginRender();
-	if (scene)
+	if (scene != nullptr)
 	{
 		scene->Draw();
 	}
@@ -301,14 +293,12 @@ void Game::Draw()
 	device->SwapBuffers();
 }
 
-void Game::SetScene(Scene* scene)
+inline void Game::SetScene(Ptr<Scene> scene)
 {
-	TH_SAFE_RELEASE(this->scene);
-	scene->Retain();
 	this->scene = scene;
 }
 
-void Game::LoadScene(Scene* scene)
+void Game::LoadScene(Ptr<Scene> scene)
 {
 	nextScene = scene;
 	if (scene->loaded == false)
@@ -317,27 +307,27 @@ void Game::LoadScene(Scene* scene)
 	}
 }
 
-void Game::LoadSceneAsync(Scene* scene)
+void Game::LoadSceneAsync(Ptr<Scene> scene)
 {
 	if (scene->loaded)
 	{
 		return;
 	}
-	AsyncLoader::Load(scene, [this, scene]()
+	AsyncLoader::Load(scene.Get(), [this, scene]()
 	{
 		this->nextScene = scene;
 	});
 }
 
-void Game::LoadSceneAsync(Scene* scene, int delay, const std::function<void()>& onLoadCompleted)
+void Game::LoadSceneAsync(Ptr<Scene> scene, int delay, const std::function<void()>& onLoadCompleted)
 {
 	if (scene->loaded)
 	{
 		return;
 	}
-	AsyncLoader::Load(scene, [this, scene, delay, onLoadCompleted]()
+	AsyncLoader::Load(scene.Get(), [this, scene, delay, onLoadCompleted]()
 	{
-		FrameTimer* timer = new FrameTimer();
+		Ptr<FrameTimer> timer = Ptr<FrameTimer>::New();
 		timer->SetFrame(delay);
 		timer->run = [this, scene]() {
 			this->nextScene = scene;
@@ -347,7 +337,7 @@ void Game::LoadSceneAsync(Scene* scene, int delay, const std::function<void()>& 
 	});
 }
 
-AsyncInfo* Game::LoadSceneAsyncWithInfo(Scene* scene, bool autoChange)
+Ptr<AsyncInfo> Game::LoadSceneAsyncWithInfo(Ptr<Scene> scene, bool autoChange)
 {
 	if (scene->loaded)
 	{
@@ -355,12 +345,12 @@ AsyncInfo* Game::LoadSceneAsyncWithInfo(Scene* scene, bool autoChange)
 	}
 	if (autoChange)
 	{
-		return AsyncLoader::LoadWithInfo(scene, [this, scene]()
+		return AsyncLoader::LoadWithInfo(scene.Get(), [this, scene]()
 		{
 			this->nextScene = scene;
 		});
 	}
-	return AsyncLoader::LoadWithInfo(scene);
+	return AsyncLoader::LoadWithInfo(scene.Get());
 }
 
 void Game::CalcFPS()
@@ -395,23 +385,28 @@ void Game::Shutdown()
 {
 	OnShutdown();
 
-	TH_SAFE_RELEASE(pipeline);
-	TH_SAFE_RELEASE(scene);
-
-	TH_SAFE_RELEASE(eventSystem);
-	TH_SAFE_RELEASE(defaultFont);
-
-	TH_SAFE_RELEASE(input);
-	TH_SAFE_RELEASE(shaderStock);
-	TH_SAFE_RELEASE(assetManager);
-	TH_SAFE_RELEASE(audio);
-	TH_SAFE_RELEASE(app);
-	TH_SAFE_RELEASE(dataStack);
-
 	TH_SAFE_DELETE(config);
 
+	pipeline = nullptr;
+	scene = nullptr;
+	eventSystem = nullptr;
+	defaultFont = nullptr;
+	input = nullptr;
+	shaderStock = nullptr;
+	assetManager = nullptr;
+	audio = nullptr;
+	app = nullptr;
+	dataStack = nullptr;
+
+	EventSystem::DestroyInstance();
+	Input::DestroyInstance();
+	ShaderStock::DestroyInstance();
+	AssetManager::DestroyInstance();
+	Audio::DestroyInstance();
+	Application::DestroyInstance();
+	DataStack::DestroyInstance();
+
 	delete Logger::GetInstance();
-	delete exceptionManager;
 }
 
 void Game::OnShutdown()

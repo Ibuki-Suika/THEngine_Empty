@@ -1,10 +1,10 @@
-#include "THSpriteRenderer.h"
+#include <Asset\THShaderStock.h>
 #include <Core\THGame.h>
 #include <Core\THSprite.h>
-#include <Asset\THShaderStock.h>
 #include <Asset\THTexture.h>
 #include <Asset\THShader.h>
 #include <Platform\THDevice.h>
+#include "THSpriteRenderer.h"
 
 using namespace THEngine;
 
@@ -17,9 +17,11 @@ SpriteRenderer::~SpriteRenderer()
 	TH_SAFE_RELEASE(vb);
 }
 
-SpriteRenderer* SpriteRenderer::Create()
+Ptr<SpriteRenderer> SpriteRenderer::Create()
 {
-	SpriteRenderer* renderer = new SpriteRenderer();
+	SpriteRenderer* r = (SpriteRenderer*)malloc(sizeof(SpriteRenderer));
+	new(r) SpriteRenderer();
+	Ptr<SpriteRenderer> renderer = Ptr<SpriteRenderer>::Create_NoRetain(r);
 	if (renderer)
 	{
 		auto device = Device::GetInstance()->GetD3DDevice();
@@ -27,17 +29,16 @@ SpriteRenderer* SpriteRenderer::Create()
 			SPRITE_FVF, D3DPOOL_DEFAULT, &renderer->vb, NULL);
 		if (renderer->vb == nullptr)
 		{
-			ExceptionManager::GetInstance()->PushException(new Exception(("¥¥Ω®∂•µ„ª∫¥Ê ß∞‹°£")));
-			delete renderer;
+			ExceptionManager::GetInstance()->PushException(Ptr<Exception>::New(("¥¥Ω®∂•µ„ª∫¥Ê ß∞‹°£")));
 			return nullptr;
 		}
 	}
 	return renderer;
 }
 
-void SpriteRenderer::Render(GameObject* obj)
+void SpriteRenderer::Render(Ptr<GameObject> obj)
 {
-	auto sprite = dynamic_cast<Sprite*>(obj);
+	auto sprite = (Sprite*)obj.Get();
 	ASSERT(sprite != nullptr);
 
 	auto game = Game::GetInstance();

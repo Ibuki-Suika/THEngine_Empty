@@ -11,7 +11,7 @@ namespace THEngine
 	class Sprite : public GameObject
 	{
 	protected:
-		Texture* texture;
+		Ptr<Texture> texture;
 		Rect texRect;
 
 		Vector2f pivot;
@@ -40,9 +40,9 @@ namespace THEngine
 		virtual void Update() override;
 		virtual void Draw() override;
 
-		void SetTexture(Texture* texture);
+		void SetTexture(Ptr<Texture> texture);
 
-		inline Texture* GetTexture() const
+		inline Ptr<Texture> GetTexture() const
 		{
 			return this->texture;
 		}

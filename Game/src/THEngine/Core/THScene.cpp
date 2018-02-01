@@ -12,18 +12,18 @@ namespace THEngine
 		auto iter = layers.GetIterator();
 		while (iter->HasNext())
 		{
-			Layer* curLayer = iter->Next();
+			Ptr<Layer> curLayer = iter->Next();
 			curLayer->OnDestroy();
 			iter->Remove();
 		}
 	}
 
-	void Scene::AddLayer(Layer* layer)
+	void Scene::AddLayer(Ptr<Layer> layer)
 	{
 		auto iter = layers.GetIterator();
 		while (iter->HasNext())
 		{
-			Layer* curLayer = iter->Next();
+			Ptr<Layer> curLayer = iter->Next();
 			if (curLayer->order < layer->order)
 			{
 				iter->AddBefore(layer);
@@ -40,7 +40,7 @@ namespace THEngine
 		auto iter = layers.GetIterator();
 		while (iter->HasNext())
 		{
-			Layer* curLayer = iter->Next();
+			Ptr<Layer> curLayer = iter->Next();
 			if (curLayer->IsPaused() == false)
 			{
 				curLayer->Update();
@@ -53,20 +53,20 @@ namespace THEngine
 		auto iter = layers.GetIterator();
 		while (iter->HasNext())
 		{
-			Layer* curLayer = iter->Next();
+			Ptr<Layer> curLayer = iter->Next();
 			curLayer->Draw();
 			Device::GetInstance()->GetRenderState()->Clear();
 		}
 	}
 
-	void Scene::OnLoad(AsyncInfo* info)
+	void Scene::OnLoad(Ptr<AsyncInfo> info)
 	{
 		EngineObject::OnLoad(info);
 
 		auto iter = layers.GetIterator();
 		while (iter->HasNext())
 		{
-			Layer* curLayer = iter->Next();
+			Ptr<Layer> curLayer = iter->Next();
 			curLayer->OnLoad(info);
 		}
 	}

@@ -2,12 +2,15 @@
 #define TH_SYSTEM_CLOKC_H
 
 #include <Common\THObject.h>
+#include <Common\THTemplates.h>
 #include <Scheduling\THTime.h>
 
 namespace THEngine
 {
-	class SystemClock : public Object
+	class SystemClock : public Object, public Singleton<SystemClock>
 	{
+		friend class Singleton<SystemClock>;
+
 	private:
 		long long frequency = 0;
 
@@ -15,7 +18,6 @@ namespace THEngine
 		SystemClock();
 
 	public:
-		static SystemClock* GetInstance();
 		Time GetTime();
 	};
 }

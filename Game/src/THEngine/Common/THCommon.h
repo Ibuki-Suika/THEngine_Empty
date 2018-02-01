@@ -1,5 +1,5 @@
-#ifndef THCOMMON_H
-#define THCOMMON_H
+#ifndef TH_COMMON_H
+#define TH_COMMON_H
 
 #include <windows.h>
 #include <d3d9.h>
@@ -26,7 +26,9 @@
 #define DIRECTINPUT_VERSION   0x0800
 #endif
 
+#include "THTemplates.h"
 #include "THObject.h"
+#include "THPtr.h"
 #include "THEngineObject.h"
 #include "THDefine.h"
 #include "THString.h"

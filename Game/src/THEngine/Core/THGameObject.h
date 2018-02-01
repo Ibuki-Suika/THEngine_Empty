@@ -15,7 +15,7 @@ namespace THEngine
 	class GameObject : public EngineObject
 	{
 	protected:
-		LinkedList<GameObject*> children;
+		LinkedList<Ptr<GameObject>> children;
 		bool needRemove;
 		bool activated = false;
 
@@ -27,7 +27,7 @@ namespace THEngine
 
 		Quaternion rotation3D;
 
-		TweenManager* tweenManager = nullptr;
+		Ptr<TweenManager> tweenManager = nullptr;
 
 		Vector3f positionForRender = Vector3f(0.0f, 0.0f, 0.0f);
 
@@ -50,17 +50,17 @@ namespace THEngine
 
 		virtual void Update() override;
 		virtual void Draw() override;
-		virtual void OnLoad(AsyncInfo* info) override;
-		virtual Object* Clone() override;
+		virtual void OnLoad(Ptr<AsyncInfo> info) override;
+		virtual Ptr<Object> Clone() const override;
 
 		//virtual functions
 		virtual void OnDestroy();
 		virtual void DrawGeometry();
 		virtual void GetWorldMatrix(Matrix* world);
 
-		void AddChild(GameObject* obj);
+		void AddChild(Ptr<GameObject> obj);
 
-		void RemoveChild(GameObject* child);
+		void RemoveChild(Ptr<GameObject> child);
 
 		void RemoveChildAt(int index);
 
@@ -70,11 +70,11 @@ namespace THEngine
 
 		inline bool NeedRemove() { return needRemove; }
 
-		void AddTween(Tween* tween);
+		void AddTween(Ptr<Tween> tween);
 
 		void ClearTweens();
 
-		void KillTween(Tween* tween);
+		void KillTween(Ptr<Tween> tween);
 
 		inline void SetPosition(const Vector3f& position)
 		{

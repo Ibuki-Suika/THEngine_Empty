@@ -12,8 +12,8 @@ namespace THEngine
 	{
 	}
 
-	Object* FrameTimer::Clone()
+	Ptr<Object> FrameTimer::Clone() const
 	{
-		return new FrameTimer(*this);
+		return Ptr<FrameTimer>::New(*this).Get();
 	}
 }

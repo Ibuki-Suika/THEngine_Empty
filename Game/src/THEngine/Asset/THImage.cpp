@@ -52,11 +52,11 @@ Image::~Image()
 	data = nullptr;
 }
 
-Image* Image::Load(const String& filePath)
+Ptr<Image> Image::Load(const String& filePath)
 {
 	auto exceptionManager = ExceptionManager::GetInstance();
 
-	Image* image = new Image();
+	Ptr<Image> image = Ptr<Image>::New();
 	String ext = filePath.SubString(filePath.LastIndexOf(TCHAR('.')) + 1, filePath.GetLength());
 
 	if (ext == "jpg")
@@ -65,7 +65,7 @@ Image* Image::Load(const String& filePath)
 		{
 			auto exception = exceptionManager->GetException();
 			String message;
-			if (exception)
+			if (exception != nullptr)
 			{
 				message = (String)"读取图片失败。原因是:\n" + exception->GetInfo();
 			}
@@ -74,10 +74,9 @@ Image* Image::Load(const String& filePath)
 				message = (String)"读取图片失败。原因是:\n" + "未知异常";
 			}
 
-			auto newException = new Exception();
+			auto newException = Ptr<Exception>::New();
+			newException->SetInfo(message);
 			exceptionManager->PushException(newException);
-
-			delete image;
 			return nullptr;
 		}
 	}
@@ -87,7 +86,7 @@ Image* Image::Load(const String& filePath)
 		{
 			auto exception = exceptionManager->GetException();
 			String message;
-			if (exception)
+			if (exception != nullptr)
 			{
 				message = (String)"读取图片失败。原因是:\n" + exception->GetInfo();
 			}
@@ -96,18 +95,16 @@ Image* Image::Load(const String& filePath)
 				message = (String)"读取图片失败。原因是:\n" + "未知异常";
 			}
 
-			auto newException = new Exception();
+			auto newException = Ptr<Exception>::New();
+			newException->SetInfo(message);
 			exceptionManager->PushException(newException);
-
-			delete image;
 			return nullptr;
 		}
 	}
 	else
 	{
-		Exception* exception = new Exception("不支持的文件格式。");
+		Ptr<Exception> exception = Ptr<Exception>::New("不支持的文件格式。");
 		exceptionManager->PushException(exception);
-		delete image;
 		return nullptr;
 	}
 	return image;
@@ -123,7 +120,7 @@ bool Image::LoadJPG(const char* filePath)
 	FILE* infile;
 	if ((infile = fopen(filePath, "rb")) == NULL)
 	{
-		exceptionManager->PushException(new Exception("无法打开文件。"));
+		exceptionManager->PushException(Ptr<Exception>::New("无法打开文件。"));
 		return false;
 	}
 
@@ -175,7 +172,7 @@ bool Image::LoadPNG(const char* filePath)
 
 	if ((infile = fopen(filePath, "rb")) == NULL)
 	{
-		exceptionManager->PushException(new Exception("无法打开文件。"));
+		exceptionManager->PushException(Ptr<Exception>::New("无法打开文件。"));
 		return false;
 	}
 
@@ -188,7 +185,7 @@ bool Image::LoadPNG(const char* filePath)
 		png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 		fclose(infile);
 		/* If we get here, we had a problem reading the file */
-		exceptionManager->PushException(new Exception("无法读取文件内容。文件可能已损坏。"));
+		exceptionManager->PushException(Ptr<Exception>::New("无法读取文件内容。文件可能已损坏。"));
 		return false;
 	}
 

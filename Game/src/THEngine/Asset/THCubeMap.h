@@ -1,36 +1,21 @@
 #ifndef TH_CUBE_MAP_H
 #define TH_CUBE_MAP_H
 
-#include "THAssetImpl.h"
+#include "THBaseAsset.h"
 
 namespace THEngine
 {
-	class CubeMapImpl : public AssetImpl
+	class CubeMap : public BaseAsset
 	{
 	private:
-		IDirect3DCubeTexture9* cubeTexture = nullptr;
-
-	protected:
-		CubeMapImpl();
-
-	public:
-		virtual ~CubeMapImpl();
-
-		virtual void OnLostDevice() override;
-		virtual void OnResetDevice() override;
-
-		friend class AssetManager;
-		friend class Shader;
-	};
-
-	class CubeMap : public Object
-	{
-	private:
-		CubeMapImpl* impl = nullptr;
+		IDirect3DCubeTexture9 * cubeTexture = nullptr;
 
 	public:
 		CubeMap();
 		virtual ~CubeMap();
+
+		virtual void OnLostDevice() override;
+		virtual void OnResetDevice() override;
 
 		friend class AssetManager;
 		friend class Shader;

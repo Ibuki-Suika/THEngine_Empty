@@ -24,13 +24,15 @@ namespace THEngine
 
 		static const DWORD PARTICLE_FVF = D3DFVF_XYZ | D3DFVF_DIFFUSE | D3DFVF_TEX1;
 
-	public:
+	private:
 		Particle3DRenderer();
+
+	public:
 		virtual ~Particle3DRenderer();
 
-		virtual void Render(GameObject* obj) override;
+		virtual void Render(Ptr<GameObject> obj) override;
 
-		static Particle3DRenderer* Create();
+		static Ptr<Particle3DRenderer> Create();
 	};
 }
 

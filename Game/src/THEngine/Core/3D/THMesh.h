@@ -15,7 +15,7 @@ namespace THEngine
 		Vector4f specular = Vector4f(0, 0, 0, 0);
 		Vector4f emissive = Vector4f(0, 0, 0, 0);
 		float power = 0.0f;
-		Texture* texture = nullptr;
+		Ptr<Texture> texture = nullptr;
 	};
 
 	struct MeshVertex
@@ -51,9 +51,9 @@ namespace THEngine
 			D3DMesh(const D3DMesh& d3dMesh);
 			virtual ~D3DMesh();
 
-			static D3DMesh* LoadMesh(String filePath);
+			static Ptr<D3DMesh> LoadMesh(const String& filePath);
 
-			virtual Object* Clone() override;
+			virtual Ptr<Object> Clone() const override;
 
 			void DrawGeometry();
 
@@ -66,12 +66,12 @@ namespace THEngine
 		Material material;
 		PrimitiveType primitiveType = TRIANGLE_LIST;
 
-		D3DMesh* mesh = nullptr;
+		Ptr<D3DMesh> mesh = nullptr;
 		IDirect3DVertexBuffer9* vertexBuffer = nullptr;
 		IDirect3DIndexBuffer9* indexBuffer = nullptr;
 
 	private:
-		bool LoadFromX(String filePath);
+		bool LoadFromX(const String& filePath);
 
 	public:
 		Mesh();
@@ -81,10 +81,10 @@ namespace THEngine
 		virtual void Update() override;
 		virtual void Draw() override;
 		virtual void SendToRenderQueue() override;
-		virtual Object* Clone() override;
+		virtual Ptr<Object> Clone() const override;
 		virtual void DrawGeometry() override;
 
-		inline void SetMaterial(Material material) { this->material = material; }
+		inline void SetMaterial(const Material& material) { this->material = material; }
 
 		inline void SetPrimitiveType(PrimitiveType primitiveType) { this->primitiveType = primitiveType; }
 
@@ -92,7 +92,7 @@ namespace THEngine
 
 		void SetVertexData(void* data);
 
-		static Mesh* CreateMeshFromFile(String filePath);
+		static Ptr<Mesh> CreateMeshFromFile(const String& filePath);
 
 	
 

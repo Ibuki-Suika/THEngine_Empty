@@ -16,7 +16,7 @@ namespace THEngine
 		Exception(String info);
 		virtual ~Exception();
 
-		inline void SetInfo(String info) { this->info = info; }
+		inline void SetInfo(const String& info) { this->info = info; }
 		inline String GetInfo() { return info; }
 	};
 }

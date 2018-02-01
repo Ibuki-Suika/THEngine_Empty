@@ -18,7 +18,7 @@ namespace THEngine
 		bool shineEnabled = true;
 		bool vibrateEnabled = true;
 
-		Tween* tweenShine = nullptr;
+		Ptr<Tween> tweenShine = nullptr;
 		float shineTime = 15;
 		Vector3f shineColor = Vector3f(0.75f, 0.75f, 0.75f);
 
@@ -26,7 +26,7 @@ namespace THEngine
 		int twinkleTime = 30;
 		int twinkleInterval = 2;
 
-		Tween* tweenVibrate = nullptr;
+		Ptr<Tween> tweenVibrate = nullptr;
 		float vibrateTime = 3;
 		float xVibrateRange = 2;
 		float yVibrateRange = 2;

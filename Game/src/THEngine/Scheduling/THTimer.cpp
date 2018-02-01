@@ -2,8 +2,8 @@
 
 namespace THEngine
 {
-	Object* Timer::Clone()
+	Ptr<Object> Timer::Clone() const
 	{
-		return new Timer(*this);
+		return Ptr<Timer>::New(*this).Get();
 	}
 }

@@ -11,7 +11,7 @@ namespace THEngine
 	class Particle3D : public GameObject
 	{
 	protected:
-		Texture* texture;
+		Ptr<Texture> texture;
 		Rect texRect;
 		Vector2f pivot = Vector2f(0.5f, 0.5f);
 
@@ -35,28 +35,28 @@ namespace THEngine
 
 		virtual void SendToRenderQueue() override;
 
-		void RotateByAxis(Vector3f axis, float degree);
+		void RotateByAxis(const Vector3f& axis, float degree);
 
-		inline void SetTexture(Texture* texture)
+		inline void SetTexture(Ptr<Texture> texture)
 		{
 			this->texture = texture;
 		}
-		inline void SetTexRect(Rect rect) { this->texRect = rect; }
-		inline Rect GetTexRect() { return texRect; }
+		inline void SetTexRect(const Rect& rect) { this->texRect = rect; }
+		inline const Rect& GetTexRect() { return texRect; }
 
-		inline void SetPivot(Vector2f pivot) { this->pivot = pivot; }
+		inline void SetPivot(const Vector2f& pivot) { this->pivot = pivot; }
 
 		inline void SetFlipX(bool flipX) { this->flipX = flipX; }
 		inline void SetFlipY(bool flipY) { this->flipY = flipY; }
 
-		inline void SetDirection(Vector3f direction) { this->direction = direction.Normalize(); }
-		inline Vector3f GetDirection() { return direction; }
+		inline void SetDirection(const Vector3f& direction) { this->direction = direction.Normalize(); }
+		inline const Vector3f& GetDirection() { return direction; }
 
 		inline void SetSpeed(float speed) { this->speed = speed; }
 		inline float GetSpeed() { return speed; }
 
-		inline void SetRotatingAxis(Vector3f rotatingAxis) { this->rotatingAxis = rotatingAxis; }
-		inline Vector3f GetRotatingAxis() { return rotatingAxis; }
+		inline void SetRotatingAxis(const Vector3f& rotatingAxis) { this->rotatingAxis = rotatingAxis; }
+		inline const Vector3f& GetRotatingAxis() { return rotatingAxis; }
 
 		inline void SetRotatingSpeed(float rotatingSpeed) { this->rotatingSpeed = rotatingSpeed; }
 		inline float GetRotatingSpeed() { return rotatingSpeed; }

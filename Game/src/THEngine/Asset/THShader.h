@@ -39,9 +39,9 @@ namespace THEngine
 
 		inline UINT GetPassNum() { return passNum; }
 
-		void SetTexture(char* textureName, Texture* texture);
+		void SetTexture(char* textureName, Ptr<Texture> texture);
 
-		void SetCubeMap(char* textureName, CubeMap* cubeMap);
+		void SetCubeMap(char* textureName, Ptr<CubeMap> cubeMap);
 
 		inline void SetInt(char* name, int value)
 		{
@@ -63,7 +63,7 @@ namespace THEngine
 			effect->SetFloatArray(name, value, count);
 		}
 
-		inline void SetFloat4(char* name, const Vector4f vector)
+		inline void SetFloat4(char* name, const Vector4f& vector)
 		{
 			effect->SetFloatArray(name, vector._data, 4);
 		}

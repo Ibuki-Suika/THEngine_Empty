@@ -18,9 +18,7 @@ namespace THEngine
 	{
 		TweenUnit::OnStart();
 
-		TH_SAFE_RELEASE(tweener);
-		tweener = new EmptyTweener(duration);
-		tweener->Retain();
+		tweener = Ptr<EmptyTweener>::New(duration).Get();
 	}
 
 	/////////////////////////////////////////////////////
@@ -39,9 +37,7 @@ namespace THEngine
 	{
 		TweenUnit::OnStart();
 
-		TH_SAFE_RELEASE(tweener);
-		tweener = new Vector3fTweener(&object->position, object->position, position, duration, type);
-		tweener->Retain();
+		tweener = Ptr<Vector3fTweener>::New(&object->position, object->position, position, duration, type).Get();
 	}
 
 	////////////////////////////////////////////////////
@@ -60,9 +56,7 @@ namespace THEngine
 	{
 		TweenUnit::OnStart();
 
-		TH_SAFE_RELEASE(tweener);
-		tweener = new Vector3fTweener(&object->position, object->position, object->position + position, duration, type);
-		tweener->Retain();
+		tweener = Ptr<Vector3fTweener>::New(&object->position, object->position, object->position + position, duration, type).Get();
 	}
 
 	/////////////////////////////////////////////////////////
@@ -81,9 +75,7 @@ namespace THEngine
 	{
 		TweenUnit::OnStart();
 
-		TH_SAFE_RELEASE(tweener);
-		tweener = new FloatTweener(&object->alpha, object->alpha, alpha, duration, type);
-		tweener->Retain();
+		tweener = Ptr<FloatTweener>::New(&object->alpha, object->alpha, alpha, duration, type).Get();
 	}
 
 	/////////////////////////////////////////////////////////
@@ -101,9 +93,7 @@ namespace THEngine
 	{
 		TweenUnit::OnStart();
 
-		TH_SAFE_RELEASE(tweener);
-		tweener = new FloatTweener(&object->alpha, object->alpha, 0, duration, type);
-		tweener->Retain();
+		tweener = Ptr<FloatTweener>::New(&object->alpha, object->alpha, 0, duration, type).Get();
 	}
 
 	void FadeOut::OnFinish()
@@ -129,9 +119,7 @@ namespace THEngine
 	{
 		TweenUnit::OnStart();
 
-		TH_SAFE_RELEASE(tweener);
-		tweener = new Vector3fTweener(&object->color, object->color, color, duration, type);
-		tweener->Retain();
+		tweener = Ptr<Vector3fTweener>::New(&object->color, object->color, color, duration, type).Get();
 	}
 
 	///////////////////////////////////////////////////////////
@@ -150,9 +138,7 @@ namespace THEngine
 	{
 		TweenUnit::OnStart();
 
-		TH_SAFE_RELEASE(tweener);
-		tweener = new Vector3fTweener(&object->scale, object->scale, scale, duration, type);
-		tweener->Retain();
+		tweener = Ptr<Vector3fTweener>::New(&object->scale, object->scale, scale, duration, type).Get();
 	}
 
 	///////////////////////////////////////////////////////////
@@ -171,10 +157,8 @@ namespace THEngine
 	{
 		TweenUnit::OnStart();
 
-		TH_SAFE_RELEASE(tweener);
-		tweener = new FloatTweener(&((Sprite*)object)->rotation, ((Sprite*)object)->rotation,
-			((Sprite*)object)->rotation + rotation, duration, type);
-		tweener->Retain();
+		tweener = Ptr<FloatTweener>::New(&((Sprite*)object)->rotation, ((Sprite*)object)->rotation,
+			((Sprite*)object)->rotation + rotation, duration, type).Get();
 	}
 
 	///////////////////////////////////////////////////////////
@@ -193,9 +177,7 @@ namespace THEngine
 	{
 		TweenUnit::OnStart();
 
-		TH_SAFE_RELEASE(tweener);
-		tweener = new FloatTweener(&((Sprite*)object)->speed, ((Sprite*)object)->speed,
-			speed, duration, type);
-		tweener->Retain();
+		tweener = Ptr<FloatTweener>::New(&((Sprite*)object)->speed, ((Sprite*)object)->speed,
+			speed, duration, type).Get();
 	}
 }

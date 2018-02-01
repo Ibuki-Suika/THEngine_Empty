@@ -3,6 +3,7 @@
 
 #include "THTime.h"
 #include <Common\THObject.h>
+#include <Common\THPtr.h>
 #include <functional>
 
 namespace THEngine
@@ -22,7 +23,7 @@ namespace THEngine
 		Timer() = default;
 		virtual ~Timer() = default;
 
-		virtual Object* Clone() override;
+		virtual Ptr<Object> Clone() const override;
 
 		inline void Pause() { paused = true; }
 		inline void Resume() { paused = false; }

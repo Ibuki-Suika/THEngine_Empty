@@ -42,12 +42,12 @@ namespace THEngine
 
 		BlendMode blendMode;
 
-		Shader* shader = nullptr;
+		Ptr<Shader> shader;
 
-		RenderTexture* renderTarget = nullptr;
-		Surface* depthBuffer = nullptr;
-		Surface* colorBuffer = nullptr;
-		Camera* camera = nullptr;
+		Ptr<RenderTexture> renderTarget;
+		Ptr<Surface> depthBuffer;
+		Ptr<Surface> colorBuffer;;
+		Ptr<Camera> camera;
 
 		bool isDepthTestEnabled = true;
 
@@ -66,16 +66,16 @@ namespace THEngine
 		inline const Viewport& GetViewport() const { return this->viewport; }
 
 		const Vector4f& GetAmbientLight() const;
-		LinkedList<Light*>* GetLights() const;
+		LinkedList<Ptr<Light>>* GetLights() const;
 
-		inline Shader* GetCurrentShader() const { return this->shader; }
+		inline Ptr<Shader> GetCurrentShader() const { return this->shader; }
 
-		inline RenderTexture* GetRenderTarget() const { return this->renderTarget; }
+		inline Ptr<RenderTexture> GetRenderTarget() const { return this->renderTarget; }
 
-		inline Surface* GetDepthBuffer() const { return this->depthBuffer; }
-		inline Surface* GetColorBuffer() const { return this->colorBuffer; }
+		inline Ptr<Surface> GetDepthBuffer() const { return this->depthBuffer; }
+		inline Ptr<Surface> GetColorBuffer() const { return this->colorBuffer; }
 
-		inline Camera* GetCamera() const { return this->camera; }
+		inline Ptr<Camera> GetCamera() const { return this->camera; }
 
 		inline BlendMode GetBlendMode() const { return this->blendMode; }
 

@@ -7,11 +7,11 @@ namespace THEngine
 {
 	class IKeyDownListener;
 
-	class EventSystem : public Object
+	class EventSystem : public Object, public Singleton<EventSystem>
 	{
+		friend class Singleton<EventSystem>;
 	private:
 		EventSystem();
-		static EventSystem* instance;
 
 	private:
 		template<class T>
@@ -22,16 +22,13 @@ namespace THEngine
 			bool needRemove = false;
 		};
 
-
 	protected:
-		LinkedList<ListenerInfo<IKeyDownListener*>*> keyDownListeners;
+		LinkedList<Ptr<ListenerInfo<IKeyDownListener*>>> keyDownListeners;
 
 	public:
 		~EventSystem();
 
-		static EventSystem* Create();
-
-		static EventSystem* GetInstance();
+		bool Init();
 
 		void Update();
 

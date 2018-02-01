@@ -13,17 +13,17 @@ namespace THEngine
 	class Camera : public EngineObject
 	{
 	protected:
-		Layer* layer = nullptr;
+		Layer* layer = nullptr;   //no smart pointer, for avoiding cycling reference
 
 		Vector3f position;
 		String name = "";
-		RenderTexture* renderTexture = nullptr;
+		Ptr<RenderTexture> renderTexture = nullptr;
 		RectInt viewport = RectInt(0, 0, 0, 0);
 		float znear = 1;
 		float zfar = TH_MAX_Z;
 
 	protected:
-		void SetupViewport(Layer* layer);
+		void SetupViewport(Ptr<Layer> layer);
 
 	public:
 		Camera();
@@ -39,7 +39,7 @@ namespace THEngine
 		inline void SetName(const String& name) { this->name = name; }
 		inline String& GetName() { return name; }
 
-		void SetRenderTexture(RenderTexture* renderTexture);
+		void SetRenderTexture(Ptr<RenderTexture> renderTexture);
 
 		inline void SetViewport(const RectInt& rect) { this->viewport = rect; }
 		inline const RectInt& GetViewport() const { return this->viewport; }
@@ -52,7 +52,7 @@ namespace THEngine
 
 		virtual bool Is2D() = 0;
 
-		virtual void Render(Layer* layer);
+		virtual void Render(Ptr<Layer> layer);
 
 		friend class Layer;
 	};
@@ -75,7 +75,7 @@ namespace THEngine
 
 		virtual bool Is2D() override final { return true; }
 
-		virtual void Render(Layer* layer) override;
+		virtual void Render(Ptr<Layer> layer) override;
 	};
 
 	class Camera3D : public Camera
@@ -104,7 +104,7 @@ namespace THEngine
 
 		virtual bool Is2D() override final { return false; }
 
-		virtual void Render(Layer* layer) override;
+		virtual void Render(Ptr<Layer> layer) override;
 
 		friend class Layer;
 	};

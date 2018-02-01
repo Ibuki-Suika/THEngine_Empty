@@ -11,41 +11,35 @@ namespace THEngine
 	class RenderTexture;
 	class FloatTexture;
 
-	class AssetManager : public Object
+	class AssetManager : public Object, public Singleton<AssetManager>
 	{
+		friend class Singleton<AssetManager>;
 	private:
-		ArrayList<Shader*> shaderList;
-		ArrayList<TextureImpl*> textureList;
-		ArrayList<CubeMapImpl*> cubeMapList;
+		ArrayList<Ptr<Shader>> shaderList;
+		ArrayList<Ptr<Texture>> textureList;
+		ArrayList<Ptr<CubeMap>> cubeMapList;
 
 		std::mutex mutex;
 
 	private:
-		AssetManager();
-
-		void CopyImageToSurface(Image* image, IDirect3DSurface9* surface);
+		AssetManager() = default;
+		void CopyImageToSurface(Ptr<Image> image, IDirect3DSurface9* surface);
 
 	public:
-		static AssetManager* instance;
+		bool Init();
 
-		static AssetManager* Create();
+		Ptr<Shader> CreateShaderFromFile(const String& filePath);
+		void DestroyShader(Ptr<Shader> shader);
 
-		static AssetManager* GetInstance();
-
-		Shader* CreateShaderFromFile(String filePath);
-		void DestroyShader(Shader* shader);
-
-		Texture* CreateTextureFromFile(String filePath);
-		CubeMap* CreateCubeMapFromFile(const String& front, const String& back,
+		Ptr<Texture> CreateTextureFromFile(const String& filePath);
+		Ptr<CubeMap> CreateCubeMapFromFile(const String& front, const String& back,
 			const String& left, const String& right, const String& top, const String& bottom);
-		RenderTexture* CreateRenderTexture(int width, int height);
-		FloatTexture* CreateFloatTexture(int width, int height);
-
-		void DestroyTexture(Texture* texture);
-		void DestroyCubeMap(CubeMap* cubeMap);
+		Ptr<RenderTexture> CreateRenderTexture(int width, int height);
+		Ptr<FloatTexture> CreateFloatTexture(int width, int height);
 
 		void OnLostDevice();
 		void OnResetDevice();
+		void Update();
 	};
 }
 

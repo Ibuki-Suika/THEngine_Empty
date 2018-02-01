@@ -8,12 +8,12 @@
 using namespace THEngine;
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
-                     _In_opt_ HINSTANCE hPrevInstance,
-                     _In_ LPTSTR    lpCmdLine,
-                     _In_ int       nCmdShow)
+	_In_opt_ HINSTANCE hPrevInstance,
+	_In_ LPTSTR    lpCmdLine,
+	_In_ int       nCmdShow)
 {
-	Game game;
-	if (game.CreateGame(640, 480, false, "test", IDI_GAME, IDI_SMALL) == false)
+	auto game = Ptr<Game>::New();
+	if (game->CreateGame(640, 480, false, "test", IDI_GAME, IDI_SMALL) == false)
 	{
 		auto exceptionManager = ExceptionManager::GetInstance();
 		auto exception = exceptionManager->GetException();
@@ -21,5 +21,5 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 		return 0;
 	}
 
-	return game.Run();
+	return game->Run();
 }

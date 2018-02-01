@@ -7,7 +7,6 @@ using namespace THEngine;
 
 String::String()
 {
-
 }
 
 String::String(const TCHAR* str)
@@ -28,7 +27,7 @@ String::String(const char* str)
 	{
 		delete[] buffer;
 	}
-	buffer = new TCHAR[length + 1];	
+	buffer = new TCHAR[length + 1];
 	MultiByteToWideChar(CP_ACP, 0, str, -1, buffer, length + 1);
 }
 
@@ -89,20 +88,22 @@ String String::SubString(int start, int end) const
 	return ret;
 }
 
-String String::operator + (const String& str)
+String String::operator + (const String& str) const
 {
+	if (str.length == 0)
+		return *this;
 	int newLength = this->length + str.length;
 	TCHAR* newBuffer = new TCHAR[newLength + 1];
 	lstrcpy(newBuffer, buffer);
 	lstrcat(newBuffer, str.buffer);
-	
+
 	String ret;
 	ret.buffer = newBuffer;
 	ret.length = newLength;
 	return ret;
 }
 
-String String::operator + (int number)
+String String::operator + (int number) const
 {
 	std::string s;
 	std::strstream buf;
@@ -124,13 +125,13 @@ void String::operator = (const String& str)
 	lstrcpy(buffer, str.buffer);
 }
 
-TCHAR& String::operator[](int number)
+const TCHAR& String::operator[](int number) const
 {
 	ASSERT(number < length && number >= 0);
 	return buffer[number];
 }
 
-bool String::operator ==(const String& str)
+bool String::operator ==(const String& str) const
 {
 	if (length != str.length)
 	{

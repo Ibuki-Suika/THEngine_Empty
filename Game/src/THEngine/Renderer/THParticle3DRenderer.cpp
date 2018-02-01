@@ -16,9 +16,11 @@ Particle3DRenderer::~Particle3DRenderer()
 {
 }
 
-Particle3DRenderer* Particle3DRenderer::Create()
+Ptr<Particle3DRenderer> Particle3DRenderer::Create()
 {
-	Particle3DRenderer* renderer = new Particle3DRenderer();
+	Particle3DRenderer* r = (Particle3DRenderer*)malloc(sizeof(Particle3DRenderer));
+	new(r) Particle3DRenderer();
+	Ptr<Particle3DRenderer> renderer = Ptr<Particle3DRenderer>::Create_NoRetain(r);
 	if (renderer)
 	{
 		auto device = Device::GetInstance();
@@ -28,17 +30,16 @@ Particle3DRenderer* Particle3DRenderer::Create()
 			PARTICLE_FVF, D3DPOOL_DEFAULT, &renderer->vb, NULL);
 		if (renderer->vb == nullptr)
 		{
-			ExceptionManager::GetInstance()->PushException(new Exception(("¥¥Ω®∂•µ„ª∫¥Ê ß∞‹°£")));
-			delete renderer;
+			ExceptionManager::GetInstance()->PushException(Ptr<Exception>::New(("¥¥Ω®∂•µ„ª∫¥Ê ß∞‹°£")));
 			return nullptr;
 		}
 	}
 	return renderer;
 }
 
-void Particle3DRenderer::Render(GameObject* obj)
+void Particle3DRenderer::Render(Ptr<GameObject> obj)
 {
-	Particle3D* particle = (Particle3D*)obj;
+	Particle3D* particle = (Particle3D*)obj.Get();
 
 	auto spriteShader = ShaderStock::GetInstance()->GetSpriteShader();
 	auto device = Device::GetInstance();

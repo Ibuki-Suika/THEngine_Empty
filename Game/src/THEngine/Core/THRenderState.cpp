@@ -13,11 +13,6 @@ namespace THEngine
 
 	RenderState::~RenderState()
 	{
-		TH_SAFE_RELEASE(this->shader);
-		TH_SAFE_RELEASE(this->renderTarget);
-		TH_SAFE_RELEASE(this->depthBuffer);
-		TH_SAFE_RELEASE(this->colorBuffer);
-		TH_SAFE_RELEASE(this->camera);
 	}
 
 	const Vector4f& RenderState::GetAmbientLight() const
@@ -25,7 +20,7 @@ namespace THEngine
 		return environment->ambientLight;
 	}
 
-	LinkedList<Light*>* RenderState::GetLights() const
+	LinkedList<Ptr<Light>>* RenderState::GetLights() const
 	{
 		return &environment->lights;
 	}

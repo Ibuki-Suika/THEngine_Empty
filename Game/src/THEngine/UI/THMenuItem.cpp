@@ -27,12 +27,12 @@ namespace THEngine
 
 				if (selected && shineEnabled)
 				{
-					TweenSequence* sequence = new TweenSequence();
-					sequence->AddTween(new ColorTo(shineColor, shineTime, Tweener::EASE_OUT));
-					sequence->AddTween(new ColorTo(Vector3f(1.0f, 1.0f, 1.0f), shineTime, Tweener::EASE_OUT));
+					Ptr<TweenSequence> sequence = Ptr<TweenSequence>::New();
+					sequence->AddTween(Ptr<ColorTo>::New(shineColor, shineTime, Tweener::EASE_OUT).Get());
+					sequence->AddTween(Ptr<ColorTo>::New(Vector3f(1.0f, 1.0f, 1.0f), shineTime, Tweener::EASE_OUT).Get());
 					sequence->SetLooped(true);
 
-					tweenShine = sequence;
+					tweenShine = sequence.Get();
 					AddTween(tweenShine);
 				}
 
@@ -55,12 +55,12 @@ namespace THEngine
 
 		if (shineEnabled)
 		{
-			TweenSequence* sequence = new TweenSequence();
-			sequence->AddTween(new ColorTo(Vector3f(1.0f, 1.0f, 1.0f), shineTime, Tweener::EASE_OUT));
-			sequence->AddTween(new ColorTo(shineColor, shineTime, Tweener::EASE_OUT));
+			Ptr<TweenSequence> sequence = Ptr<TweenSequence>::New();
+			sequence->AddTween(Ptr<ColorTo>::New(Vector3f(1.0f, 1.0f, 1.0f), shineTime, Tweener::EASE_OUT).Get());
+			sequence->AddTween(Ptr<ColorTo>::New(shineColor, shineTime, Tweener::EASE_OUT).Get());
 			sequence->SetLooped(true);
 
-			tweenShine = sequence;
+			tweenShine = sequence.Get();
 			AddTween(tweenShine);
 		}
 
@@ -71,12 +71,12 @@ namespace THEngine
 			float y1 = Math::Random(0, yVibrateRange);
 			float y2 = Math::Random(0, yVibrateRange);
 
-			TweenSequence* sequence = new TweenSequence();
-			sequence->AddTween(new MoveBy(Vector3f(-x1, -y1, 0.0f), vibrateTime, Tweener::SIMPLE));
-			sequence->AddTween(new MoveBy(Vector3f(x1 + x2, y1 + y2, 0.0f), vibrateTime, Tweener::SIMPLE));
-			sequence->AddTween(new MoveBy(Vector3f(-x2, -y2, 0.0f), vibrateTime, Tweener::SIMPLE));
+			Ptr<TweenSequence> sequence = Ptr<TweenSequence>::New();
+			sequence->AddTween(Ptr<MoveBy>::New(Vector3f(-x1, -y1, 0.0f), vibrateTime, Tweener::SIMPLE).Get());
+			sequence->AddTween(Ptr<MoveBy>::New(Vector3f(x1 + x2, y1 + y2, 0.0f), vibrateTime, Tweener::SIMPLE).Get());
+			sequence->AddTween(Ptr<MoveBy>::New(Vector3f(-x2, -y2, 0.0f), vibrateTime, Tweener::SIMPLE).Get());
 
-			tweenVibrate = sequence;
+			tweenVibrate = sequence.Get();
 			AddTween(tweenVibrate);
 		}
 	}

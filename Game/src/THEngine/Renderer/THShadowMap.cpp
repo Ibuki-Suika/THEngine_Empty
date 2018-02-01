@@ -11,23 +11,21 @@ namespace THEngine
 
 	ShadowMap::~ShadowMap()
 	{
-		TH_SAFE_RELEASE(this->shadowMap);
 	}
 
-	ShadowMap* ShadowMap::Create(int width, int height)
+	Ptr<ShadowMap> ShadowMap::Create(int width, int height)
 	{
-		ShadowMap* shadowMap = new ShadowMap();
+		ShadowMap* r = (ShadowMap*)malloc(sizeof(ShadowMap));
+		new(r) ShadowMap();
+		Ptr<ShadowMap> shadowMap = Ptr<ShadowMap>::Create_NoRetain(r);
 		auto assetManager = AssetManager::GetInstance();
 
 		shadowMap->shadowMap = assetManager->CreateFloatTexture(width, height);
 		if (shadowMap->shadowMap == nullptr)
 		{
-			ExceptionManager::GetInstance()->PushException(new Exception(("创建浮点纹理失败。")));
-			delete shadowMap;
+			ExceptionManager::GetInstance()->PushException(Ptr<Exception>::New(("创建浮点纹理失败。")));
 			return nullptr;
 		}
-		shadowMap->shadowMap->Retain();
-
 		return shadowMap;
 	}
 }

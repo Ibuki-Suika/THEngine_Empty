@@ -3,8 +3,6 @@
 
 using namespace THEngine;
 
-EventSystem* EventSystem::instance = nullptr;
-
 EventSystem::EventSystem()
 {
 }
@@ -13,19 +11,9 @@ EventSystem::~EventSystem()
 {
 }
 
-EventSystem* EventSystem::Create()
+bool EventSystem::Init()
 {
-	if (instance == nullptr)
-	{
-		instance = new EventSystem();
-		return instance;
-	}
-	return nullptr;
-}
-
-EventSystem* EventSystem::GetInstance()
-{
-	return instance;
+	return true;
 }
 
 void EventSystem::Update()
@@ -65,7 +53,7 @@ void EventSystem::RegisterKeyDownListener(IKeyDownListener* listener)
 			return;
 		}
 	}
-	auto info = new ListenerInfo<IKeyDownListener*>();
+	auto info = Ptr<ListenerInfo<IKeyDownListener*>>::New();
 	info->listener = listener;
 	keyDownListeners.Add(info);
 }

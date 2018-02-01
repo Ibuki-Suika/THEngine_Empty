@@ -17,25 +17,24 @@ namespace THEngine
 		this->width = width;
 		this->height = height;
 
-		Camera2D* camera2D = new Camera2D();
+		Ptr<Camera2D> camera2D = Ptr<Camera2D>::New();
 		camera2D->SetWidth(width);
 		camera2D->SetHeight(height);
 		camera2D->SetPosition(Vector3f(width / 2, height / 2, 0));
 		camera2D->SetViewport(RectInt(0, this->width, 0, this->height));
-		AddCamera(camera2D);
+		AddCamera(camera2D.Get());
 	}
 
 	Layer::~Layer()
 	{
-		TH_SAFE_RELEASE(skyBox);
 	}
 
-	void Layer::AddChild(GameObject* obj)
+	void Layer::AddChild(Ptr<GameObject> obj)
 	{
 		rootNode.AddChild(obj);
 	}
 
-	void Layer::AddCamera(Camera* camera)
+	void Layer::AddCamera(Ptr<Camera> camera)
 	{
 		cameraList.Add(camera);
 		if (camera->viewport.left == 0 && camera->viewport.right == 0
@@ -46,7 +45,7 @@ namespace THEngine
 		}
 	}
 
-	Camera* Layer::GetCameraByName(const String& name)
+	Ptr<Camera> Layer::GetCameraByName(const String& name)
 	{
 		auto iter = cameraList.GetIterator();
 		while (iter->HasNext())
@@ -60,7 +59,7 @@ namespace THEngine
 		return nullptr;
 	}
 
-	Camera* Layer::GetCameraByIndex(int index)
+	Ptr<Camera> Layer::GetCameraByIndex(int index)
 	{
 		int i = 0;
 		auto iter = cameraList.GetIterator();
@@ -76,12 +75,12 @@ namespace THEngine
 		return nullptr;
 	}
 
-	Camera* Layer::GetFirstCamera()
+	Ptr<Camera> Layer::GetFirstCamera()
 	{
 		return GetCameraByIndex(0);
 	}
 
-	void Layer::SetCameraByName(Camera* camera, const String& name)
+	void Layer::SetCameraByName(Ptr<Camera> camera, const String& name)
 	{
 		auto iter = cameraList.GetIterator();
 		while (iter->HasNext())
@@ -102,7 +101,7 @@ namespace THEngine
 		}
 	}
 
-	void Layer::SetCameraByIndex(Camera* camera, int index)
+	void Layer::SetCameraByIndex(Ptr<Camera> camera, int index)
 	{
 		int i = 0;
 		auto iter = cameraList.GetIterator();
@@ -125,14 +124,14 @@ namespace THEngine
 		}
 	}
 
-	void Layer::SetFirstCamera(Camera* camera)
+	void Layer::SetFirstCamera(Ptr<Camera> camera)
 	{
 		SetCameraByIndex(camera, 0);
 	}
 
-	void Layer::SetSkyBox(CubeMap* skyBox)
+	void Layer::SetSkyBox(Ptr<CubeMap> skyBox)
 	{
-		TH_SET(this->skyBox, skyBox);
+		this->skyBox = skyBox;
 	}
 
 	void Layer::Update()
@@ -163,7 +162,7 @@ namespace THEngine
 		}
 	}
 
-	void Layer::OnLoad(AsyncInfo* info)
+	void Layer::OnLoad(Ptr<AsyncInfo> info)
 	{
 		EngineObject::OnLoad(info);
 

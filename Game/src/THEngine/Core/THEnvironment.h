@@ -21,7 +21,7 @@ namespace THEngine
 		Fog fog;
 
 		Vector4f ambientLight = Vector4f(0, 0, 0, 1);
-		LinkedList<Light*> lights;
+		LinkedList<Ptr<Light>> lights;
 
 		bool lightingEnable = false;
 

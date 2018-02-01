@@ -7,31 +7,27 @@ namespace THEngine
 {
 	class Shader;
 
-	class ShaderStock : public Object
+	class ShaderStock : public Object, public Singleton<ShaderStock>
 	{
+		friend class Singleton<ShaderStock>;
 	private:
-		static ShaderStock* instance;
-
-		Shader* skyBoxShader = nullptr;
-		Shader* shadowShader = nullptr;
-		Shader* meshShader = nullptr;
-		Shader* spriteShader = nullptr;
+		Ptr<Shader> skyBoxShader;
+		Ptr<Shader> shadowShader;
+		Ptr<Shader> meshShader;
+		Ptr<Shader> spriteShader;
 
 	private:
-		ShaderStock();
-		ShaderStock(const ShaderStock&) = delete;
-		ShaderStock& operator= (const ShaderStock&) = delete;
+		ShaderStock() = default;
 
 	public:
 		virtual ~ShaderStock();
 
-		static ShaderStock* GetInstance();
-		static ShaderStock* Create();
+		bool Init();
 
-		inline Shader* GetSkyBoxShader() const { return skyBoxShader; }
-		inline Shader* GetShadowShader() const { return shadowShader; }
-		inline Shader* GetSpriteShader() const { return spriteShader; }
-		inline Shader* GetMeshShader() const { return meshShader; }
+		inline Ptr<Shader> GetSkyBoxShader() const { return skyBoxShader; }
+		inline Ptr<Shader> GetShadowShader() const { return shadowShader; }
+		inline Ptr<Shader> GetSpriteShader() const { return spriteShader; }
+		inline Ptr<Shader> GetMeshShader() const { return meshShader; }
 	};
 }
 

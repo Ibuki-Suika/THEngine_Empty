@@ -11,22 +11,23 @@ namespace THEngine
 	struct Config;
 	class Device;
 
-	class Application : public Object
+	class Application : public Object, public Singleton<Application>
 	{
+		friend class Singleton<Application>;
+
 	private:
 		const Config* config = nullptr;
 		int bigIcon, smallIcon;
-		bool needQuit;
+		bool needQuit = false;
 		int returnCode;
 
 		HINSTANCE hInstance;
 		HWND hWnd;
 
-		Device* device = nullptr;
-
-		static Application* instance;
-
+		Ptr<Device> device;
 	private:
+		Application() = default;
+
 		static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
 		bool RegisterGameClass();
@@ -35,10 +36,7 @@ namespace THEngine
 
 		void OnKeyDown(int key);
 	public:
-		Application();
 		~Application();
-
-		static Application* GetInstance();
 
 		bool Init(const Config& config, int bigIcon, int smallIcon);
 		void DealWithMessage();
@@ -47,7 +45,7 @@ namespace THEngine
 		void PrintScreen();
 
 		inline HWND GetHwnd() const { return hWnd; }
-		inline Device* GetDevice() { return device; }
+		inline Ptr<Device> GetDevice() { return device; }
 
 		inline bool NeedQuit() { return needQuit; }
 

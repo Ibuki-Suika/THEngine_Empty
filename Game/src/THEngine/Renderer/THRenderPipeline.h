@@ -21,22 +21,22 @@ namespace THEngine
 	class RenderPipeline : public Object
 	{
 	private:
-		SpriteRenderer* spriteRenderer = nullptr;
-		Particle3DRenderer* particle3DRenderer = nullptr;
-		MeshRenderer* meshRenderer = nullptr;
-		SkyBoxRenderer* skyBoxRenderer = nullptr;
-		DirectionalLightShadowRenderer* dirShadowRenderer = nullptr;
-		DirectionalLightRenderer* dirLightRenderer = nullptr;
+		Ptr<SpriteRenderer> spriteRenderer;
+		Ptr<Particle3DRenderer> particle3DRenderer = nullptr;
+		Ptr<MeshRenderer> meshRenderer = nullptr;
+		Ptr<SkyBoxRenderer> skyBoxRenderer = nullptr;
+		Ptr<DirectionalLightShadowRenderer> dirShadowRenderer = nullptr;
+		Ptr<DirectionalLightRenderer> dirLightRenderer = nullptr;
 
-		SpriteRenderQueue* spriteQueue = nullptr;
-		NormalRenderQueue* normalQueue = nullptr;
+		Ptr<SpriteRenderQueue> spriteQueue = nullptr;
+		Ptr<NormalRenderQueue> normalQueue = nullptr;
 
 	private:
 		RenderPipeline();
 
 		void Render3D();
-		void RenderWithLight(Light* light);
-		void RenderShadowMap(Light* light);
+		void RenderWithLight(Ptr<Light> light);
+		void RenderShadowMap(Ptr<Light> light);
 
 	public:
 		enum RenderQueueType
@@ -48,16 +48,16 @@ namespace THEngine
 	public:
 		virtual ~RenderPipeline();
 
-		static RenderPipeline* Create();
+		static Ptr<RenderPipeline> Create();
 
 		void Render();
 
 		void SendToRenderQueue(RenderQueueType type, GameObject* obj);
 
-		inline SpriteRenderer* GetSpriteRenderer() const { return spriteRenderer; }
-		inline Particle3DRenderer* GetParticle3DRenderer() const { return particle3DRenderer; }
-		inline MeshRenderer* GetMeshRenderer() const { return meshRenderer; }
-		inline SkyBoxRenderer* GetSkyBoxRenderer() const { return skyBoxRenderer; }
+		inline Ptr<SpriteRenderer> GetSpriteRenderer() const { return spriteRenderer; }
+		inline Ptr<Particle3DRenderer> GetParticle3DRenderer() const { return particle3DRenderer; }
+		inline Ptr<MeshRenderer> GetMeshRenderer() const { return meshRenderer; }
+		inline Ptr<SkyBoxRenderer> GetSkyBoxRenderer() const { return skyBoxRenderer; }
 	};
 }
 

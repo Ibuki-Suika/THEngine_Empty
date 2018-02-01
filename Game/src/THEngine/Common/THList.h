@@ -13,17 +13,17 @@ namespace THEngine
 	template <class T> class LinkedList;
 	template <class T> class ArrayList;
 	template <class T> class ArrayListIterator;
-	
+
 	template <class T>
 	class Iterator
 	{
 	public:
 		virtual bool HasNext() = 0;
-		virtual T Next() = 0;
+		virtual T& Next() = 0;
 		virtual void Remove() = 0;
-		virtual void Set(T obj) = 0;
-		virtual void AddBefore(T obj) = 0;
-		virtual void AddAfter(T obj) = 0;
+		virtual void Set(const T& obj) = 0;
+		virtual void AddBefore(const T& obj) = 0;
+		virtual void AddAfter(const T& obj) = 0;
 	};
 
 	template <class T>
@@ -31,12 +31,12 @@ namespace THEngine
 	{
 	public:
 		virtual ~List() {}
-		virtual void Add(T obj) = 0;
-		virtual void AddAt(T obj, int index) = 0;
+		virtual void Add(const T& obj) = 0;
+		virtual void AddAt(const T& obj, int index) = 0;
 		virtual int Size() = 0;
-		virtual void Set(T obj, int index) = 0;
-		virtual T Get(int index) = 0;
-		virtual void Remove(T obj) = 0;
+		virtual void Set(const T& obj, int index) = 0;
+		virtual T& Get(int index) = 0;
+		virtual void Remove(const T& obj) = 0;
 		virtual void RemoveAt(int index) = 0;
 		virtual void Clear() = 0;
 		virtual Iterator<T>* GetIterator() = 0;
@@ -48,22 +48,7 @@ namespace THEngine
 		T obj;
 		ListNode<T>* next;
 		ListNode<T>* prior;
-
-		ListNode()
-		{
-			obj = nullptr;
-		}
-
-		~ListNode()
-		{
-			if (obj == nullptr)
-			{
-				return;
-			}
-			obj->Release();
-		}
 	};
-
 
 	template <class T>
 	class LinkedList : public List<T>
@@ -85,7 +70,7 @@ namespace THEngine
 			iter = NULL;
 		}
 
-		LinkedList(const LinkedList<T>& list) 
+		LinkedList(const LinkedList<T>& list)
 		{
 			head = new ListNode<T>();
 			head->prior = NULL;
@@ -100,7 +85,6 @@ namespace THEngine
 				p->next->prior = p;
 				p = p->next;
 				p->obj = q->obj;
-				p->obj->Retain();
 				p->next = nullptr;
 			}
 
@@ -123,7 +107,7 @@ namespace THEngine
 			delete head;
 		}
 
-		virtual void Add(T obj) override
+		virtual void Add(const T& obj) override
 		{
 			ListNode<T>* node = new ListNode<T>();
 			node->prior = rear;
@@ -132,10 +116,9 @@ namespace THEngine
 			rear->obj = obj;
 			rear->next = NULL;
 			size++;
-			obj->Retain();
 		}
 
-		virtual void AddAt(T obj, int index) override
+		virtual void AddAt(const T& obj, int index) override
 		{
 			ASSERT(index < size);
 			auto iter = (LinkedListIterator<T>*)GetIterator();
@@ -146,7 +129,6 @@ namespace THEngine
 				i++;
 			}
 			iter->AddAfter(obj);
-			obj->Retain();
 		}
 
 		virtual int Size() override
@@ -154,7 +136,7 @@ namespace THEngine
 			return size;
 		}
 
-		virtual void Set(T obj, int index) override
+		virtual void Set(const T& obj, int index) override
 		{
 			ASSERT(index < size);
 			auto iter = (LinkedListIterator<T>*)GetIterator();
@@ -168,7 +150,7 @@ namespace THEngine
 			iter->Set(obj);
 		}
 
-		virtual T Get(int index) override
+		virtual T& Get(int index) override
 		{
 			ASSERT(index < size);
 			auto iter = (LinkedListIterator<T>*)GetIterator();
@@ -181,7 +163,7 @@ namespace THEngine
 			return iter->Next();
 		}
 
-		virtual void Remove(T obj) override
+		virtual void Remove(const T& obj) override
 		{
 			auto p = head;
 
@@ -276,7 +258,7 @@ namespace THEngine
 			return pointer->next != NULL;
 		}
 
-		virtual T Next() override
+		virtual T& Next() override
 		{
 			ASSERT(pointer->next);
 			pointer = pointer->next;
@@ -299,16 +281,15 @@ namespace THEngine
 			delete pointer;
 			pointer = temp;
 			list->size--;
-			
 		}
 
-		virtual void Set(T obj) override
+		virtual void Set(const T& obj) override
 		{
 			ASSERT(pointer != list->head);
 			pointer->obj = obj;
 		}
 
-		virtual void AddBefore(T obj) override
+		virtual void AddBefore(const T& obj) override
 		{
 			ASSERT(pointer->prior);
 			auto node = new ListNode<T>();
@@ -318,10 +299,9 @@ namespace THEngine
 			pointer->prior->next = node;
 			pointer->prior = node;
 			list->size++;
-			obj->Retain();
 		}
 
-		virtual void AddAfter(T obj) override
+		virtual void AddAfter(const T& obj) override
 		{
 			auto node = new ListNode<T>();
 			node->prior = pointer;
@@ -333,12 +313,10 @@ namespace THEngine
 			}
 			pointer->next = node;
 			list->size++;
-			obj->Retain();
 		}
 
 		friend class LinkedListIterator<T>;
 	};
-	
 
 	template <class T>
 	class ArrayList : public List<T>
@@ -352,24 +330,9 @@ namespace THEngine
 
 		typedef bool CompareFunc(T a, T b);
 
-	private:
-		void ExpandCapacity()   //扩容
-		{
-			T* newElements = new T[capacity + baseSize];
-			capacity += baseSize;
-			if (elements)
-			{
-				//拷贝旧数据到新的存储区
-				memcpy(newElements, elements, size * sizeof(T*));
-				delete[] elements;
-			}
-			elements = newElements;
-		}
-
 	public:
 		ArrayList()
 		{
-
 		}
 
 		ArrayList(const ArrayList<T>& list)
@@ -378,12 +341,11 @@ namespace THEngine
 			capacity = list.capacity;
 			baseSize = list.baseSize;
 			iter = nullptr;
-			elements = new T[list.capacity];
+			elements = (T*)malloc(list.capacity);
 
 			for (int i = 0; i < size; i++)
 			{
 				elements[i] = list.elements[i];
-				elements[i]->Retain();
 			}
 		}
 
@@ -394,13 +356,10 @@ namespace THEngine
 
 		virtual ~ArrayList()
 		{
-			for (int i = 0; i < size; i++)
-			{
-				TH_SAFE_RELEASE(elements[i]);
-			}
+			Clear();
 			if (elements)
 			{
-				delete[] elements;
+				free(elements);
 			}
 			if (iter)
 			{
@@ -408,19 +367,18 @@ namespace THEngine
 			}
 		}
 
-		virtual void Add(T obj) override
+		virtual void Add(const T& obj) override
 		{
 			if (size >= capacity)
 			{
 				//容量不够，需要扩容
 				ExpandCapacity();
 			}
-			elements[size] = obj;
+			new(elements + size) T(obj);
 			size++;
-			obj->Retain();
 		}
 
-		virtual void AddAt(T obj, int index) override
+		virtual void AddAt(const T& obj, int index) override
 		{
 			ASSERT(index <= size);
 			if (size >= capacity)
@@ -428,13 +386,16 @@ namespace THEngine
 				//容量不够，需要扩容
 				ExpandCapacity();
 			}
-			for (int i = size; i > index; i--)
+			if (index < size)
 			{
-				elements[i] = elements[i - 1];
+				for (int i = size; i > index; i--)
+				{
+					new(elements + i) T(std::move(elements[i - 1]));
+					Destroy(elements[i - 1]);
+				}
 			}
-			elements[index] = obj;
+			new(elements + index) T(obj);
 			size++;
-			obj->Retain();
 		}
 
 		virtual int Size() override
@@ -442,30 +403,25 @@ namespace THEngine
 			return size;
 		}
 
-		virtual void Set(T obj, int index) override
+		virtual void Set(const T& obj, int index) override
 		{
 			ASSERT(index < size);
 			elements[index] = obj;
 		}
 
-		virtual T Get(int index) override
+		virtual T& Get(int index) override
 		{
 			ASSERT(index < size);
 			return elements[index];
 		}
 
-		virtual void Remove(T obj) override
+		virtual void Remove(const T& obj) override
 		{
 			for (int i = 0; i < size; i++)
 			{
 				if (elements[i] == obj)
 				{
-					for (int j = i; j < size - 1; j++)
-					{
-						elements[j] = elements[j + 1];
-					}
-					size--;
-					obj->Release();
+					RemoveAt(i);
 					return;
 				}
 			}
@@ -474,24 +430,24 @@ namespace THEngine
 		virtual void RemoveAt(int index) override
 		{
 			ASSERT(index < size);
-			elements[index]->Release();
-			for (int i = index; i < size - 1; i++)
+			Destroy(elements[index]);
+			if (index < size - 1)
 			{
-				elements[i] = elements[i + 1];
+				for (int i = index; i < size - 1; i++)
+				{
+					new (elements + i) T(std::move(elements[i + 1]));
+					Destroy(elements[i + 1]);
+				}
 			}
 			size--;
 		}
 
 		virtual void Clear() override
-		{		
-			auto iter = GetIterator();
-			while (iter->HasNext())
-			{
-				iter->Next()->Release();
-			}
+		{
+			for (int i = 0; i < size; i++)
+				Destroy(elements[i]);
 			size = 0;
 		}
-
 
 		inline void Sort(int begin, int end, CompareFunc compare)
 		{
@@ -513,6 +469,25 @@ namespace THEngine
 			this->baseSize = baseSize;
 		}
 
+	private:
+		void Destroy(const T& obj)
+		{
+			(&obj)->~T();
+		}
+
+		void ExpandCapacity()   //扩容
+		{
+			T* newElements = (T*)malloc((capacity + baseSize) * sizeof(T));
+			capacity += baseSize;
+			if (elements)
+			{
+				//拷贝旧数据到新的存储区
+				memcpy(newElements, elements, size * sizeof(T*));
+				free(elements);
+			}
+			elements = newElements;
+		}
+
 		friend class ArrayListIterator<T>;
 	};
 
@@ -532,7 +507,6 @@ namespace THEngine
 
 		virtual ~ArrayListIterator()
 		{
-
 		}
 
 		virtual bool HasNext() override
@@ -540,7 +514,7 @@ namespace THEngine
 			return pointer < list->size - 1;
 		}
 
-		virtual T Next() override
+		virtual T& Next() override
 		{
 			pointer++;
 			ASSERT(pointer < list->size);
@@ -550,27 +524,22 @@ namespace THEngine
 		virtual void Remove() override
 		{
 			ASSERT(pointer >= 0 && pointer < list->size);
-			list->elements[pointer]->Release();
-			for (int i = pointer; i < list->size - 1; i++)
-			{
-				list->elements[i] = list->elements[i + 1];
-			}
-			list->size--;
+			list->RemoveAt(pointer);
 		}
 
-		virtual void Set(T obj) override
+		virtual void Set(const T& obj) override
 		{
 			ASSERT(pointer >= 0 && pointer <= list->size);
 			list->elements[pointer] = obj;
 		}
 
-		virtual void AddBefore(T obj) override
+		virtual void AddBefore(const T& obj) override
 		{
 			ASSERT(pointer > 0);
 			list->AddAt(obj, pointer);
 		}
 
-		virtual void AddAfter(T obj) override
+		virtual void AddAfter(const T& obj) override
 		{
 			list->AddAt(obj, pointer + 1);
 		}

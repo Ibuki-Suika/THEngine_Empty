@@ -11,7 +11,7 @@ namespace THEngine
 	class Picker : public Object
 	{
 	private:
-		Camera3D* camera = nullptr;
+		Ptr<Camera3D> camera;
 		int width;
 		int height;
 
@@ -23,7 +23,7 @@ namespace THEngine
 
 	public:
 		Picker();
-		Picker(Camera3D* camera);
+		Picker(Ptr<Camera3D> camera);
 		virtual ~Picker();
 
 		Vector3f GenerateRay(int x, int y);

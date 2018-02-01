@@ -7,9 +7,9 @@ namespace THEngine
 	{
 	}
 
-	Picker::Picker(Camera3D* camera)
+	Picker::Picker(Ptr<Camera3D> camera)
 	{
-		TH_SET(this->camera, camera);
+		this->camera = camera;
 		this->width = camera->GetViewport().Width();
 		this->height = camera->GetViewport().Height();
 		this->front = (camera->GetLookAt() - camera->GetPosition()).Normalize();
@@ -21,7 +21,6 @@ namespace THEngine
 
 	Picker::~Picker()
 	{
-		TH_SAFE_RELEASE(this->camera);
 	}
 
 	Vector3f Picker::GenerateRay(int x, int y)

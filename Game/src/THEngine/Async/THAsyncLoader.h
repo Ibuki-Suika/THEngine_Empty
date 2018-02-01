@@ -16,18 +16,17 @@ namespace THEngine
 		AsyncLoader() = default;
 		virtual ~AsyncLoader() = default;
 
-		static void ThreadFuncLoad(AsyncInfo* info, EngineObject* object);
+		static void ThreadFuncLoad(Ptr<AsyncInfo> info, Ptr<EngineObject> object);
 
-		static void Load(EngineObject* object, const Callback& onCompleted, AsyncInfo* outputInfo);
-
+		static Ptr<AsyncInfo> _Load(Ptr<EngineObject> object, const Callback& onCompleted);
 	public:
-		static void Load(EngineObject* object);
+		static void Load(Ptr<EngineObject> object);
 
-		static void Load(EngineObject* object, const Callback& onCompleted);
+		static void Load(Ptr<EngineObject> object, const Callback& onCompleted);
 
-		static AsyncInfo* LoadWithInfo(EngineObject* object);
+		static Ptr<AsyncInfo> LoadWithInfo(Ptr<EngineObject> object);
 
-		static AsyncInfo* LoadWithInfo(EngineObject* object, const Callback& onCompleted);
+		static Ptr<AsyncInfo> LoadWithInfo(Ptr<EngineObject> object, const Callback& onCompleted);
 	};
 }
 

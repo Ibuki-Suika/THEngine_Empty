@@ -8,8 +8,8 @@ namespace THEngine
 	class RenderTexture : public Texture
 	{
 	public:
-		RenderTexture();
-		virtual ~RenderTexture();
+		RenderTexture() = default;
+		virtual ~RenderTexture() = default;
 	};
 }
 

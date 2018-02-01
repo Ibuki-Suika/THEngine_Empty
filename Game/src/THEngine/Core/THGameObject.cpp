@@ -8,8 +8,7 @@ namespace THEngine
 	{
 		needRemove = false;
 
-		tweenManager = new TweenManager();
-		tweenManager->Retain();
+		tweenManager = Ptr<TweenManager>::New();
 	}
 
 	GameObject::GameObject(const GameObject& object) : EngineObject(object), children(object.children)
@@ -20,41 +19,38 @@ namespace THEngine
 		scale = object.scale;
 		rotation3D = object.rotation3D;
 
-		tweenManager = new TweenManager(*object.tweenManager);
-		tweenManager->Retain();
-
+		tweenManager = Ptr<TweenManager>::New(*object.tweenManager.Get());
 		needRemove = false;
 	}
 
 	GameObject::~GameObject()
 	{
-		TH_SAFE_RELEASE(tweenManager);
 	}
 
-	Object* GameObject::Clone()
+	Ptr<Object> GameObject::Clone() const
 	{
-		return new GameObject(*this);
+		return Ptr<GameObject>::New(*this).Get();
 	}
 
-	void GameObject::OnLoad(AsyncInfo* info)
+	void GameObject::OnLoad(Ptr<AsyncInfo> info)
 	{
 		EngineObject::OnLoad(info);
 
-		Iterator<GameObject*>* iter = children.GetIterator();
+		Iterator<Ptr<GameObject>>* iter = children.GetIterator();
 		while (iter->HasNext())
 		{
 			iter->Next()->OnLoad(info);
 		}
 	}
 
-	void GameObject::AddChild(GameObject* obj)
+	void GameObject::AddChild(Ptr<GameObject> obj)
 	{
 		children.Add(obj);
 	}
 
 	void GameObject::Visit()
 	{
-		Iterator<GameObject*>* iter = children.GetIterator();
+		auto iter = children.GetIterator();
 
 		WriteRenderData();
 
@@ -99,7 +95,7 @@ namespace THEngine
 
 		tweenManager->Update();
 
-		Iterator<GameObject*>* iter = children.GetIterator();
+		auto iter = children.GetIterator();
 		while (iter->HasNext())
 		{
 			auto obj = iter->Next();
@@ -147,7 +143,7 @@ namespace THEngine
 		RemoveAllChildren();
 	}
 
-	void GameObject::RemoveChild(GameObject* child)
+	void GameObject::RemoveChild(Ptr<GameObject> child)
 	{
 		auto iter = children.GetIterator();
 		while (iter->HasNext())
@@ -178,13 +174,13 @@ namespace THEngine
 		}
 	}
 
-	void GameObject::AddTween(Tween* tween)
+	void GameObject::AddTween(Ptr<Tween> tween)
 	{
-		tween->Bind(this);
 		tweenManager->AddTween(tween);
+		tween->Bind(this);
 	}
 
-	void GameObject::KillTween(Tween* tween)
+	void GameObject::KillTween(Ptr<Tween> tween)
 	{
 		tweenManager->KillTween(tween);
 	}

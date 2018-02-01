@@ -8,25 +8,10 @@
 
 namespace THEngine
 {
-	Device* Device::instance = nullptr;
-
-	Device::Device()
-	{
-		ASSERT(instance == nullptr);
-		d3d = NULL;
-		device = NULL;
-		instance = this;
-	}
-
 	Device::~Device()
 	{
 		TH_SAFE_RELEASE(d3d);
 		TH_SAFE_RELEASE(device);
-	}
-
-	Device* Device::GetInstance()
-	{
-		return instance;
 	}
 
 	bool Device::Init(const Config* config)
@@ -152,7 +137,7 @@ namespace THEngine
 
 		if (mainVSVersion < 2)
 		{
-			exceptionManager->PushException(new Exception((String)"当前显卡支持的顶点着色器版本过低。\n"
+			exceptionManager->PushException(Ptr<Exception>::New((String)"当前显卡支持的顶点着色器版本过低。\n"
 				"当前支持版本：" + mainVSVersion + "." + subVSVersion
 				+ "   最低需要版本：2.0"));
 			return false;
@@ -160,7 +145,7 @@ namespace THEngine
 
 		if (mainPSVersion < 2)
 		{
-			exceptionManager->PushException(new Exception((String)"当前显卡支持的像素着色器版本过低。\n"
+			exceptionManager->PushException(Ptr<Exception>::New((String)"当前显卡支持的像素着色器版本过低。\n"
 				"当前支持版本：" + mainPSVersion + "." + subPSVersion
 				+ "   最低需要版本：2.0"));
 			return false;
@@ -172,7 +157,7 @@ namespace THEngine
 		if (FAILED(d3d->CheckDeviceFormat(D3DADAPTER_DEFAULT, deviceType, mode.Format, D3DUSAGE_RENDERTARGET,
 			D3DRTYPE_TEXTURE, D3DFMT_R32F)))
 		{
-			exceptionManager->PushException(new Exception("您的显卡不支持32位浮点纹理。"));
+			exceptionManager->PushException(Ptr<Exception>::New("您的显卡不支持32位浮点纹理。"));
 			return false;
 		}
 
@@ -258,13 +243,11 @@ namespace THEngine
 
 	void Device::InitRenderState()
 	{
-		this->renderState.depthBuffer = new Surface();
-		this->device->GetDepthStencilSurface(&this->renderState.depthBuffer->surface);
-		this->renderState.depthBuffer->Retain();
+		this->renderState->depthBuffer = Ptr<Surface>::New();
+		this->device->GetDepthStencilSurface(&this->renderState->depthBuffer->surface);
 
-		this->renderState.colorBuffer = new Surface();
-		this->device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &this->renderState.colorBuffer->surface);
-		this->renderState.colorBuffer->Retain();
+		this->renderState->colorBuffer = Ptr<Surface>::New();
+		this->device->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &this->renderState->colorBuffer->surface);
 	}
 
 	void Device::ResetDeviceState()
@@ -289,9 +272,9 @@ namespace THEngine
 
 	void Device::EndRender()
 	{
-		if (renderState.shader)
+		if (renderState->shader != nullptr)
 		{
-			renderState.shader->End();
+			renderState->shader->End();
 		}
 		device->EndScene();
 	}
@@ -305,29 +288,29 @@ namespace THEngine
 
 	void Device::SetViewport(int left, int top, int width, int height)
 	{
-		renderState.viewport.x = left;
-		renderState.viewport.y = top;
-		renderState.viewport.width = width;
-		renderState.viewport.height = height;
-		renderState.viewport.minZ = 0;
-		renderState.viewport.maxZ = 1;
+		renderState->viewport.x = left;
+		renderState->viewport.y = top;
+		renderState->viewport.width = width;
+		renderState->viewport.height = height;
+		renderState->viewport.minZ = 0;
+		renderState->viewport.maxZ = 1;
 
 		D3DVIEWPORT9 viewport;
-		viewport.X = renderState.viewport.x;
-		viewport.Y = renderState.viewport.y;
-		viewport.Width = renderState.viewport.width;
-		viewport.Height = renderState.viewport.height;
-		viewport.MinZ = renderState.viewport.minZ;
-		viewport.MaxZ = renderState.viewport.maxZ;
+		viewport.X = renderState->viewport.x;
+		viewport.Y = renderState->viewport.y;
+		viewport.Width = renderState->viewport.width;
+		viewport.Height = renderState->viewport.height;
+		viewport.MinZ = renderState->viewport.minZ;
+		viewport.MaxZ = renderState->viewport.maxZ;
 		device->SetViewport(&viewport);
 	}
 
-	void Device::SetRenderTarget(RenderTexture* texture)
+	void Device::SetRenderTarget(Ptr<RenderTexture> texture)
 	{
-		if (texture)
+		if (texture != nullptr)
 		{
 			IDirect3DSurface9* surface = nullptr;
-			texture->texImpl->texture->GetSurfaceLevel(0, &surface);
+			texture->texture->GetSurfaceLevel(0, &surface);
 			device->SetRenderTarget(0, surface);
 		}
 		else
@@ -337,22 +320,21 @@ namespace THEngine
 			device->SetRenderTarget(0, surface);
 		}
 
-		TH_SET(renderState.renderTarget, texture);
+		renderState->renderTarget = texture;
 	}
 
-	void Device::SetDepthBuffer(Surface* depthBuffer)
+	void Device::SetDepthBuffer(Ptr<Surface> depthBuffer)
 	{
-		TH_SET(this->renderState.depthBuffer, depthBuffer);
+		this->renderState->depthBuffer = depthBuffer;
 		this->device->SetDepthStencilSurface(depthBuffer->surface);
 	}
 
-	Surface* Device::CreateDepthBuffer(int width, int height)
+	Ptr<Surface> Device::CreateDepthBuffer(int width, int height)
 	{
-		Surface* depthBuffer = new Surface();
+		Ptr<Surface> depthBuffer = Ptr<Surface>::New();
 		if (FAILED(this->device->CreateDepthStencilSurface(width, height, this->d3dpp.AutoDepthStencilFormat,
 			this->d3dpp.MultiSampleType, this->d3dpp.MultiSampleQuality, TRUE, &depthBuffer->surface, nullptr)))
 		{
-			delete depthBuffer;
 			return nullptr;
 		}
 		return depthBuffer;
@@ -360,7 +342,7 @@ namespace THEngine
 
 	void Device::SetBlendMode(BlendMode blendMode)
 	{
-		this->renderState.blendMode = blendMode;
+		this->renderState->blendMode = blendMode;
 		switch (blendMode)
 		{
 		case BlendMode::ALPHA_BLEND:
@@ -375,7 +357,7 @@ namespace THEngine
 
 	void Device::EnableDepthTest(bool value)
 	{
-		this->renderState.isDepthTestEnabled = value;
+		this->renderState->isDepthTestEnabled = value;
 		this->device->SetRenderState(D3DRS_ZENABLE, value);
 	}
 

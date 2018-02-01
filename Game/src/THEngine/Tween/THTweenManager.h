@@ -9,7 +9,7 @@ namespace THEngine
 	class TweenManager : public Object
 	{
 	private:
-		LinkedList<Tween*> tweenList;
+		LinkedList<Ptr<Tween>> tweenList;
 		
 	public:
 		TweenManager();
@@ -18,9 +18,9 @@ namespace THEngine
 
 		void Update();
 
-		inline void AddTween(Tween* tween) { tweenList.Add(tween); }
+		inline void AddTween(Ptr<Tween> tween) { tweenList.Add(tween); }
 
-		inline void KillTween(Tween* tween) { tweenList.Remove(tween); }
+		inline void KillTween(Ptr<Tween> tween) { tweenList.Remove(tween); }
 
 		inline void ClearTweens() { tweenList.Clear(); }
 	};

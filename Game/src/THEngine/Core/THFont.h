@@ -12,7 +12,7 @@ namespace THEngine
 	class Font : public Object
 	{
 	private:
-		Texture* texture;
+		Ptr<Texture> texture;
 		std::map<char, Rect> charset;
 		//HashMap<char, Rect> charset;
 
@@ -20,9 +20,9 @@ namespace THEngine
 		Font();
 		virtual ~Font();
 		
-		static Font* CreateFontFromFile(String ImagePath,String txtPath);
+		static Ptr<Font> CreateFontFromFile(const String& ImagePath, const String& txtPath);
 
-		void DrawString(String text,float x,float y);
+		void DrawString(const String& text,float x,float y);
 	};
 }
 

@@ -20,8 +20,10 @@ namespace THEngine
 			D3DCOLOR color;
 			float u, v;
 			SpriteVertex() {}
-			SpriteVertex(float x, float y, float z, float r, float g, float b, float a, float u, float v) 
-				:x(x), y(y), z(z), color(D3DCOLOR_ARGB((int)(255 * a), (int)(255 * r), (int)(255 * g), (int)(255 * b))), u(u), v(v) {}
+			SpriteVertex(float x, float y, float z, float r, float g, float b, float a, float u, float v)
+				:x(x), y(y), z(z), color(D3DCOLOR_ARGB((int)(255 * a), (int)(255 * r), (int)(255 * g), (int)(255 * b))), u(u), v(v)
+			{
+			}
 		};
 
 		/*struct SpriteBatch
@@ -31,7 +33,7 @@ namespace THEngine
 			Texture* texture;
 		};*/
 
-		IDirect3DVertexBuffer9* vb;
+		IDirect3DVertexBuffer9* vb = nullptr;
 		//SpriteBatch spriteBatch;
 
 	private:
@@ -40,13 +42,14 @@ namespace THEngine
 		void SetupVertices(Sprite* sprite, const Matrix& transform);
 		void FlushBatch();*/
 
-	public:
+	private:
 		SpriteRenderer();
 		virtual ~SpriteRenderer();
 
-		static SpriteRenderer* Create();
+	public:
+		static Ptr<SpriteRenderer> Create();
 
-		virtual void Render(GameObject* obj) override;
+		virtual void Render(Ptr<GameObject> obj) override;
 
 		friend class SpriteRenderQueue;
 	};

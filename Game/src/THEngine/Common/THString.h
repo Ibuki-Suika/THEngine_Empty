@@ -18,7 +18,7 @@ namespace THEngine
 		String(const String& str);
 		~String();
 
-		inline TCHAR* GetBuffer() const
+		inline const TCHAR* GetBuffer() const
 		{
 			return buffer;
 		}
@@ -33,11 +33,11 @@ namespace THEngine
 		int LastIndexOf(TCHAR ch) const;
 		String SubString(int start, int end) const;
 
-		String operator +(const String& str);
-		String operator +(int number);
+		String operator +(const String& str) const;
+		String operator +(int number) const;
 		void operator =(const String& str);
-		TCHAR& operator[](int number);
-		bool operator ==(const String& str);
+		const TCHAR& operator[](int number) const;
+		bool operator ==(const String& str) const;
 	};
 }
 

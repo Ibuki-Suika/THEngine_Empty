@@ -20,8 +20,7 @@ namespace THEngine
 
 		if (mesh.mesh)
 		{
-			this->mesh = (D3DMesh*)mesh.mesh->Clone();
-			this->mesh->Retain();
+			this->mesh = (D3DMesh*)mesh.mesh->Clone().Get();
 		}
 
 		if (mesh.vertexBuffer)
@@ -39,7 +38,6 @@ namespace THEngine
 
 	Mesh::~Mesh()
 	{
-		TH_SAFE_RELEASE(mesh);
 		TH_SAFE_RELEASE(vertexBuffer);
 		TH_SAFE_RELEASE(indexBuffer);
 	}
@@ -83,7 +81,7 @@ namespace THEngine
 	{
 		auto device = Device::GetInstance();
 
-		if (this->mesh)
+		if (this->mesh != nullptr)
 		{
 			this->mesh->DrawGeometry();
 		}
@@ -106,48 +104,45 @@ namespace THEngine
 		}
 	}
 
-	Mesh* Mesh::CreateMeshFromFile(String filePath)
+	Ptr<Mesh> Mesh::CreateMeshFromFile(const String& filePath)
 	{
 		auto exceptionManager = ExceptionManager::GetInstance();
 
-		Mesh* mesh = new Mesh();
+		Ptr<Mesh> mesh = Ptr<Mesh>::New();
 
 		String ext = filePath.SubString(filePath.LastIndexOf(TCHAR('.')) + 1, filePath.GetLength());
 		if (ext == "x")
 		{
 			if (mesh->LoadFromX(filePath) == false)
 			{
-				Exception* exception = new Exception((String)"加载模型文件失败：" + filePath + "原因是:\n"
+				Ptr<Exception> exception = Ptr<Exception>::New((String)"加载模型文件失败：" + filePath + "原因是:\n"
 					+ exceptionManager->GetException()->GetInfo());
 				exceptionManager->PushException(exception);
-				delete mesh;
 				return nullptr;
 			}
 		}
 		else
 		{
-			Exception* exception = new Exception("不支持的文件格式。");
+			Ptr<Exception> exception = Ptr<Exception>::New("不支持的文件格式。");
 			exceptionManager->PushException(exception);
-			delete mesh;
 			return nullptr;
 		}
 		return mesh;
 	}
 
-	bool Mesh::LoadFromX(String filePath)
+	bool Mesh::LoadFromX(const String& filePath)
 	{
 		this->mesh = D3DMesh::LoadMesh(filePath);
-		if (this->mesh)
+		if (this->mesh != nullptr)
 		{
-			this->mesh->Retain();
 			return true;
 		}
 		return false;
 	}
 
-	Object* Mesh::Clone()
+	Ptr<Object> Mesh::Clone() const
 	{
-		return new Mesh(*this);
+		return Ptr<Mesh>::New(*this).Get();
 	}
 
 	//////////////////////////////////////////////////////////////////////
@@ -178,10 +173,6 @@ namespace THEngine
 
 		if (isCloned == false && materialList)
 		{
-			for (int i = 0; i < numMaterials; i++)
-			{
-				TH_SAFE_RELEASE(materialList[i].texture);
-			}
 			delete[] materialList;
 		}
 
@@ -191,9 +182,9 @@ namespace THEngine
 		}
 	}
 
-	Mesh::D3DMesh* Mesh::D3DMesh::LoadMesh(String filePath)
+	Ptr<Mesh::D3DMesh> Mesh::D3DMesh::LoadMesh(const String& filePath)
 	{
-		D3DMesh* d3dMesh = new D3DMesh();
+		Ptr<D3DMesh> d3dMesh = Ptr<D3DMesh>::New();
 
 		auto device = Device::GetInstance()->GetD3DDevice();
 		auto exceptionManager = ExceptionManager::GetInstance();
@@ -205,9 +196,8 @@ namespace THEngine
 		if (FAILED(D3DXLoadMeshFromX(filePath.GetBuffer(), D3DXMESH_MANAGED, device, &adjacency, &materialBuffer,
 			nullptr, &numMaterials, &d3dMesh->mesh)))
 		{
-			Exception* exception = new Exception("无法加载模型文件。文件可能已损坏。");
+			Ptr<Exception> exception = Ptr<Exception>::New("无法加载模型文件。文件可能已损坏。");
 			exceptionManager->PushException(exception);
-			delete d3dMesh;
 			return nullptr;
 		}
 
@@ -215,9 +205,8 @@ namespace THEngine
 		if (FAILED(d3dMesh->mesh->OptimizeInplace(D3DXMESHOPT_COMPACT | D3DXMESHOPT_ATTRSORT | D3DXMESHOPT_VERTEXCACHE,
 			(DWORD*)adjacency->GetBufferPointer(), nullptr, nullptr, nullptr)))
 		{
-			Exception* exception = new Exception("模型优化失败。");
+			Ptr<Exception> exception = Ptr<Exception>::New("模型优化失败。");
 			exceptionManager->PushException(exception);
-			delete d3dMesh;
 			return nullptr;
 		}
 
@@ -236,10 +225,8 @@ namespace THEngine
 				d3dMesh->materialList[i].texture = assetManager->CreateTextureFromFile(path);
 				if (d3dMesh->materialList[i].texture == nullptr)
 				{
-					delete d3dMesh;
 					return nullptr;
 				}
-				d3dMesh->materialList[i].texture->Retain();
 			}
 			d3dMesh->materialList[i].ambient[0] = materials[i].MatD3D.Diffuse.r;
 			d3dMesh->materialList[i].ambient[1] = materials[i].MatD3D.Diffuse.g;
@@ -263,9 +250,9 @@ namespace THEngine
 		return d3dMesh;
 	}
 
-	Object* Mesh::D3DMesh::Clone()
+	Ptr<Object> Mesh::D3DMesh::Clone() const
 	{
-		return new D3DMesh(*this);
+		return Ptr<D3DMesh>::New(*this).Get();
 	}
 
 	void Mesh::D3DMesh::DrawGeometry()
@@ -274,7 +261,7 @@ namespace THEngine
 		for (int i = 0; i < this->numMaterials; i++)
 		{
 			Material& mat = this->materialList[i];
-			if (mat.texture)
+			if (mat.texture != nullptr)
 			{
 				meshShader->SetTexture("tex", mat.texture);
 				meshShader->SetBoolean("hasTexture", true);

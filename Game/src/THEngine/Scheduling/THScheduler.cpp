@@ -13,14 +13,14 @@ namespace THEngine
 		while (iter->HasNext())
 		{
 			auto timer = iter->Next();
-			AddFrameTimer((FrameTimer*)timer->Clone());
+			AddFrameTimer((FrameTimer*)timer->Clone().Get());
 		}
 
 		auto iter2 = const_cast<Scheduler&>(scheduler).timerList.GetIterator();
 		while (iter2->HasNext())
 		{
 			auto timer = iter->Next();
-			AddTimer((Timer*)timer->Clone());
+			AddTimer((Timer*)timer->Clone().Get());
 		}
 	}
 
@@ -76,7 +76,7 @@ namespace THEngine
 
 	void Scheduler::AddFrameTimer(int delay, TimerFunc run)
 	{
-		FrameTimer* timer = new FrameTimer();
+		Ptr<FrameTimer> timer = Ptr<FrameTimer>::New();
 		timer->SetFrame(delay);
 		timer->run = run;
 		AddFrameTimer(timer);
